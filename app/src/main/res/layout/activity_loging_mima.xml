@@ -6,10 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.LogingActivity">
 
+    <ImageView
+        android:id="@+id/fanhui"
+        android:layout_marginTop="19dp"
+        android:layout_marginLeft="15dp"
+        android:background="@drawable/fanhuiim"
+        android:layout_width="28dp"
+        android:layout_height="28dp"/>
+
         <TextView
             android:layout_marginTop="88dp"
             android:textColor="#333333"
-            android:text="账号登录"
+            android:text="设置密码"
             android:textSize="24sp"
             android:id="@+id/rrr"
             android:layout_marginLeft="30dp"
@@ -29,34 +37,28 @@
 
        <EditText
            android:paddingLeft="112dp"
-           android:id="@+id/phone"
+           android:id="@+id/mima1"
            android:textSize="17sp"
-           android:inputType="phone"
-           android:maxLength="11"
+           android:inputType="textPassword"
+           android:maxLength="21"
            android:textColor="#333333"
            android:background="@null"
            android:layout_width="match_parent"
            android:layout_height="40dp"/>
        <View
-           android:layout_below="@+id/phone"
+           android:layout_below="@+id/mima1"
            android:background="#40555555"
            android:layout_width="match_parent"
            android:layout_height="1dp"/>
 
        <TextView
-           android:text="请输入手机号"
+           android:text="请输入密码"
            android:textColor="#AAB5CA"
            android:textSize="17sp"
            android:layout_centerVertical="true"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"/>
 
-       <ImageView
-           android:layout_alignParentRight="true"
-           android:layout_centerVertical="true"
-           android:background="@drawable/fanhuibg"
-           android:layout_width="24dp"
-           android:layout_height="24dp"/>
 
 
    </RelativeLayout>
@@ -73,43 +75,36 @@
 
         <EditText
             android:paddingLeft="112dp"
-            android:id="@+id/pwd"
+            android:id="@+id/mima2"
             android:textSize="17sp"
             android:inputType="textPassword"
-            android:maxLength="22"
+            android:maxLength="21"
             android:textColor="#333333"
             android:background="@null"
             android:layout_width="match_parent"
             android:layout_height="40dp"/>
         <View
-            android:layout_below="@+id/pwd"
+            android:layout_below="@+id/mima2"
             android:background="#40555555"
             android:layout_width="match_parent"
             android:layout_height="1dp"/>
 
         <TextView
-            android:text="请输入密码"
+            android:text="请确认密码"
             android:textColor="#AAB5CA"
             android:textSize="17sp"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <ImageView
-            android:id="@+id/yingcang"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/yingcangbg"
-            android:layout_width="24dp"
-            android:layout_height="24dp"/>
 
 
     </RelativeLayout>
 
     <Button
         android:textSize="18sp"
-        android:text="登录"
-        android:textColor="@color/white"
+        android:text="下一步"
+        android:textColor="#ffffff"
         android:layout_marginTop="30dp"
         android:layout_below="@id/eeff"
         android:id="@+id/denglu"
@@ -118,54 +113,6 @@
         android:layout_width="315dp"
         android:layout_height="47dp"/>
 
-    <TextView
-        android:id="@+id/yanzhengmadenglu"
-        android:layout_marginTop="28dp"
-        android:layout_below="@+id/denglu"
-        android:layout_centerHorizontal="true"
-        android:text="手机验证码登录"
-        android:textSize="15sp"
-        android:textColor="#666666"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
-
-
-    <ImageView
-        android:id="@+id/weixin"
-        android:background="@drawable/weixinbg"
-        android:layout_marginBottom="60dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_width="50dp"
-        android:layout_height="50dp"/>
-
-    <TextView
-        android:textSize="11sp"
-        android:textColor="#AAB5CA"
-        android:text="快速登录"
-        android:id="@+id/rrfg"
-        android:layout_marginBottom="12dp"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/weixin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <View
-        android:layout_marginBottom="19dp"
-        android:layout_above="@+id/weixin"
-        android:layout_marginRight="6dp"
-        android:layout_toLeftOf="@+id/rrfg"
-        android:background="#DBE3F2"
-        android:layout_width="100dp"
-        android:layout_height="1dp"/>
-    <View
-        android:layout_marginBottom="19dp"
-        android:layout_above="@+id/weixin"
-        android:layout_marginLeft="6dp"
-        android:layout_toRightOf="@+id/rrfg"
-        android:background="#DBE3F2"
-        android:layout_width="100dp"
-        android:layout_height="1dp"/>
 
 </RelativeLayout>

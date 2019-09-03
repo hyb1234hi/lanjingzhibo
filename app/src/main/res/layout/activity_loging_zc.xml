@@ -9,7 +9,7 @@
         <TextView
             android:layout_marginTop="88dp"
             android:textColor="#333333"
-            android:text="账号登录"
+            android:text="手机号登录注册"
             android:textSize="24sp"
             android:id="@+id/rrr"
             android:layout_marginLeft="30dp"
@@ -51,79 +51,28 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"/>
 
-       <ImageView
-           android:layout_alignParentRight="true"
-           android:layout_centerVertical="true"
-           android:background="@drawable/fanhuibg"
-           android:layout_width="24dp"
-           android:layout_height="24dp"/>
-
 
    </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/eeff"
-        android:layout_below="@+id/ffff"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="35dp"
-        android:layout_marginTop="32dp"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:paddingLeft="112dp"
-            android:id="@+id/pwd"
-            android:textSize="17sp"
-            android:inputType="textPassword"
-            android:maxLength="22"
-            android:textColor="#333333"
-            android:background="@null"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"/>
-        <View
-            android:layout_below="@+id/pwd"
-            android:background="#40555555"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"/>
-
-        <TextView
-            android:text="请输入密码"
-            android:textColor="#AAB5CA"
-            android:textSize="17sp"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:id="@+id/yingcang"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/yingcangbg"
-            android:layout_width="24dp"
-            android:layout_height="24dp"/>
-
-
-    </RelativeLayout>
 
     <Button
         android:textSize="18sp"
-        android:text="登录"
+        android:text="获取验证码"
         android:textColor="@color/white"
         android:layout_marginTop="30dp"
-        android:layout_below="@id/eeff"
-        android:id="@+id/denglu"
+        android:layout_below="@id/ffff"
+        android:id="@+id/yanzhengma"
         android:background="@drawable/jiaohu3"
         android:layout_centerHorizontal="true"
         android:layout_width="315dp"
         android:layout_height="47dp"/>
 
     <TextView
-        android:id="@+id/yanzhengmadenglu"
+        android:id="@+id/zhanghaomimadenglu"
         android:layout_marginTop="28dp"
-        android:layout_below="@+id/denglu"
+        android:layout_below="@+id/yanzhengma"
         android:layout_centerHorizontal="true"
-        android:text="手机验证码登录"
+        android:text="账号密码登录"
         android:textSize="15sp"
         android:textColor="#666666"
         android:layout_width="wrap_content"
@@ -167,5 +116,8 @@
         android:background="#DBE3F2"
         android:layout_width="100dp"
         android:layout_height="1dp"/>
+
+
+
 
 </RelativeLayout>

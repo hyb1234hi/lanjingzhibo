@@ -1,8 +1,10 @@
 package com.example.myapplication2.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,13 +30,15 @@ public class LogingActivity extends AppCompatActivity {
     TextView yanzhengmadenglu;
     @BindView(R.id.weixin)
     ImageView weixin;
+    @BindView(R.id.denglu)
+    Button denglu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loging);
         ButterKnife.bind(this);
-
 
 
 
@@ -45,7 +49,7 @@ public class LogingActivity extends AppCompatActivity {
 
     private boolean isC=false;
 
-    @OnClick({R.id.yingcang, R.id.yanzhengmadenglu, R.id.weixin})
+    @OnClick({R.id.yingcang, R.id.yanzhengmadenglu, R.id.weixin,R.id.denglu})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.yingcang:
@@ -59,11 +63,16 @@ public class LogingActivity extends AppCompatActivity {
 
                 break;
             case R.id.yanzhengmadenglu:
+                startActivity(new Intent(LogingActivity.this,LogingActivity_zhuce.class));
 
                 break;
             case R.id.weixin:
 
 
+                break;
+            case R.id.denglu:
+
+                startActivity(new Intent(LogingActivity.this, MainActivity.class));
                 break;
         }
     }

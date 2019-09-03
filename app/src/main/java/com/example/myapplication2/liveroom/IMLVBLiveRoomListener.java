@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.example.myapplication2.liveroom.roomutil.commondef.AnchorInfo;
 import com.example.myapplication2.liveroom.roomutil.commondef.AudienceInfo;
 import com.example.myapplication2.liveroom.roomutil.commondef.RoomInfo;
-import com.tencent.rtmp.ui.TXCloudVideoView;
+
 
 import java.util.ArrayList;
 import java.util.Map;

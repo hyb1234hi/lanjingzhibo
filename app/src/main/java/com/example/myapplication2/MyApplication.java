@@ -49,8 +49,6 @@ public class MyApplication extends Application implements Application.ActivityLi
 
         Bugly.init(getApplicationContext(), "dbdf648da8", false);
 
-
-
       //全局dialog
         this.registerActivityLifecycleCallbacks(this);//注册
         CommonData.applicationContext = this;
@@ -60,10 +58,6 @@ public class MyApplication extends Application implements Application.ActivityLi
         CommonData.ScreenWidth = metric.widthPixels; // 屏幕宽度（像素）
         Intent dialogservice = new Intent(this, CommonDialogService.class);
         startService(dialogservice);
-
-
-
-
 
 
 
