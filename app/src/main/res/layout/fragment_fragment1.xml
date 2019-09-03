@@ -22,7 +22,7 @@
                 android:id="@+id/tv11"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:textColor="#333333"
+                android:textColor="#111111"
                 android:text="关注"
                 android:layout_width="50dp"
                 android:layout_height="28dp"/>
@@ -48,7 +48,7 @@
                 android:id="@+id/tv22"
                 android:gravity="center"
                 android:textSize="13sp"
-                android:textColor="#333333"
+                android:textColor="#666666"
                 android:text="直播"
                 android:layout_centerInParent="true"
                 android:layout_width="50dp"
@@ -74,7 +74,7 @@
             <TextView
                 android:id="@+id/tv33"
                 android:textSize="13sp"
-                android:textColor="#333333"
+                android:textColor="#666666"
                 android:text="视频"
                 android:gravity="center"
                 android:layout_centerInParent="true"
@@ -89,6 +89,27 @@
                 android:background="@drawable/yuanxian"
                 android:layout_width="15dp"
                 android:layout_height="4dp"/>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/sousuo"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="121dp"
+            android:layout_height="42dp">
+            <ImageView
+                android:background="@drawable/souuo11"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <ImageView
+                android:background="@drawable/sousuobg"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="14dp"
+                android:layout_width="12dp"
+                android:layout_height="12dp"/>
+
         </RelativeLayout>
 
     </RelativeLayout>

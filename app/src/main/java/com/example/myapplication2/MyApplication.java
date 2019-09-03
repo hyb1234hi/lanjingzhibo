@@ -2,24 +2,35 @@ package com.example.myapplication2;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 
+import android.util.Log;
 import android.view.WindowManager;
 
+import com.example.myapplication2.beans.BaoCunBean;
+import com.example.myapplication2.beans.MyObjectBox;
 import com.example.myapplication2.dialogall.CommonData;
 import com.example.myapplication2.dialogall.CommonDialogService;
 import com.example.myapplication2.dialogall.ToastUtils;
 
 import com.tencent.bugly.Bugly;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+
+import io.objectbox.Box;
+import io.objectbox.BoxStore;
 
 
 /**
@@ -28,15 +39,16 @@ import java.io.File;
 
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
-
+    private Box<BaoCunBean> baoCunBeanBox=null;
     public static MyApplication myApplication;
 
-
+    private static final String APP_ID = "wxa118e3198ef780bd";
+    // IWXAPI 是第三方app和微信通信的openApi接口
+    private IWXAPI api;
     public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+
             File.separator+"ruitongzipyqt";
     public static final String SDPATH2 = Environment.getExternalStorageDirectory().getAbsolutePath()+
             File.separator+"ruitongyqt";
-
 
 
 
@@ -45,7 +57,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         super.onCreate();
 
         myApplication = this;
-       // BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
+        BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
 
         Bugly.init(getApplicationContext(), "dbdf648da8", false);
 
@@ -59,8 +71,22 @@ public class MyApplication extends Application implements Application.ActivityLi
         Intent dialogservice = new Intent(this, CommonDialogService.class);
         startService(dialogservice);
 
+        baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
 
 
+        BaoCunBean  baoCunBean = mBoxStore.boxFor(BaoCunBean.class).get(123456L);
+        if (baoCunBean == null) {
+            baoCunBean = new BaoCunBean();
+            baoCunBean.setId(123456L);
+            mBoxStore.boxFor(BaoCunBean.class).put(baoCunBean);
+        }
+
+        regToWx();
+    }
+
+
+    public Box<BaoCunBean> getBaoCunBeanBox(){
+        return baoCunBeanBox;
     }
 
 
@@ -113,7 +139,22 @@ public class MyApplication extends Application implements Application.ActivityLi
 
 
 
+    private void regToWx() {
+        // 通过WXAPIFactory工厂，获取IWXAPI的实例
+        api = WXAPIFactory.createWXAPI(this, APP_ID, true);
+        // 将应用的appId注册到微信
+        api.registerApp(APP_ID);
+        //建议动态监听微信启动广播进行注册到微信
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("MyApplication", "intent:" + intent);
+                // 将该app注册到微信
+                api.registerApp(APP_ID);
 
+            }
+        }, new IntentFilter(ConstantsAPI.ACTION_REFRESH_WXAPP));
 
+    }
 
 }

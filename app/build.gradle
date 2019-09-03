@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'io.objectbox'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
     defaultConfig {
-        applicationId "com.example.myapplication2"
+        applicationId "com.shengma.lanjing"
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
@@ -49,4 +49,6 @@ dependencies {
 //  弹幕功能需要依赖此库
     implementation 'com.github.ctiao:dfm:0.4.4'
     implementation 'com.badoo.mobile:android-weak-handler:1.1'
+    implementation 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.4.3'
 }

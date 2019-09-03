@@ -3,23 +3,20 @@ package com.example.myapplication2.ui.fargments;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.CalendarContract;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
-
 import com.example.myapplication2.R;
 import com.example.myapplication2.views.GZFragmentPagerAdapter;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 
@@ -40,6 +37,8 @@ public class Fragment1 extends Fragment implements ViewPager.OnPageChangeListene
     TextView tv33;
     @BindView(R.id.im33)
     ImageView im33;
+    @BindView(R.id.sousuo)
+    RelativeLayout sousuo;
     private ViewPager viewpage;
     private Unbinder unbinder;
 
@@ -86,7 +85,7 @@ public class Fragment1 extends Fragment implements ViewPager.OnPageChangeListene
                 case 0: {
                     resize();
                     tv11.setTextColor(Color.BLACK);
-                    tv11.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
+                    tv11.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                     im11.setVisibility(View.VISIBLE);
 
                     break;
@@ -94,14 +93,14 @@ public class Fragment1 extends Fragment implements ViewPager.OnPageChangeListene
                 case 1: {
                     resize();
                     tv22.setTextColor(Color.BLACK);
-                    tv22.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
+                    tv22.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                     im22.setVisibility(View.VISIBLE);
                     break;
                 }
                 case 2: {
                     resize();
                     tv33.setTextColor(Color.BLACK);
-                    tv33.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
+                    tv33.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                     im33.setVisibility(View.VISIBLE);
                     break;
                 }
@@ -110,21 +109,29 @@ public class Fragment1 extends Fragment implements ViewPager.OnPageChangeListene
         }
     }
 
-    private void resize(){
+    private void resize() {
         tv11.setTextColor(Color.parseColor("#666666"));
         tv22.setTextColor(Color.parseColor("#666666"));
         tv33.setTextColor(Color.parseColor("#666666"));
-        tv11.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
-        tv22.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
-        tv33.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
+        tv11.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        tv22.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        tv33.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
         im11.setVisibility(View.GONE);
         im22.setVisibility(View.GONE);
         im33.setVisibility(View.GONE);
     }
 
 
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    @OnClick(R.id.sousuo)
+    public void onViewClicked() {
+
+
+    }
+
 }
