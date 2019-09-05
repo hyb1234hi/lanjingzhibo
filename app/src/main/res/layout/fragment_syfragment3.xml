@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fargments.SYFragment3">
+    tools:context="com.shengma.lanjing.ui.fargments.SYFragment3">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="333" />
+        android:text="视频" />
 
 </FrameLayout>

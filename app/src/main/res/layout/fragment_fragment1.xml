@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fargments.Fragment1">
+    tools:context="com.shengma.lanjing.ui.fargments.Fragment1">
 
     <RelativeLayout
         android:layout_marginLeft="10dp"

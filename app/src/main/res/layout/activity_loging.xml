@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:background="#ffffff"
     android:layout_height="match_parent"
-    tools:context=".ui.LogingActivity">
+    tools:context="com.shengma.lanjing.ui.LogingActivity">
 
         <TextView
             android:layout_marginTop="88dp"

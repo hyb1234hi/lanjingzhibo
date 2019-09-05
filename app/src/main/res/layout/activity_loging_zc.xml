@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:background="#ffffff"
     android:layout_height="match_parent"
-    tools:context=".ui.LogingActivity">
+    tools:context="com.shengma.lanjing.ui.LogingActivity">
+
 
         <TextView
             android:layout_marginTop="88dp"
@@ -80,42 +81,42 @@
 
 
 
-    <ImageView
-        android:id="@+id/weixin"
-        android:background="@drawable/weixinbg"
-        android:layout_marginBottom="60dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_width="50dp"
-        android:layout_height="50dp"/>
+<!--    <ImageView-->
+<!--        android:id="@+id/weixin"-->
+<!--        android:background="@drawable/weixinbg"-->
+<!--        android:layout_marginBottom="60dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_width="50dp"-->
+<!--        android:layout_height="50dp"/>-->
 
-    <TextView
-        android:textSize="11sp"
-        android:textColor="#AAB5CA"
-        android:text="快速登录"
-        android:id="@+id/rrfg"
-        android:layout_marginBottom="12dp"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/weixin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+<!--    <TextView-->
+<!--        android:textSize="11sp"-->
+<!--        android:textColor="#AAB5CA"-->
+<!--        android:text="快速登录"-->
+<!--        android:id="@+id/rrfg"-->
+<!--        android:layout_marginBottom="12dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_above="@+id/weixin"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <View
-        android:layout_marginBottom="19dp"
-        android:layout_above="@+id/weixin"
-        android:layout_marginRight="6dp"
-        android:layout_toLeftOf="@+id/rrfg"
-        android:background="#DBE3F2"
-        android:layout_width="100dp"
-        android:layout_height="1dp"/>
-    <View
-        android:layout_marginBottom="19dp"
-        android:layout_above="@+id/weixin"
-        android:layout_marginLeft="6dp"
-        android:layout_toRightOf="@+id/rrfg"
-        android:background="#DBE3F2"
-        android:layout_width="100dp"
-        android:layout_height="1dp"/>
+<!--    <View-->
+<!--        android:layout_marginBottom="19dp"-->
+<!--        android:layout_above="@+id/weixin"-->
+<!--        android:layout_marginRight="6dp"-->
+<!--        android:layout_toLeftOf="@+id/rrfg"-->
+<!--        android:background="#DBE3F2"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="1dp"/>-->
+<!--    <View-->
+<!--        android:layout_marginBottom="19dp"-->
+<!--        android:layout_above="@+id/weixin"-->
+<!--        android:layout_marginLeft="6dp"-->
+<!--        android:layout_toRightOf="@+id/rrfg"-->
+<!--        android:background="#DBE3F2"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="1dp"/>-->
 
 
 

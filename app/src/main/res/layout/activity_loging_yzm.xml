@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:background="#ffffff"
     android:layout_height="match_parent"
-    tools:context=".ui.LogingActivity">
+    tools:context="com.shengma.lanjing.ui.LogingActivity">
 
 
     <ImageView
@@ -48,7 +48,7 @@
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
 
-       <com.example.myapplication2.views.PhoneCode
+       <com.shengma.lanjing.views.PhoneCode
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:id="@+id/pc_1"
