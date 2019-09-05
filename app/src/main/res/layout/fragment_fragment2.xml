@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:id="@+id/refreshLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.shengma.lanjing.ui.fargments.Fragment1">
+    tools:context="com.shengma.lanjing.ui.fargments.Fragment2">
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"

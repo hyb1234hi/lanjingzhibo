@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -59,6 +61,8 @@ public class Fragment2 extends Fragment {
     private float jd=0,wd=0;
     private List<GuanZhuBean.ResultBean> beanList=new ArrayList<>();
     private FuJinAdapter adapter;
+    private EditText sousuo;
+    private TextView rrr;
 
     public Fragment2() {
         // Required empty public constructor
@@ -69,6 +73,8 @@ public class Fragment2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        View view=inflater.inflate(R.layout.fragment_fragment2, container, false);
+       rrr=view.findViewById(R.id.rtrr);
+       sousuo=view.findViewById(R.id.sousuo);
         swipeRefreshLayout=view.findViewById(R.id.refreshLayout);
         recyclerView=view.findViewById(R.id.recyclerview);
         //设置进度View的组合颜色，在手指上下滑时使用第一个颜色，在刷新中，会一个个颜色进行切换
@@ -109,7 +115,12 @@ public class Fragment2 extends Fragment {
         return view;
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        rrr.setFocusableInTouchMode(true);
+        sousuo.clearFocus();
+    }
 
     private void link_list() {
         Request.Builder requestBuilder = new Request.Builder()

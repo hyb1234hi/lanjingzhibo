@@ -1,15 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:id="@+id/refreshLayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.shengma.lanjing.ui.fargments.Fragment3">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+        <TextView
+            android:textSize="20sp"
+            android:textColor="@color/blake"
+            android:text="消息"
+            android:id="@+id/rtrr"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-</FrameLayout>
+        <ImageView
+            app:layout_constraintTop_toBottomOf="@+id/rtrr"
+            android:id="@+id/im11"
+            android:layout_marginTop="2dp"
+            app:layout_constraintLeft_toLeftOf="@+id/rtrr"
+            app:layout_constraintRight_toRightOf="@+id/rtrr"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/yuanxian"
+            android:layout_width="15dp"
+            android:layout_height="4dp"/>
+
+        <EditText
+            app:layout_constraintTop_toBottomOf="@+id/im11"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:paddingLeft="33dp"
+            android:textSize="13sp"
+            android:id="@+id/sousuo"
+            android:layout_marginTop="16dp"
+            android:textColor="#333333"
+            android:hint="消息搜索"
+            android:background="@drawable/sousuobg1"
+            android:layout_width="343dp"
+            android:layout_height="32dp"/>
+
+        <ImageView
+            app:layout_constraintTop_toBottomOf="@+id/rtrr"
+            android:id="@+id/im1221"
+            app:layout_constraintLeft_toLeftOf="@+id/sousuo"
+            app:layout_constraintTop_toTopOf="@+id/sousuo"
+            app:layout_constraintBottom_toBottomOf="@+id/sousuo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="14dp"
+            android:background="@drawable/sousuobg2"
+            android:layout_width="12dp"
+            android:layout_height="12dp"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            app:layout_constraintTop_toBottomOf="@+id/sousuo"
+            app:layout_constraintStart_toStartOf="@+id/sousuo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:id="@+id/recyclerview"
+            android:layout_height="0dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

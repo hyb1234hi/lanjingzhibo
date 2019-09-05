@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -59,6 +60,7 @@ public class SYFragment1 extends Fragment {
     private int pag=1;
     private List<GuanZhuBean.ResultBean> beanList=new ArrayList<>();
     private GuanZhuAdapter adapter;
+
 
     public SYFragment1() {
         // Required empty public constructor
