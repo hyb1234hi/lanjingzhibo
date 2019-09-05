@@ -211,6 +211,8 @@ public class LogingActivity extends AppCompatActivity {
                         bean.setSdkAppId(logingBe.getResult().getSdkAppId());
                         bean.setIsBind(logingBe.getResult().getIsBind());
                         baoCunBeanBox.put(bean);
+
+
                         startActivity(new Intent(LogingActivity.this, MainActivity.class));
                         finish();
                     }else {
@@ -390,6 +392,9 @@ public class LogingActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 
     @Override
     protected void onDestroy() {

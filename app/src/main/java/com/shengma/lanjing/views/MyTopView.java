@@ -51,8 +51,8 @@ public class MyTopView extends View {
         path.setFillType(Path.FillType.WINDING);
         paint=new Paint();
         LinearGradient linearGradient=new LinearGradient(150,50,150,300,new int[]{
-                Color.rgb(255,189,22),
-                Color.rgb(221,43,6)},
+                Color.rgb(139,32,244),
+                Color.rgb(179,68,248)},
                 new float[]{0,1.0F}, Shader.TileMode.CLAMP);
         //new float[]{},中的数据表示相对位置，将150,50,150,300，划分10个单位，.3，.6，.9表示它的绝对位置。300到400，将直接画出rgb（0,232,210）
         paint.setShader(linearGradient);
@@ -64,10 +64,10 @@ public class MyTopView extends View {
         super.onDraw(canvas);
         path.moveTo(0,0);
         path.lineTo(w,0);
-        path.lineTo(w,h/6);
-        path.lineTo(w-(w/7),(h/6)+(h/7));
-        path.lineTo(w/7,(h/6)+(h/7));
-        path.lineTo(0,h/6);
+        path.lineTo(w,h/4);
+        path.lineTo(w-(w/6),(h/4)+(h/6));
+        path.lineTo(w/6,(h/4)+(h/6));
+        path.lineTo(0,h/4);
         path.lineTo(0,0);
         path.close();
         canvas.drawPath(path,paint);

@@ -2,6 +2,7 @@ package com.shengma.lanjing.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -10,13 +11,33 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
+import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.beans.GuanZhuBean;
+import com.shengma.lanjing.beans.UserInfoBean;
+import com.shengma.lanjing.cookies.CookiesManager;
+import com.shengma.lanjing.utils.Consts;
+import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.views.ControlScrollViewPager;
 import com.shengma.lanjing.views.MyFragmentPagerAdapter;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.objectbox.Box;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     @BindView(R.id.ll1)
@@ -44,6 +65,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @BindView(R.id.tv4)
     TextView tv4;
 
+    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .writeTimeout(18000, TimeUnit.MILLISECONDS)
+            .connectTimeout(18000, TimeUnit.MILLISECONDS)
+            .readTimeout(18000, TimeUnit.MILLISECONDS)
+            .cookieJar(new CookiesManager())
+            //        .retryOnConnectionFailure(true)
+            .build();
 
     private ControlScrollViewPager viewpage;
     //几个代表页面的常量
@@ -58,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        link_userinfo();
         viewpage = findViewById(R.id.viewpage);
         MyFragmentPagerAdapter myFragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         viewpage.setAdapter(myFragmentPagerAdapter);
@@ -101,6 +129,57 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
+    private void link_userinfo() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .get()
+                .url(Consts.URL+"/user/info");
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                ToastUtils.showError(MainActivity.this,"获取数据失败,请检查网络");
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("LogingActivity", "用户信息"+ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    UserInfoBean userInfoBean = gson.fromJson(jsonObject, UserInfoBean.class);
+                    Box<BaoCunBean> baoCunBeanBox = MyApplication.myApplication.getBaoCunBeanBox();
+                    BaoCunBean bean = baoCunBeanBox.get(123456);
+                    bean.setAnchorLevel(userInfoBean.getResult().getAnchorLevel());
+                    bean.setAuth(userInfoBean.getResult().getAuth());
+                    bean.setDuration(userInfoBean.getResult().getDuration());
+                    bean.setFans(userInfoBean.getResult().getFans());
+                    bean.setHeadImage(userInfoBean.getResult().getHeadImage());
+                    bean.setIdNumber(userInfoBean.getResult().getIdNumber());
+                    bean.setIdols(userInfoBean.getResult().getIdols());
+                    bean.setNickname(userInfoBean.getResult().getNickname());
+                    bean.setRealName(userInfoBean.getResult().getRealName());
+                    bean.setSex(userInfoBean.getResult().getSex());
+                    bean.setUserCode(userInfoBean.getResult().getUserCode());
+                    bean.setUserid(userInfoBean.getResult().getId());
+                    bean.setUserLevel(userInfoBean.getResult().getUserLevel());
+                    baoCunBeanBox.put(bean);
+
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    ToastUtils.showError(MainActivity.this,"获取数据失败");
+
+                }
+            }
+        });
+    }
 
     //重写ViewPager页面切换的处理方法
     @Override
