@@ -119,7 +119,7 @@ public class Fragment3 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        rrr.setFocusableInTouchMode(true);
+        rrr.setFocusableInTouchMode(true);//解决clearFocus无效
         sousuo.clearFocus();
     }
 
