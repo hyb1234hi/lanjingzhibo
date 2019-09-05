@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -22,7 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.ZHiBoAdapter;
-import com.shengma.lanjing.beans.GuanZhuBean;
+import com.shengma.lanjing.beans.LiveType;
 import com.shengma.lanjing.beans.ZhiBoBean;
 import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.utils.Consts;
@@ -46,7 +48,7 @@ import okhttp3.ResponseBody;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SYFragment2 extends Fragment {
+public class SYFragment2 extends Fragment implements View.OnClickListener {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -56,10 +58,11 @@ public class SYFragment2 extends Fragment {
             .cookieJar(new CookiesManager())
             //        .retryOnConnectionFailure(true)
             .build();
-    private int pag=1;
+    private int pag=1,type=0;
     private List<ZhiBoBean.ResultBean> beanList=new ArrayList<>();
     private ZHiBoAdapter adapter;
-
+    private LinearLayout linearLayout;
+    private List<LiveType.ResultBean> typeList=new ArrayList<>();
 
 
     public SYFragment2() {
@@ -73,16 +76,16 @@ public class SYFragment2 extends Fragment {
         View view=inflater.inflate(R.layout.fragment_syfragment2, container, false);
         swipeRefreshLayout=view.findViewById(R.id.refreshLayout);
         recyclerView=view.findViewById(R.id.recyclerview);
+        linearLayout=view.findViewById(R.id.topll);
         //设置进度View的组合颜色，在手指上下滑时使用第一个颜色，在刷新中，会一个个颜色进行切换
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#3EE1F7"), Color.GREEN, Color.RED, Color.YELLOW, Color.BLUE);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                link_list();
                 pag+=1;
+                link_list();
             }
         });
-
 
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),2, LinearLayoutManager.VERTICAL,false);
         //设置布局管理器
@@ -107,6 +110,8 @@ public class SYFragment2 extends Fragment {
         });
 
 
+        link_live_type();
+
         return view;
     }
 
@@ -114,8 +119,8 @@ public class SYFragment2 extends Fragment {
     private void link_list() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .get()
-                .url(Consts.URL+"/live/list?page="+pag+"&pageSize=10");
+                .get()//live/list?page=1&pageSize=10&type=0
+                .url(Consts.URL+"/live/list?page="+pag+"&pageSize=10&type="+type);
 
         // step 3：创建 Call 对象
         Call call = okHttpClient.newCall(requestBuilder.build());
@@ -145,7 +150,6 @@ public class SYFragment2 extends Fragment {
                             swipeRefreshLayout.setRefreshing(false);
                         }
                     });
-
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
@@ -179,5 +183,98 @@ public class SYFragment2 extends Fragment {
             }
         });
     }
+
+
+    private void link_live_type() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .get()
+                .url(Consts.URL+"/live/type");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                if (getActivity()!=null)
+                    ToastUtils.showError(getActivity(),"获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("LogingActivity", "关注列表"+ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    LiveType bean = gson.fromJson(jsonObject, LiveType.class);
+                    if (bean.getCode()==2000) {
+                        typeList.clear();
+                        typeList.addAll(bean.getResult());
+                        if (getActivity()!=null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                   int ss = bean.getResult().size();
+                                   if (ss>0) {
+                                       for (int i = 0; i < ss; i++) {
+                                           View view_dk = View.inflate(getActivity(), R.layout.zbtitle_item, null);
+                                           LinearLayout layout = view_dk.findViewById(R.id.root_layout);
+                                           TextView textView = view_dk.findViewById(R.id.toptitle);
+                                           textView.setText(bean.getResult().get(i).getName());
+                                           view_dk.setOnClickListener(SYFragment2.this);
+                                           if (i == 0) {
+                                               textView.setTextColor(Color.parseColor("#FFF36D87"));
+                                               textView.setBackgroundResource(R.drawable.yuanjiao_bg);
+                                           } else {
+                                               textView.setTextColor(Color.parseColor("#FF999999"));
+                                               textView.setBackgroundColor(Color.TRANSPARENT);
+                                           }
+                                           view_dk.setTag(i);
+                                           linearLayout.addView(view_dk);
+                                       }
+                                       link_list();
+                                   }
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    if (getActivity()!=null)
+                        ToastUtils.showError(getActivity(),"获取数据失败");
+
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onClick(View view) {
+       int size =  typeList.size();
+       for (int i=0;i<size;i++){
+          View view1= linearLayout.getChildAt(i);
+          TextView textView= view1.findViewById(R.id.toptitle);
+          if (view1.getTag().equals(view.getTag())){
+              textView.setTextColor(Color.parseColor("#FFF36D87"));
+              textView.setBackgroundResource(R.drawable.yuanjiao_bg);
+          }else {
+              textView.setTextColor(Color.parseColor("#FF999999"));
+              textView.setBackgroundColor(Color.TRANSPARENT);
+          }
+       }
+       type=Integer.parseInt(view.getTag().toString());
+       beanList.clear();
+       link_list();
+
+    }
+
+
 
 }
