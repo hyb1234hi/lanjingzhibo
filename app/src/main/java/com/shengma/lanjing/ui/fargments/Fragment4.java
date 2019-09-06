@@ -20,6 +20,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.ui.GeXinSheZhiActivity;
 import com.shengma.lanjing.ui.QianBaoActivity;
 import com.shengma.lanjing.views.MyTopView;
 
@@ -141,7 +142,7 @@ public class Fragment4 extends Fragment {
 
                 break;
             case R.id.rl4:
-
+                startActivity(new Intent(getActivity(), GeXinSheZhiActivity.class));
                 break;
             case R.id.rl5:
 

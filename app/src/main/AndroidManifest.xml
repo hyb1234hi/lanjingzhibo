@@ -10,7 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ChongZhiActivity"></activity>
+        <activity android:name=".ui.ZhangHaoAnQuanActivity"></activity>
+        <activity android:name=".ui.GeXinSheZhiActivity" />
+        <activity android:name=".ui.ChongZhiActivity" />
         <activity android:name=".ui.QianBaoActivity" />
         <activity
             android:name=".ui.LogingActivity"
