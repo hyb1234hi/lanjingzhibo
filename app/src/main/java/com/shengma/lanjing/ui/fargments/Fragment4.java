@@ -1,26 +1,31 @@
 package com.shengma.lanjing.ui.fargments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.ui.QianBaoActivity;
 import com.shengma.lanjing.views.MyTopView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.objectbox.Box;
 
@@ -32,12 +37,42 @@ public class Fragment4 extends Fragment {
     MyTopView mytopview;
     @BindView(R.id.touxiang)
     ImageView touxiang;
+    @BindView(R.id.name)
+    TextView name;
+    @BindView(R.id.dengji)
+    TextView dengji;
+    @BindView(R.id.dengji2)
+    TextView dengji2;
+    @BindView(R.id.myid)
+    TextView myid;
+    @BindView(R.id.textView1)
+    LinearLayout textView1;
+    @BindView(R.id.guanzhu)
+    TextView guanzhu;
+    @BindView(R.id.textView2)
+    LinearLayout textView2;
+    @BindView(R.id.fensi)
+    TextView fensi;
+    @BindView(R.id.textView3)
+    LinearLayout textView3;
+    @BindView(R.id.shichang)
+    TextView shichang;
+    @BindView(R.id.rl1)
+    RelativeLayout rl1;
+    @BindView(R.id.rl2)
+    RelativeLayout rl2;
+    @BindView(R.id.rl3)
+    RelativeLayout rl3;
+    @BindView(R.id.rl4)
+    RelativeLayout rl4;
+    @BindView(R.id.rl5)
+    RelativeLayout rl5;
     private Unbinder unbinder;
     private Box<BaoCunBean> baoCunBeanBox = MyApplication.myApplication.getBaoCunBeanBox();
-    private BaoCunBean baoCunBean=null;
+    private BaoCunBean baoCunBean = null;
 
     public Fragment4() {
-        baoCunBean=baoCunBeanBox.get(123456);
+        baoCunBean = baoCunBeanBox.get(123456);
 
     }
 
@@ -54,15 +89,20 @@ public class Fragment4 extends Fragment {
         int heightPixels = outMetrics.heightPixels;
         mytopview.setWH(widthPixels, heightPixels);
 
-        if (baoCunBean!=null){
+        if (baoCunBean != null) {
             Glide.with(getActivity())
                     .load(baoCunBean.getHeadImage())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(touxiang);
-
             //RequestOptions.bitmapTransform(new CircleCrop())//圆形
             //RequestOptions.bitmapTransform(new RoundedCorners( 5))//圆角
-
+            name.setText(baoCunBean.getNickname() + "");
+            dengji.setText("Lv." + baoCunBean.getAnchorLevel());
+            dengji2.setText("Lv." + baoCunBean.getUserLevel());
+            myid.setText("ID:" + baoCunBean.getUserCode());
+            shichang.setText(baoCunBean.getDuration() + "");
+            fensi.setText(baoCunBean.getFans() + "");
+            guanzhu.setText(baoCunBean.getIdols() + "");
         }
 
 
@@ -77,4 +117,35 @@ public class Fragment4 extends Fragment {
     }
 
 
+
+
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5,R.id.textView1, R.id.textView2, R.id.textView3})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.textView1:
+
+                break;
+            case R.id.textView2:
+
+                break;
+            case R.id.textView3:
+
+                break;
+            case R.id.rl1:
+                startActivity(new Intent(getActivity(), QianBaoActivity.class));
+                break;
+            case R.id.rl2:
+
+                break;
+            case R.id.rl3:
+
+                break;
+            case R.id.rl4:
+
+                break;
+            case R.id.rl5:
+
+                break;
+        }
+    }
 }

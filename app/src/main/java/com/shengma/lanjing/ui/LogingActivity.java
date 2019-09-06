@@ -182,7 +182,7 @@ public class LogingActivity extends AppCompatActivity {
                 .post(body)
                 .url(Consts.URL+"/login/password");
         // step 3：创建 Call 对象
-        Call call = okHttpClient.newCall(requestBuilder.build());
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
         call.enqueue(new Callback() {
             @Override

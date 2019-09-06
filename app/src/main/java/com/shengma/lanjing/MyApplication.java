@@ -15,6 +15,7 @@ import android.view.WindowManager;
 
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.MyObjectBox;
+import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.dialogall.CommonData;
 import com.shengma.lanjing.dialogall.CommonDialogService;
 import com.shengma.lanjing.dialogall.ToastUtils;
@@ -28,9 +29,11 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
+import okhttp3.OkHttpClient;
 
 import static com.shengma.lanjing.utils.Consts.APP_ID;
 
@@ -44,7 +47,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     private Box<BaoCunBean> baoCunBeanBox=null;
     public static MyApplication myApplication;
 
-
+    public OkHttpClient okHttpClient =null;
     // IWXAPI 是第三方app和微信通信的openApi接口
     private IWXAPI api;
     public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+
@@ -57,10 +60,8 @@ public class MyApplication extends Application implements Application.ActivityLi
     @Override
     public void onCreate() {
         super.onCreate();
-
         myApplication = this;
         BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
-
         Bugly.init(getApplicationContext(), "dbdf648da8", false);
 
       //全局dialog
@@ -75,7 +76,6 @@ public class MyApplication extends Application implements Application.ActivityLi
 
         baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
 
-
         BaoCunBean  baoCunBean = mBoxStore.boxFor(BaoCunBean.class).get(123456L);
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
@@ -83,15 +83,27 @@ public class MyApplication extends Application implements Application.ActivityLi
             mBoxStore.boxFor(BaoCunBean.class).put(baoCunBean);
         }
 
+        okHttpClient = new OkHttpClient.Builder()
+                .writeTimeout(18000, TimeUnit.MILLISECONDS)
+                .connectTimeout(18000, TimeUnit.MILLISECONDS)
+                .readTimeout(18000, TimeUnit.MILLISECONDS)
+                .cookieJar(new CookiesManager())
+                //        .retryOnConnectionFailure(true)
+                .build();
+
         regToWx();
     }
 
-
+    public OkHttpClient getOkHttpClient(){
+        return okHttpClient;
+    }
     public Box<BaoCunBean> getBaoCunBeanBox(){
         return baoCunBeanBox;
     }
 
-
+    public BaoCunBean getBaoCunBean(){
+        return baoCunBeanBox.get(123456);
+    }
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
