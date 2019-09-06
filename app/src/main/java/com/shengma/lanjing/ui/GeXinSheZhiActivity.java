@@ -38,7 +38,6 @@ public class GeXinSheZhiActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ge_xin_she_zhi);
         ButterKnife.bind(this);
 
-
     }
 
     @OnClick({R.id.fanhui, R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.tuichu})

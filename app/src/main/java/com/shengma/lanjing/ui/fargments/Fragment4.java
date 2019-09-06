@@ -68,6 +68,8 @@ public class Fragment4 extends Fragment {
     RelativeLayout rl4;
     @BindView(R.id.rl5)
     RelativeLayout rl5;
+    @BindView(R.id.bianji)
+    ImageView bianji;
     private Unbinder unbinder;
     private Box<BaoCunBean> baoCunBeanBox = MyApplication.myApplication.getBaoCunBeanBox();
     private BaoCunBean baoCunBean = null;
@@ -118,9 +120,7 @@ public class Fragment4 extends Fragment {
     }
 
 
-
-
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5,R.id.textView1, R.id.textView2, R.id.textView3})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.textView1, R.id.textView2, R.id.textView3})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.textView1:
@@ -148,5 +148,9 @@ public class Fragment4 extends Fragment {
 
                 break;
         }
+    }
+
+    @OnClick(R.id.bianji)
+    public void onViewClicked() {
     }
 }

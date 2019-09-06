@@ -464,4 +464,15 @@
         </androidx.cardview.widget.CardView>
     </ScrollView>
 
+
+    <ImageView
+        android:background="@drawable/bianjixinxi"
+        android:layout_marginTop="28dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/bianji"
+        android:layout_width="24dp"
+        android:layout_height="20dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
