@@ -9,12 +9,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
 import com.shengma.lanjing.R;
+
 
 public class FenXiangDialog extends DialogFragment implements View.OnClickListener {
 

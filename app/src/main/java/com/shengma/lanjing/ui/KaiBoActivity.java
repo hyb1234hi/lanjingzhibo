@@ -1,7 +1,7 @@
 package com.shengma.lanjing.ui;
 
-<<<<<<< HEAD
-import android.content.Intent;
+
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,14 +9,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
-import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
@@ -27,20 +24,14 @@ import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.zyao89.view.zloading.ZLoadingDialog;
 import com.zyao89.view.zloading.Z_TYPE;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -49,6 +40,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+
+
 
 public class KaiBoActivity extends AppCompatActivity {
 
@@ -69,14 +63,6 @@ public class KaiBoActivity extends AppCompatActivity {
     private PhotoDialog photoDialog;
     ZLoadingDialog dialog;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-
-import com.shengma.lanjing.R;
-
-public class KaiBoActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +70,7 @@ public class KaiBoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_kai_bo);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
+
 
     }
 
@@ -219,10 +206,6 @@ public class KaiBoActivity extends AppCompatActivity {
         });
     }
 
+  }
 
-=======
 
-
-    }
->>>>>>> origin/master
-}

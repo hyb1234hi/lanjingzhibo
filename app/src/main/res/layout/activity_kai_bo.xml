@@ -10,10 +10,6 @@
 
     <ImageView
         android:id="@+id/fanhui"
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:layout_marginStart="16dp"
@@ -40,10 +36,7 @@
         android:gravity="center"
         android:text="更换封面"
         android:paddingLeft="6dp"
-<<<<<<< HEAD
-=======
         android:id="@+id/fgfgr"
->>>>>>> origin/master
         android:paddingRight="6dp"
         android:paddingTop="2dp"
         android:layout_marginBottom="6dp"
@@ -68,17 +61,14 @@
     <ImageView
         android:background="@drawable/weizhibg"
         android:layout_marginStart="6dp"
-<<<<<<< HEAD
         android:id="@+id/jkjk"
-=======
->>>>>>> origin/master
         app:layout_constraintTop_toTopOf="@+id/weizhi"
         app:layout_constraintBottom_toBottomOf="@+id/weizhi"
         app:layout_constraintLeft_toLeftOf="@+id/weizhi"
         android:layout_width="9dp"
         android:layout_height="12dp"/>
 
-<<<<<<< HEAD
+
     <TextView
         android:text="显示距离"
         app:layout_constraintTop_toTopOf="@+id/weizhi"
@@ -176,9 +166,6 @@
             android:layout_marginTop="4dp"
             android:layout_width="180dp"
             android:layout_height="80dp"/>
-
-=======
->>>>>>> origin/master
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
