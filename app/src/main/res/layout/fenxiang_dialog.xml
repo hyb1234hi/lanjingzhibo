@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/yuanjiao_top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="169dp">
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:textColor="#181818"
+            android:textSize="17sp"
+            android:text="分享"
+            android:id="@+id/fff"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    <ImageView
+        android:layout_marginTop="14dp"
+        android:layout_marginRight="10dp"
+        android:padding="5dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/guanbi_hui"
+        android:id="@+id/guanbi"
+        android:layout_width="32dp"
+        android:layout_height="32dp"/>
+
+
+       <LinearLayout
+           android:orientation="horizontal"
+           android:gravity="center"
+           android:layout_below="@+id/fff"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
+           <LinearLayout
+               android:id="@+id/l1"
+               android:layout_marginRight="10dp"
+               android:orientation="vertical"
+               android:gravity="center"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content">
+               <ImageView
+                   android:background="@drawable/wx2"
+                   android:layout_width="44dp"
+                   android:layout_height="44dp"/>
+               <TextView
+                   android:text="朋友圈"
+                   android:textSize="14sp"
+                   android:layout_marginTop="10dp"
+                   android:textColor="#AAAAAA"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"/>
+
+           </LinearLayout>
+
+           <LinearLayout
+               android:id="@+id/l2"
+               android:layout_marginRight="10dp"
+               android:layout_marginLeft="10dp"
+               android:orientation="vertical"
+               android:gravity="center"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content">
+               <ImageView
+                   android:background="@drawable/wx1"
+                   android:layout_width="44dp"
+                   android:layout_height="44dp"/>
+               <TextView
+                   android:text="微信"
+                   android:textSize="14sp"
+                   android:layout_marginTop="10dp"
+                   android:textColor="#AAAAAA"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"/>
+
+           </LinearLayout>
+           <LinearLayout
+               android:id="@+id/l3"
+               android:layout_marginRight="10dp"
+               android:layout_marginLeft="10dp"
+               android:orientation="vertical"
+               android:gravity="center"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content">
+               <ImageView
+                   android:background="@drawable/qq1"
+                   android:layout_width="44dp"
+                   android:layout_height="44dp"/>
+               <TextView
+                   android:text="QQ"
+                   android:textSize="14sp"
+                   android:layout_marginTop="10dp"
+                   android:textColor="#AAAAAA"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"/>
+
+           </LinearLayout>
+           <LinearLayout
+               android:id="@+id/l4"
+               android:layout_marginLeft="10dp"
+               android:orientation="vertical"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content">
+               <ImageView
+                   android:background="@drawable/qq2"
+                   android:layout_width="44dp"
+                   android:layout_height="44dp"/>
+               <TextView
+                   android:text="QQ空间"
+                   android:textSize="14sp"
+                   android:layout_marginTop="10dp"
+                   android:textColor="#AAAAAA"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"/>
+
+           </LinearLayout>
+
+       </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

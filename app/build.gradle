@@ -53,7 +53,8 @@ dependencies {
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.4.3'
     implementation 'com.zyao89:zloading:1.2.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
-    implementation 'androidx.cardview:cardview:1.0.0-alpha3'
-
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation project(path: ':photopicker')
+    implementation 'pub.devrel:easypermissions:3.0.0'
 
 }

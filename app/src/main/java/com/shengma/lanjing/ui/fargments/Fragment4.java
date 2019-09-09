@@ -21,7 +21,9 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.ui.GeXinSheZhiActivity;
+import com.shengma.lanjing.ui.KaiBoActivity;
 import com.shengma.lanjing.ui.QianBaoActivity;
+import com.shengma.lanjing.ui.WoDeZiLiaoActivity;
 import com.shengma.lanjing.views.MyTopView;
 
 import butterknife.BindView;
@@ -70,6 +72,7 @@ public class Fragment4 extends Fragment {
     RelativeLayout rl5;
     @BindView(R.id.bianji)
     ImageView bianji;
+
     private Unbinder unbinder;
     private Box<BaoCunBean> baoCunBeanBox = MyApplication.myApplication.getBaoCunBeanBox();
     private BaoCunBean baoCunBean = null;
@@ -120,7 +123,7 @@ public class Fragment4 extends Fragment {
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.textView1, R.id.textView2, R.id.textView3})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.textView1, R.id.textView2, R.id.textView3,R.id.bianji})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.textView1:
@@ -136,7 +139,7 @@ public class Fragment4 extends Fragment {
                 startActivity(new Intent(getActivity(), QianBaoActivity.class));
                 break;
             case R.id.rl2:
-
+                startActivity(new Intent(getActivity(), KaiBoActivity.class));
                 break;
             case R.id.rl3:
 
@@ -147,10 +150,12 @@ public class Fragment4 extends Fragment {
             case R.id.rl5:
 
                 break;
+            case R.id.bianji:
+                startActivity(new Intent(getActivity(), WoDeZiLiaoActivity.class));
+                break;
         }
     }
 
-    @OnClick(R.id.bianji)
-    public void onViewClicked() {
-    }
+
+
 }

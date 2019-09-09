@@ -1,5 +1,7 @@
 package com.shengma.lanjing.ui;
 
+
+import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,8 +9,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.gson.Gson;
@@ -16,7 +21,6 @@ import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
-import com.shengma.lanjing.beans.GuanZhuBean;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.utils.Consts;
@@ -26,6 +30,7 @@ import com.shengma.lanjing.views.ControlScrollViewPager;
 import com.shengma.lanjing.views.MyFragmentPagerAdapter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -38,8 +43,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener , EasyPermissions.PermissionCallbacks {
     @BindView(R.id.ll1)
     LinearLayout ll1;
     @BindView(R.id.ll2)
@@ -96,8 +103,60 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewpage.addOnPageChangeListener(this);
         viewpage.setOffscreenPageLimit(4);
 
+        methodRequiresTwoPermission();
+
     }
 
+
+    private final int RC_CAMERA_AND_LOCATION=10000;
+
+    @AfterPermissionGranted(RC_CAMERA_AND_LOCATION)
+    private void methodRequiresTwoPermission() {
+        String[] perms = {Manifest.permission.CAMERA,
+                Manifest.permission.RECEIVE_BOOT_COMPLETED, Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,Manifest.permission.INTERNET};
+
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // 已经得到许可，就去做吧 //第一次授权成功也会走这个方法
+            Log.d("BaseActivity", "成功获得权限");
+
+
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, "需要授予app权限,请点击确定",
+                    RC_CAMERA_AND_LOCATION, perms);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> list) {
+        // Some permissions have been granted
+        Log.d("BaseActivity", "list.size():" + list.size());
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> list) {
+        // Some permissions have been denied
+        // ...
+        for (String s:list){
+            Log.d("BaseActivity", s);
+        }
+        Log.d("BaseActivity", "list.size():" + list.size());
+        Toast.makeText(MainActivity.this,"权限被拒绝会导致无法正常使用app",Toast.LENGTH_LONG).show();
+       // finish();
+
+    }
 
     @OnClick({R.id.ll1, R.id.ll2, R.id.ll3, R.id.ll4})
     public void onViewClicked(View view) {

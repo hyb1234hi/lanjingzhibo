@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/baiyun"
+    tools:context=".ui.KaiBoActivity">
+
+
+    <ImageView
+        android:id="@+id/fanhui"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="27dp"
+        android:background="@drawable/guanbi"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/fengmian"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/morenbg"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fanhui" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:background="@drawable/yuanxian_heise"
+        android:gravity="center"
+        android:text="更换封面"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="2dp"
+        android:layout_marginBottom="6dp"
+        android:paddingBottom="2dp"
+        android:textColor="#FFFFFF"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@+id/fengmian"
+        app:layout_constraintLeft_toLeftOf="@+id/fengmian"
+        app:layout_constraintRight_toRightOf="@+id/fengmian" />
+
+
+    <View
+        android:id="@+id/weizhi"
+        app:layout_constraintTop_toTopOf="@+id/fengmian"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/yuanxian_heise2"
+        app:layout_constraintLeft_toRightOf="@+id/fengmian"
+        android:layout_width="80dp"
+        android:layout_height="24dp"/>
+
+    <ImageView
+        android:background="@drawable/weizhibg"
+        android:layout_marginStart="6dp"
+        android:id="@+id/jkjk"
+        app:layout_constraintTop_toTopOf="@+id/weizhi"
+        app:layout_constraintBottom_toBottomOf="@+id/weizhi"
+        app:layout_constraintLeft_toLeftOf="@+id/weizhi"
+        android:layout_width="9dp"
+        android:layout_height="12dp"/>
+
+    <TextView
+        android:text="显示距离"
+        app:layout_constraintTop_toTopOf="@+id/weizhi"
+        app:layout_constraintBottom_toBottomOf="@+id/weizhi"
+        app:layout_constraintLeft_toRightOf="@+id/jkjk"
+        android:textColor="#FFFFFF"
+        android:textSize="11sp"
+        android:gravity="center"
+        app:layout_constraintRight_toRightOf="@+id/weizhi"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+
+    <View
+        android:id="@+id/pingdao"
+        app:layout_constraintTop_toTopOf="@+id/weizhi"
+        app:layout_constraintBottom_toBottomOf="@+id/weizhi"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/yuanxian_heise2"
+        app:layout_constraintLeft_toRightOf="@+id/weizhi"
+        android:layout_width="80dp"
+        android:layout_height="24dp"/>
+
+    <TextView
+        android:text="选择频道"
+        app:layout_constraintTop_toTopOf="@+id/pingdao"
+        app:layout_constraintBottom_toBottomOf="@+id/pingdao"
+        app:layout_constraintLeft_toLeftOf="@+id/pingdao"
+        app:layout_constraintRight_toRightOf="@+id/pingdao"
+        android:paddingRight="2dp"
+        android:id="@+id/frrrd"
+        android:textColor="#FFFFFF"
+        android:textSize="11sp"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        app:layout_constraintTop_toTopOf="@+id/pingdao"
+        app:layout_constraintBottom_toBottomOf="@+id/pingdao"
+        app:layout_constraintRight_toRightOf="@+id/pingdao"
+        android:layout_marginRight="6dp"
+        android:background="@drawable/you_bai"
+        android:layout_width="5dp"
+        android:layout_height="9dp"/>
+
+
+
+    <TextView
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:text="开始直播"
+        android:id="@+id/kaibo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:paddingTop="20dp"
+        android:layout_marginBottom="30dp"
+        android:gravity="center_horizontal"
+        android:background="@drawable/kaibobg1"
+        android:layout_width="223dp"
+        android:layout_height="68dp"/>
+
+    <ImageView
+        android:id="@+id/fenxiang"
+        android:background="@drawable/fenxiang"
+        app:layout_constraintTop_toTopOf="@+id/kaibo"
+        app:layout_constraintLeft_toRightOf="@+id/kaibo"
+        android:layout_marginTop="9dp"
+        android:layout_marginStart="18dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"/>
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@+id/fenxiang"
+        app:layout_constraintLeft_toLeftOf="@+id/fenxiang"
+        app:layout_constraintRight_toRightOf="@+id/fenxiang"
+        android:textSize="13sp"
+        android:text="分享"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+        <EditText
+            app:layout_constraintLeft_toRightOf="@+id/fengmian"
+            app:layout_constraintTop_toBottomOf="@+id/weizhi"
+            android:gravity="center_vertical"
+            android:hint="请输入你的主题"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:id="@+id/zhuti"
+            android:background="@null"
+            android:textColorHint="@color/white"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="4dp"
+            android:layout_width="180dp"
+            android:layout_height="80dp"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

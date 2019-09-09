@@ -81,6 +81,9 @@ public class LogingActivity extends AppCompatActivity {
         EventBus.getDefault().register(this);
 
         link_loging("18620124189","yoyo89757");
+
+      //  startActivity(new Intent(LogingActivity.this, MainActivity.class));
+       // finish();
     }
 
 
@@ -189,6 +192,7 @@ public class LogingActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(LogingActivity.this,"获取数据失败,请检查网络");
+                if (dialog!=null)
                 dialog.dismiss();
             }
 
