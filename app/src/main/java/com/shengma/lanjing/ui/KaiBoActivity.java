@@ -1,5 +1,6 @@
 package com.shengma.lanjing.ui;
 
+<<<<<<< HEAD
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -69,10 +70,21 @@ public class KaiBoActivity extends AppCompatActivity {
     ZLoadingDialog dialog;
 
 
+=======
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+
+import com.shengma.lanjing.R;
+
+public class KaiBoActivity extends AppCompatActivity {
+
+>>>>>>> origin/master
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kai_bo);
+<<<<<<< HEAD
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
@@ -211,4 +223,9 @@ public class KaiBoActivity extends AppCompatActivity {
     }
 
 
+=======
+
+
+    }
+>>>>>>> origin/master
 }
