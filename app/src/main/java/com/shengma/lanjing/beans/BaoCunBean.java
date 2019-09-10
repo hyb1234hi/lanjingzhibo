@@ -13,7 +13,7 @@ public class BaoCunBean {
     private String sdkAppId;
     private String isBind;
     private String imUserSig;
-    private int userid;
+    private long userid;
     private String nickname;
     private String headImage;
     private int sex;
@@ -26,12 +26,41 @@ public class BaoCunBean {
     private int auth;
     private String realName;
     private String idNumber;
+    private long roomId;
+    private String pushUrl;
+    private String playUrl;
 
-    public int getUserid() {
+
+
+    public long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
+
+    public String getPushUrl() {
+        return pushUrl;
+    }
+
+    public void setPushUrl(String pushUrl) {
+        this.pushUrl = pushUrl;
+    }
+
+    public String getPlayUrl() {
+        return playUrl;
+    }
+
+    public void setPlayUrl(String playUrl) {
+        this.playUrl = playUrl;
+    }
+
+    public long getUserid() {
         return userid;
     }
 
-    public void setUserid(int userid) {
+    public void setUserid(long userid) {
         this.userid = userid;
     }
 

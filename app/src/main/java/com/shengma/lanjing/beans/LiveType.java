@@ -54,9 +54,17 @@ public class LiveType {
          * type : 0
          * name : 交友
          */
-
+        private int isXZ;
         private int type;
         private String name;
+
+        public int getIsXZ() {
+            return isXZ;
+        }
+
+        public void setIsXZ(int isXZ) {
+            this.isXZ = isXZ;
+        }
 
         public int getType() {
             return type;

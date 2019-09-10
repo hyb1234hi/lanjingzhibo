@@ -11,11 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.ZhangHaoAnQuanActivity"></activity>
-        <activity android:name=".ui.GeXinSheZhiActivity" />
-        <activity android:name=".ui.ChongZhiActivity" />
-        <activity android:name=".ui.QianBaoActivity" />
-        <activity android:name=".ui.KaiBoActivity"/>
+        <activity android:name=".ui.ZhangHaoAnQuanActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.GeXinSheZhiActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.ChongZhiActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.QianBaoActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.KaiBoActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.zhibo.BoFangActivity" android:screenOrientation="portrait" android:launchMode="singleTask"/>
+        <activity android:name=".ui.zhibo.ZhiBoActivity" android:screenOrientation="portrait" android:launchMode="singleTask"/>
         <activity
             android:name=".ui.LogingActivity"
             android:screenOrientation="portrait">
@@ -52,7 +54,9 @@
         <meta-data
             android:name="design_width_in_dp"
             android:value="375" />
+
     </application>
+
     <uses-feature android:name="android.hardware.Camera" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />

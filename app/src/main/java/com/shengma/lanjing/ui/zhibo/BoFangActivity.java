@@ -14,6 +14,8 @@ public class BoFangActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bo_fang);
 
 
+
+
     }
 
 

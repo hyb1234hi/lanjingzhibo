@@ -23,9 +23,10 @@
         android:id="@+id/fengmian"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:scaleType="fitXY"
         android:layout_marginStart="16dp"
         android:layout_marginTop="30dp"
-        android:background="@drawable/morenbg"
+        android:src="@drawable/morenbg"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fanhui" />
 

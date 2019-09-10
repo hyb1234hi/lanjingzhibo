@@ -64,7 +64,7 @@ public class UserInfoBean {
          * idNumber : 666654678876666678
          */
 
-        private int id;
+        private long id;
         private String nickname;
         private String headImage;
         private int sex;
@@ -78,11 +78,11 @@ public class UserInfoBean {
         private String realName;
         private String idNumber;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 

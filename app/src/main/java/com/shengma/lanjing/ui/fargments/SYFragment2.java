@@ -22,6 +22,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.ZHiBoAdapter;
 import com.shengma.lanjing.beans.LiveType;
@@ -123,7 +124,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
                 .url(Consts.URL+"/live/list?page="+pag+"&pageSize=10&type="+type);
 
         // step 3：创建 Call 对象
-        Call call = okHttpClient.newCall(requestBuilder.build());
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
         call.enqueue(new Callback() {
             @Override
@@ -190,9 +191,8 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
                 .header("Content-Type", "application/json")
                 .get()
                 .url(Consts.URL+"/live/type");
-
         // step 3：创建 Call 对象
-        Call call = okHttpClient.newCall(requestBuilder.build());
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
         call.enqueue(new Callback() {
             @Override
