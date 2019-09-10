@@ -2,6 +2,7 @@ package com.shengma.lanjing.ui;
 
 
 import android.Manifest;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,9 @@ import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.cookies.CookiesManager;
+import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
+import com.shengma.lanjing.liveroom.MLVBLiveRoom;
+import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -112,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @AfterPermissionGranted(RC_CAMERA_AND_LOCATION)
     private void methodRequiresTwoPermission() {
-        String[] perms = {Manifest.permission.CAMERA,
+        String[] perms = {Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.RECEIVE_BOOT_COMPLETED, Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_NETWORK_STATE,
@@ -230,6 +234,23 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     bean.setUserid(userInfoBean.getResult().getId());
                     bean.setUserLevel(userInfoBean.getResult().getUserLevel());
                     baoCunBeanBox.put(bean);
+
+                    LoginInfo loginInfo=new LoginInfo(Integer.parseInt(bean.getSdkAppId()),bean.getUserid()+"",bean.getNickname(),bean.getHeadImage(),bean.getImUserSig());
+                    MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setCameraMuteImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
+                    //登录IM
+                    MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
+                        @Override
+                        public void onError(int errCode, String errInfo) {
+                            Log.d("ZhiBoActivity", "errCode:" + errCode);
+                            Log.d("ZhiBoActivity", errInfo);
+                        }
+                        @Override
+                        public void onSuccess() {
+                            Log.d("ZhiBoActivity", "IM登录成功");
+
+
+                        }
+                    });
 
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");

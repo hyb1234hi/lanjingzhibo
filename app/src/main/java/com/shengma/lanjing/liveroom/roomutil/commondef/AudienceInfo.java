@@ -19,4 +19,14 @@ public class AudienceInfo {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String toString() {
+        return "AudienceInfo{" +
+                "userID='" + userID + '\'' +
+                ", userInfo='" + userInfo + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userAvatar='" + userAvatar + '\'' +
+                '}';
+    }
 }

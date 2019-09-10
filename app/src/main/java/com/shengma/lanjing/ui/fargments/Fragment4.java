@@ -95,7 +95,18 @@ public class Fragment4 extends Fragment {
         int heightPixels = outMetrics.heightPixels;
         mytopview.setWH(widthPixels, heightPixels);
 
+
+
+        return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        baoCunBean = baoCunBeanBox.get(123456);
         if (baoCunBean != null) {
+            if (getActivity()!=null)
             Glide.with(getActivity())
                     .load(baoCunBean.getHeadImage())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -111,10 +122,7 @@ public class Fragment4 extends Fragment {
             guanzhu.setText(baoCunBean.getIdols() + "");
         }
 
-
-        return view;
     }
-
 
     @Override
     public void onDestroyView() {

@@ -20,10 +20,14 @@ import com.shengma.lanjing.dialogall.CommonData;
 import com.shengma.lanjing.dialogall.CommonDialogService;
 import com.shengma.lanjing.dialogall.ToastUtils;
 
+import com.shengma.lanjing.liveroom.MLVBLiveRoom;
+import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
+import com.shengma.lanjing.utils.TCUserMgr;
 import com.tencent.bugly.Bugly;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.tencent.rtmp.TXLiveBase;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +59,8 @@ public class MyApplication extends Application implements Application.ActivityLi
     public static final String SDPATH2 = Environment.getExternalStorageDirectory().getAbsolutePath()+
             File.separator+"ruitongyqt";
 
+    private static final String LICENCE_URL = "https://license.vod2.myqcloud.com/license/v1/b85e214501a5b319de43c95ca3502b76/TXLiveSDK.licence";
+    private static final String LICENCE_KEY = "1d72ec05313e46055af4add54211508a";
 
 
     @Override
@@ -73,6 +79,13 @@ public class MyApplication extends Application implements Application.ActivityLi
         CommonData.ScreenWidth = metric.widthPixels; // 屏幕宽度（像素）
         Intent dialogservice = new Intent(this, CommonDialogService.class);
         startService(dialogservice);
+
+        // 必须：初始化 LiteAVSDK Licence。 用于直播推流鉴权。
+        TXLiveBase.getInstance().setLicence(this, LICENCE_URL, LICENCE_KEY);
+        // 必须：初始化 MLVB 组件
+        MLVBLiveRoomImpl.sharedInstance(this);
+        // 必须：初始化全局的 用户信息管理类，记录个人信息。
+        TCUserMgr.getInstance().initContext(getApplicationContext());
 
         baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
 

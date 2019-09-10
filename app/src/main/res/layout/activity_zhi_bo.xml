@@ -1,12 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.zhibo.ZhiBoActivity">
 
 
+    <com.tencent.rtmp.ui.TXCloudVideoView
+        android:id="@+id/video_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.tencent.rtmp.ui.TXCloudVideoView>
+
+
+    <View
+        android:id="@+id/topview"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/yuanxian_huitouming"
+        android:layout_width="146dp"
+        android:layout_height="40dp"/>
+
+    <ImageView
+        android:layout_marginStart="3dp"
+        app:layout_constraintTop_toTopOf="@+id/topview"
+        app:layout_constraintBottom_toBottomOf="@+id/topview"
+        app:layout_constraintLeft_toLeftOf="@+id/topview"
+        android:id="@+id/touxiang"
+        android:layout_width="34dp"
+        android:layout_height="34dp"/>
+
+        <TextView
+            android:id="@+id/name"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:gravity="start"
+            android:maxLength="7"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginRight="6dp"
+            android:layout_marginStart="4dp"
+            app:layout_constraintRight_toRightOf="@+id/topview"
+            android:layout_marginTop="3dp"
+            app:layout_constraintLeft_toRightOf="@+id/touxiang"
+            app:layout_constraintTop_toTopOf="@+id/topview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/ggghh"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="6dp"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintLeft_toRightOf="@+id/touxiang"
+            android:background="@drawable/xingguang"
+            android:layout_width="28dp"
+            android:layout_height="10dp"/>
+
+    <TextView
+        android:id="@+id/xingguang"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        android:gravity="start"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_marginStart="4dp"
+        app:layout_constraintRight_toRightOf="@+id/topview"
+        android:layout_marginRight="4dp"
+        app:layout_constraintLeft_toRightOf="@+id/ggghh"
+        app:layout_constraintTop_toTopOf="@+id/ggghh"
+        app:layout_constraintBottom_toBottomOf="@+id/ggghh"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            app:layout_constraintLeft_toRightOf="@+id/topview"
+            android:layout_marginStart="10dp"
+            android:id="@+id/recyclerview"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="54dp"
+            app:layout_constraintTop_toTopOf="@+id/topview"
+            app:layout_constraintBottom_toBottomOf="@+id/topview"
+            android:layout_width="0dp"
+            android:layout_height="38dp"/>
 
 
 

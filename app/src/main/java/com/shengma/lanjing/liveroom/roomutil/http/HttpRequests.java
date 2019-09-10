@@ -136,7 +136,7 @@ public class HttpRequests {
 
         final Request request = new Request.Builder()
                 .url(getRequestUrl("/get_room_list"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.RoomList.class, callback);
@@ -150,7 +150,7 @@ public class HttpRequests {
             body = String.format("{\"userID\": \"%s\", \"roomID\": \"%s\"}", userID, roomID);
         }
         Request request = new Request.Builder().url(getRequestUrl("/get_anchor_url"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.PushUrl.class, callback);
@@ -161,7 +161,7 @@ public class HttpRequests {
         String body = String.format("{\"roomID\":\"%s\"}", roomId);
 
         Request request = new Request.Builder().url(getRequestUrl("/get_audiences"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.AudienceList.class, callback);
@@ -172,7 +172,7 @@ public class HttpRequests {
         String body = String.format("{\"roomID\":\"%s\"}", roomId);
 
         Request request = new Request.Builder().url(getRequestUrl("/get_anchors"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.PusherList.class, callback);
@@ -199,7 +199,7 @@ public class HttpRequests {
         }
 
         final Request request = new Request.Builder().url(getRequestUrl("/create_room"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.CreateRoom.class, callback);
@@ -221,7 +221,7 @@ public class HttpRequests {
         }
 
         final Request request = new Request.Builder().url(getRequestUrl("/create_room"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.CreateRoom.class, callback);
@@ -242,7 +242,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/destroy_room"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.class, callback);
@@ -268,7 +268,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/add_anchor"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.class, callback);
@@ -288,7 +288,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/delete_anchor"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.class, callback);
@@ -310,7 +310,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/add_audience"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.class, callback);
@@ -330,7 +330,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/delete_audience"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.class, callback);
@@ -357,7 +357,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/set_custom_field"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.class, callback);
@@ -375,7 +375,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/get_custom_Info"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.GetCustomInfoResponse.class, callback);
@@ -436,7 +436,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/merge_stream"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.MergeStream.class, callback);
@@ -446,7 +446,7 @@ public class HttpRequests {
         try {
             String body = "";
             Request request = new Request.Builder().url(domain.concat("/login").concat(String.format("?sdkAppID=%s&userID=%s&userSig=%s&platform=%s", String.valueOf(sdkAppID), userID, userSig, platform)))
-                    .post(RequestBody.create(MEDIA_JSON, body))
+                    .post(RequestBody.create(body,MEDIA_JSON))
                     .build();
 
             request(request, HttpResponse.LoginResponse.class, new OnResponseCallback<HttpResponse.LoginResponse>() {
@@ -470,7 +470,7 @@ public class HttpRequests {
     public void logout(final OnResponseCallback<HttpResponse> callback) {
         String body = "";
         Request request = new Request.Builder().url(getRequestUrl("/logout"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         request(request, HttpResponse.class, callback);
@@ -491,13 +491,12 @@ public class HttpRequests {
         String cgiUrl = "";
         cgiUrl = "https://room.qcloud.com/weapp/utils/report";
 
-        if (cgiUrl.length() > 0) {
-            Request request = new Request.Builder().url(cgiUrl)
-                    .post(RequestBody.create(MEDIA_JSON, body))
-                    .build();
+        Request request = new Request.Builder().url(cgiUrl)
+                .post(RequestBody.create(body,MEDIA_JSON))
+                .build();
 
-            request(request, HttpResponse.class, callback);
-        }
+        request(request, HttpResponse.class, callback);
+
     }
 
     private class JsonBuilder{

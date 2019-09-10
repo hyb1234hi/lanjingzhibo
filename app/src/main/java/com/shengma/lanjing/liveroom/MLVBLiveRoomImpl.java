@@ -53,7 +53,7 @@ import java.util.Vector;
 
 public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.HeartBeatCallback, IMMessageMgr.IMMessageListener {
 
-    protected static final String TAG = MLVBLiveRoomImpl.class.getName();
+    protected static final String TAG = "lanjing";
     protected static final int              LIVEROOM_ROLE_NONE      = 0;
     protected static final int              LIVEROOM_ROLE_PUSHER    = 1;
     protected static final int              LIVEROOM_ROLE_PLAYER    = 2;
@@ -3073,7 +3073,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                         mHttpRequest.heartBeat(mSelfAccountInfo.userID, mCurrRoomID, mRoomStatusCode);
                     }
                     if (handler != null) {
-                        handler.postDelayed(heartBeatRunnable, 5000);
+                        handler.postDelayed(heartBeatRunnable, 8000);
                     }
                 }
             }
