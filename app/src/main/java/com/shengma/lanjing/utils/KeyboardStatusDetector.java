@@ -1,7 +1,6 @@
 package com.shengma.lanjing.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -42,9 +41,9 @@ public class KeyboardStatusDetector {
                 v.getWindowVisibleDisplayFrame(r);
                 //int heightDiff = v.getRootView().getHeight() - (r.bottom - r.top);
                 int heightDiff = v.getRootView().getHeight() - r.bottom;
-                Log.d("ZhiBoActivity键盘", v.getRootView().getHeight() +"   "+ r.bottom +"  "+ r.top);
+                //Log.d("ZhiBoActivity键盘", v.getRootView().getHeight() +"   "+ r.bottom +"  "+ r.top);
                 Log.d("ZhiBoActivity键盘", "heightDiff:" + heightDiff);
-                Log.d("ZhiBoActivity键盘", "keyboardVisible:" + keyboardVisible);
+               // Log.d("ZhiBoActivity键盘", "keyboardVisible:" + keyboardVisible);
                 if (heightDiff > SOFT_KEY_BOARD_MIN_HEIGHT && heightDiff!=heightPixels) { // if more than 100 pixels, its probably a keyboard...
                     if (!keyboardVisible) {
                         keyboardVisible = true;

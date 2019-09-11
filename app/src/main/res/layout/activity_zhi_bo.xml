@@ -14,7 +14,6 @@
         tools:layout_editor_absoluteX="-64dp"
         tools:layout_editor_absoluteY="16dp"/>
 
-
     <View
         android:id="@+id/topview"
         app:layout_constraintTop_toTopOf="parent"
@@ -203,6 +202,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"/>
 
+
     <TextView
         android:text="说点什么"
         android:textSize="15sp"
@@ -216,6 +216,25 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="92dp"
         android:layout_height="40dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        app:layout_constraintBottom_toTopOf="@+id/shuodian"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="10dp"
+        android:id="@+id/liaotianReView"
+        android:layout_width="286dp"
+        android:layout_height="wrap_content"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        app:layout_constraintBottom_toTopOf="@+id/liaotianReView"
+        android:layout_marginBottom="6dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="10dp"
+        android:id="@+id/liwuReView"
+        android:layout_width="286dp"
+        android:layout_height="wrap_content"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
