@@ -1,17 +1,19 @@
 package com.shengma.lanjing.ui.zhibo;
 
 
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,17 +24,23 @@ import com.bumptech.glide.request.RequestOptions;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.GuanZhongAdapter;
-
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.GuanZhongBean;
-
+import com.shengma.lanjing.beans.MsgWarp;
+import com.shengma.lanjing.dialogs.InputPopupwindow;
+import com.shengma.lanjing.dialogs.TuiChuDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
+import com.shengma.lanjing.utils.InputMethodUtils;
+import com.shengma.lanjing.utils.KeyboardStatusDetector;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,8 +48,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomListener {
@@ -51,16 +61,35 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     TextView name;
     @BindView(R.id.xingguang)
     TextView xingguang;
+    @BindView(R.id.guanzhongxiangqiang)
+    TextView guanzhongxiangqiang;
+    @BindView(R.id.paihangView)
+    View paihangView;
+    @BindView(R.id.fangjianhao)
+    TextView fangjianhao;
+    @BindView(R.id.tuichu)
+    View tuichu;
+    @BindView(R.id.fenxiang)
+    View fenxiang;
+    @BindView(R.id.fanzhuang)
+    View fanzhuang;
+    @BindView(R.id.meiyan)
+    View meiyan;
+    @BindView(R.id.pk)
+    View pk;
+    @BindView(R.id.shuodian)
+    TextView shuodian;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;      // 主播本地预览的 View
     private RecyclerView gz_recyclerView;
     private GuanZhongAdapter guanZhongAdapter;
-    private List<GuanZhongBean> guanZhuBeanList=new ArrayList<>();
+    private List<GuanZhongBean> guanZhuBeanList = new ArrayList<>();
     private Timer timer = new Timer();
     private TimerTask task;
     private WeakHandler mHandler;
-
+    private KeyboardStatusDetector keyboardStatusDetector;
+    private InputPopupwindow popupwindow=null;
 
 
     @Override
@@ -68,10 +97,11 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zhi_bo);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         mHandler = new WeakHandler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message message) {
-                switch (message.what){
+                switch (message.what) {
                     case 111:
 
                         break;
@@ -82,19 +112,42 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 return false;
             }
         });
+        keyboardStatusDetector = new KeyboardStatusDetector(ZhiBoActivity.this);
+        keyboardStatusDetector.registerView(shuodian);
+        keyboardStatusDetector.setVisibilityListener(new KeyboardStatusDetector.KeyboardVisibilityListener() {
+            @Override
+            public void onVisibilityChanged(boolean keyboardVisible, int heightDiff) {
+                Log.d("ZhiBoActivity", "keyboardVisible:" + keyboardVisible);
+                Log.d("ZhiBoActivity", "heightDiff:" + heightDiff);
+                if (keyboardVisible){
+                    if (popupwindow!=null)
+                        popupwindow.dismiss();
+                    popupwindow=new InputPopupwindow(ZhiBoActivity.this);
+                    popupwindow.setOutsideTouchable(true);
+                    popupwindow.showAtLocation(getWindow().getDecorView(), Gravity.CENTER,0,heightDiff);
+                }
+            }
+        });
+
         txCloudVideoView = findViewById(R.id.video_player);
-        gz_recyclerView=findViewById(R.id.recyclerview);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(ZhiBoActivity.this, LinearLayoutManager.HORIZONTAL,false);
+        gz_recyclerView = findViewById(R.id.recyclerview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(ZhiBoActivity.this, LinearLayoutManager.HORIZONTAL, false);
         //设置布局管理器
         gz_recyclerView.setLayoutManager(layoutManager);
         //设置Adapter
-        GuanZhongBean bean=new GuanZhongBean();
-        bean.setXingguang(31321+"");
+        GuanZhongBean bean = new GuanZhongBean();
+        bean.setXingguang(31321 + "");
         bean.setHeadImage(baoCunBean.getHeadImage());
-        guanZhuBeanList.add(bean);guanZhuBeanList.add(bean);guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);guanZhuBeanList.add(bean);guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);guanZhuBeanList.add(bean);guanZhuBeanList.add(bean);
-        guanZhongAdapter=new GuanZhongAdapter(guanZhuBeanList);
+        guanZhuBeanList.add(bean);
+        guanZhuBeanList.add(bean);
+        guanZhuBeanList.add(bean);
+        guanZhuBeanList.add(bean);
+        guanZhuBeanList.add(bean);
+        guanZhuBeanList.add(bean);
+        guanZhuBeanList.add(bean);
+        guanZhuBeanList.add(bean);
+        guanZhuBeanList.add(bean);
+        guanZhongAdapter = new GuanZhongAdapter(guanZhuBeanList);
         gz_recyclerView.setAdapter(guanZhongAdapter);
 
         mlvbLiveRoom.setListener(this);
@@ -124,7 +177,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         });
 
     }
-
 
 
     @Override
@@ -199,12 +251,33 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void wxMSG(MsgWarp msgWarp){
+        if (msgWarp.getType()==1005){
+            if (!msgWarp.getMsg().equals("")){
+                if (popupwindow!=null)
+                    popupwindow.dismiss();
+                try {
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                                    InputMethodManager.HIDE_NOT_ALWAYS);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                //发送消息
+                Log.d("ZhiBoActivity", msgWarp.getMsg());
+
+            }
+        }
+
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-       BaoCunBean baoCunBean= MyApplication.myApplication.getBaoCunBean();
-        if (baoCunBean!=null){
+        BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
+        if (baoCunBean != null) {
             xingguang.setText("0");
             name.setText(baoCunBean.getNickname());
             Glide.with(ZhiBoActivity.this)
@@ -212,7 +285,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(touxiang);
         }
-
 
         task = new TimerTask() {
             @Override
@@ -228,12 +300,114 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         timer.cancel();
         if (task != null)
             task.cancel();
+        EventBus.getDefault().unregister(this);
+
+        super.onDestroy();
+
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+        TuiChuDialog tuiChuDialog=new TuiChuDialog(ZhiBoActivity.this);
+        tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                    @Override
+                    public void onError(int errCode, String errInfo) {
+                        tuiChuDialog.dismiss();
+                        ZhiBoActivity.this.finish();
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        tuiChuDialog.dismiss();
+                        ZhiBoActivity.this.finish();
+                    }
+                });
+            }
+        });
+        tuiChuDialog.setQuXiaoListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tuiChuDialog.dismiss();
+            }
+        });
+        tuiChuDialog.setCanceledOnTouchOutside(false);
+        tuiChuDialog.show();
+      //  super.onBackPressed();
+    }
+
+    @OnClick({R.id.guanzhongxiangqiang, R.id.paihangView, R.id.tuichu, R.id.fenxiang,
+            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian,R.id.video_player})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.guanzhongxiangqiang:
+
+                break;
+            case R.id.paihangView:
+
+                break;
+            case R.id.tuichu:
+                TuiChuDialog tuiChuDialog=new TuiChuDialog(ZhiBoActivity.this);
+                tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                            @Override
+                            public void onError(int errCode, String errInfo) {
+                                tuiChuDialog.dismiss();
+                                ZhiBoActivity.this.finish();
+                            }
+                            @Override
+                            public void onSuccess() {
+                                tuiChuDialog.dismiss();
+                                ZhiBoActivity.this.finish();
+                            }
+                        });
+                    }
+                });
+                tuiChuDialog.setQuXiaoListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tuiChuDialog.dismiss();
+                    }
+                });
+                tuiChuDialog.setCanceledOnTouchOutside(false);
+                tuiChuDialog.show();
+                break;
+            case R.id.fenxiang:
+
+                break;
+            case R.id.fanzhuang:
+              mlvbLiveRoom.switchCamera();
+                break;
+            case R.id.meiyan:
+
+                break;
+            case R.id.pk:
+
+                break;
+            case R.id.video_player:
+                if (popupwindow!=null)
+                    popupwindow.dismiss();
+                try {
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                                    InputMethodManager.HIDE_NOT_ALWAYS);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.shuodian:
+                InputMethodUtils.showOrHide(this);
+                break;
+        }
+    }
 
 }

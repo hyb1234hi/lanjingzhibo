@@ -10,8 +10,9 @@
     <com.tencent.rtmp.ui.TXCloudVideoView
         android:id="@+id/video_player"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.tencent.rtmp.ui.TXCloudVideoView>
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="-64dp"
+        tools:layout_editor_absoluteY="16dp"/>
 
 
     <View
@@ -78,7 +79,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             app:layout_constraintLeft_toRightOf="@+id/topview"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="6dp"
             android:id="@+id/recyclerview"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="54dp"
@@ -87,6 +88,134 @@
             android:layout_width="0dp"
             android:layout_height="38dp"/>
 
+
+    <TextView
+        app:layout_constraintLeft_toRightOf="@+id/recyclerview"
+        app:layout_constraintTop_toTopOf="@+id/recyclerview"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerview"
+        android:layout_marginStart="1dp"
+        android:gravity="center"
+        android:text="•••"
+        android:id="@+id/guanzhongxiangqiang"
+        android:background="@drawable/yuanxian_huitouming17"
+        android:textSize="15sp"
+        android:textColor="#FFFFFF"
+        android:layout_width="44dp"
+        android:layout_height="34dp"/>
+
+
+    <View
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/topview"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/yuanxian_zise15"
+        android:id="@+id/paihangView"
+        android:layout_width="119dp"
+        android:layout_height="30dp"/>
+
+    <ImageView
+        android:id="@+id/jkjkgg"
+        app:layout_constraintLeft_toLeftOf="@+id/paihangView"
+        app:layout_constraintTop_toTopOf="@+id/paihangView"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/paihangView"
+        android:background="@drawable/coin3x"
+        android:layout_width="15dp"
+        android:layout_height="15dp"/>
+
+    <TextView
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:text="总排名:0"
+        app:layout_constraintLeft_toLeftOf="@+id/jkjkgg"
+        app:layout_constraintTop_toTopOf="@+id/paihangView"
+        app:layout_constraintBottom_toBottomOf="@+id/paihangView"
+        app:layout_constraintRight_toRightOf="@+id/paihangView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+    <TextView
+        android:textColor="#C7C7C7"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:text="LANJING 0"
+        android:layout_marginRight="10dp"
+        app:layout_constraintTop_toTopOf="@+id/paihangView"
+        app:layout_constraintBottom_toBottomOf="@+id/paihangView"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/yuanxian_hui10"
+        android:id="@+id/fangjianhao"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"/>
+
+    <View
+        android:id="@+id/tuichu"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="22dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/tuichuzbbg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+    <View
+        android:id="@+id/fenxiang"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="22dp"
+        app:layout_constraintRight_toLeftOf="@+id/tuichu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/fenxiangzbbg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+    <View
+        android:id="@+id/fanzhuang"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="22dp"
+        app:layout_constraintRight_toLeftOf="@+id/fenxiang"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/fanzhuangzbbg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+    <View
+        android:id="@+id/meiyan"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="22dp"
+        app:layout_constraintRight_toLeftOf="@+id/fanzhuang"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/meiyanbg5"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+    <View
+        android:id="@+id/pk"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="22dp"
+        app:layout_constraintRight_toLeftOf="@+id/meiyan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/pkzbbg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+    <TextView
+        android:text="说点什么"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:id="@+id/shuodian"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/yuanxian_huitouming20"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="22dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="92dp"
+        android:layout_height="40dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

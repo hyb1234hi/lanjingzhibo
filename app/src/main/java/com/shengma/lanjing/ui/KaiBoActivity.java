@@ -19,7 +19,6 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.KaiBoBean;
-import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.JuLiDialog;
@@ -167,13 +166,14 @@ public class KaiBoActivity extends AppCompatActivity {
             frrrd.setText(msgWarp.getMsg());
         }
 
-
     }
 
     @Override
     protected void onRestart() {
         if (photoDialog != null)
             photoDialog.dismiss();
+
+        Log.d("KaiBoActivity", "onRestart");
         super.onRestart();
     }
 
@@ -318,7 +318,12 @@ public class KaiBoActivity extends AppCompatActivity {
                       baoCunBean.setPushUrl(bean.getResult().getPushUrl());
                       baoCunBean.setPlayUrl(bean.getResult().getPlayUrl());
                       MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
-                      startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                      runOnUiThread(new Runnable() {
+                          @Override
+                          public void run() {
+                              startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                          }
+                      });
                   }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");

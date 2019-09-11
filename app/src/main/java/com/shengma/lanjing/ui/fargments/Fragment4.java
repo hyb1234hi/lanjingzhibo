@@ -4,6 +4,7 @@ package com.shengma.lanjing.ui.fargments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,7 @@ public class Fragment4 extends Fragment {
         int widthPixels = outMetrics.widthPixels;
         int heightPixels = outMetrics.heightPixels;
         mytopview.setWH(widthPixels, heightPixels);
-
+        Log.d("ZhiBoActivity", "heightPixels:" + heightPixels);
 
 
         return view;

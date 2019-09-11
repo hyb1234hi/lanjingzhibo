@@ -15,9 +15,14 @@
         <activity android:name=".ui.GeXinSheZhiActivity" android:screenOrientation="portrait"/>
         <activity android:name=".ui.ChongZhiActivity" android:screenOrientation="portrait"/>
         <activity android:name=".ui.QianBaoActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.KaiBoActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.KaiBoActivity" android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="orientation|keyboardHidden"/>
+
         <activity android:name=".ui.zhibo.BoFangActivity" android:screenOrientation="portrait" android:launchMode="singleTask"/>
-        <activity android:name=".ui.zhibo.ZhiBoActivity" android:screenOrientation="portrait" android:launchMode="singleTask"/>
+        <activity android:name=".ui.zhibo.ZhiBoActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask" android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".ui.LogingActivity"
             android:screenOrientation="portrait">
