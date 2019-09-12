@@ -53,7 +53,7 @@ import java.util.Vector;
 
 public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.HeartBeatCallback, IMMessageMgr.IMMessageListener {
 
-    protected static final String TAG = "lanjing";
+    protected static final String TAG = "ZhiBoActivity";
     protected static final int              LIVEROOM_ROLE_NONE      = 0;
     protected static final int              LIVEROOM_ROLE_PUSHER    = 1;
     protected static final int              LIVEROOM_ROLE_PLAYER    = 2;
@@ -164,6 +164,12 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
         }
     }
 
+    public void setmHasAddAnchor(boolean ismHasAddAnchor,String mCurrRoomID,int mSelfRoleType){
+        mHasAddAnchor=ismHasAddAnchor;
+        this.mCurrRoomID=mCurrRoomID;
+        this.mSelfRoleType=mSelfRoleType;
+    }
+
     /**
      * 登录
      *
@@ -244,13 +250,11 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                 }
             });
         }
-
         if (mIMMessageMgr != null) {
             mIMMessageMgr.setIMMessageListener(null);
             mIMMessageMgr.unInitialize();
             mIMMessageMgr = null;
         }
-
         mHeartBeatThread.stopHeartbeat();
     }
 
@@ -370,11 +374,9 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
      */
     @Override
     public void createRoom(final String roomID, final String roomInfo, final IMLVBLiveRoomListener.CreateRoomCallback callback) {
-        TXCLog.i(TAG, "API -> createRoom:" + roomID + ":" + roomInfo);
+        TXCLog.i("ZhiBoActivity", "API -> createRoom:" + roomID + ":" + roomInfo);
         mSelfRoleType = LIVEROOM_ROLE_PUSHER;
-
         //1. 在应用层调用startLocalPreview，启动本地预览
-
         //2. 请求CGI:get_push_url，异步获取到推流地址pushUrl
         mHttpRequest.getPushUrl(mSelfAccountInfo.userID, roomID, new HttpRequests.OnResponseCallback<HttpResponse.PushUrl>() {
             @Override
@@ -429,6 +431,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                                                 @Override
                                                 public void onError(int errCode, String errInfo) {
                                                     if (errCode == 10025) {
+
                                                         //群组 ID 已被使用，并且操作者为群主，可以直接使用
                                                         Log.w(TAG, "[IM] 群组 " + mCurrRoomID + " 已被使用，并且操作者为群主，可以直接使用");
                                                         mJoinPusher = true;
@@ -539,10 +542,8 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
         TXCLog.i(TAG, "API -> exitRoom");
         //1. 结束心跳
         mHeartBeatThread.stopHeartbeat();
-
         // 停止 BGM
         stopBGM();
-        
         if (mSelfRoleType == LIVEROOM_ROLE_PUSHER) {
             //2. 如果是大主播，则销毁群
             IMMessageMgr imMessageMgr = mIMMessageMgr;
@@ -563,19 +564,18 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
         } else {
             //通知房间内其他主播
             notifyPusherChange();
-
             //2. 调用IM的quitGroup
             IMMessageMgr imMessageMgr = mIMMessageMgr;
             if (imMessageMgr != null) {
+                Log.d(TAG, "mIMMessageMgr22222222222："+mCurrRoomID);
                 imMessageMgr.quitGroup(mCurrRoomID, new IMMessageMgr.Callback() {
                     @Override
                     public void onError(int code, String errInfo) {
-                        TXCLog.e(TAG, "[IM] 退群失败:" + code + ":" + errInfo);
+                        Log.e(TAG, "[IM] 退群失败:" + code + ":" + errInfo);
                     }
-
                     @Override
                     public void onSuccess(Object... args) {
-                        TXCLog.d(TAG, "[IM] 退群成功");
+                        Log.d(TAG, "[IM] 退群成功");
                     }
                 });
             }
@@ -615,15 +615,16 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
         //6. 退出房间：请求CGI:delete_pusher，把自己从房间成员列表里删除
         if (mHasAddAnchor) {
             mHasAddAnchor = false;
+
             mHttpRequest.delPusher(mCurrRoomID, mSelfAccountInfo.userID, new HttpRequests.OnResponseCallback<HttpResponse>() {
                 @Override
                 public void onResponse(int retcode, String retmsg, HttpResponse data) {
                     if (retcode == HttpResponse.CODE_OK) {
-                        TXCLog.d(TAG, "退群成功");
+                        Log.d(TAG, "退群成功");
                         callbackOnThread(mListener, "onDebugLog", "[LiveRoom] 退群成功");
                     } else {
                         callbackOnThread(mListener, "onDebugLog", String.format("[LiveRoom] 退群失败：%s(%d)", retmsg, retcode));
-                        TXCLog.e(TAG, String.format("解散群失败：%s(%d)", retmsg, retcode));
+                        Log.e(TAG, String.format("解散群失败：%s(%d)", retmsg, retcode));
                     }
                 }
             });

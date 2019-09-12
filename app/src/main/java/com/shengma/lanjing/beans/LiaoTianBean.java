@@ -1,6 +1,11 @@
 package com.shengma.lanjing.beans;
 
-public class LiaoTianBean {
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+
+public class LiaoTianBean implements MultiItemEntity {
+
+    public static final int ONE = 1;
+    public static final int TOW = 2;
 
 
     private int dengji;
@@ -11,7 +16,6 @@ public class LiaoTianBean {
     private String nickname;
     private String headImage;
     public String userInfo;   //观众信息
-
 
     public String getUserInfo() {
         return userInfo;
@@ -75,5 +79,11 @@ public class LiaoTianBean {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    @Override
+    public int getItemType() {
+
+        return type;
     }
 }

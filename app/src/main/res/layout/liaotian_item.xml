@@ -2,23 +2,82 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
+    android:background="@drawable/yuanxian_zise10"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/consts"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/neirong"
+        <View
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:id="@+id/gghhjj"
+            android:layout_marginStart="6dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/jianbian7"
+            android:layout_width="45dp"
+            android:layout_height="15dp"/>
+        
+        <View
+            android:layout_marginStart="3dp"
+            android:id="@+id/xiao"
+            android:background="@drawable/xiaoren"
+            app:layout_constraintTop_toTopOf="@+id/gghhjj"
+            app:layout_constraintBottom_toBottomOf="@+id/gghhjj"
+            app:layout_constraintLeft_toLeftOf="@+id/gghhjj"
+            android:layout_width="12dp"
+            android:layout_height="12dp"/>
+
+        <TextView
+            android:id="@+id/dengjilt"
+            app:layout_constraintLeft_toRightOf="@+id/xiao"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/gghhjj"
+            android:textSize="10sp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginRight="4dp"
             app:layout_constraintTop_toTopOf="parent"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+        <TextView
+            android:id="@+id/name1"
+            app:layout_constraintLeft_toRightOf="@+id/gghhjj"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="12sp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginStart="4dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="#5AF0FF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/neirong1"
+            app:layout_constraintLeft_toRightOf="@+id/name1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="12sp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="6dp"
+            android:maxLines="2"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

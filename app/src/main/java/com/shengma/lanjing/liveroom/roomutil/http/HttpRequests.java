@@ -395,7 +395,7 @@ public class HttpRequests {
         }
 
         Request request = new Request.Builder().url(getRequestUrl("/anchor_heartbeat"))
-                .post(RequestBody.create(MEDIA_JSON, body))
+                .post(RequestBody.create(body,MEDIA_JSON))
                 .build();
 
         try {

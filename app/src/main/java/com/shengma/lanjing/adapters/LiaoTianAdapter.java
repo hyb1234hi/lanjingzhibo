@@ -1,27 +1,40 @@
 package com.shengma.lanjing.adapters;
 
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import android.util.Log;
+
+import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.LiaoTianBean;
 
 import java.util.List;
 
-public class LiaoTianAdapter extends BaseQuickAdapter<LiaoTianBean,BaseViewHolder> {
+public class LiaoTianAdapter extends BaseMultiItemQuickAdapter<LiaoTianBean,BaseViewHolder> {
 
     public LiaoTianAdapter(List<LiaoTianBean> list) {
-        super(R.layout.liaotian_item, list);
+        super(list);
+        addItemType(LiaoTianBean.ONE,R.layout.liaotian_item);
+        addItemType(LiaoTianBean.TOW, R.layout.liaotian_item2);
+
     }
 
 
     @Override
     protected void convert(BaseViewHolder helper, LiaoTianBean item) {
-        helper.setText(R.id.neirong, item.getNeirong());
+        switch (helper.getItemViewType()) {
+            case LiaoTianBean.ONE:
+                helper.setText(R.id.name1, item.getNickname());
+                helper.setText(R.id.neirong1, item.getNeirong());
+                helper.setText(R.id.dengjilt, "Lv."+item.getDengji());
+                break;
+            case LiaoTianBean.TOW:
+                helper.setText(R.id.name, item.getNickname());
+                helper.setText(R.id.neirong, "加入直播间");
+                break;
+        }
+
 
 //        Glide.with(mContext)
 //                .load(item.getHeadImage())

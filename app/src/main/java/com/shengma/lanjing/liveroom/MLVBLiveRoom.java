@@ -175,6 +175,8 @@ public abstract class MLVBLiveRoom {
      */
     public abstract void exitRoom(IMLVBLiveRoomListener.ExitRoomCallback callback);
 
+    public abstract void setmHasAddAnchor(boolean issetmHasAddAnchor,String mCurrRoomID,int mSelfRoleType);
+
     /**
      * 设置自定义信息
      *

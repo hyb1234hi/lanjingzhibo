@@ -79,7 +79,8 @@ public class LogingActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
-        link_loging("18620124189","yoyo89757");
+       // link_loging("18620124189","yoyo89757");
+        link_loging("16620954033","123456");
 
       //  startActivity(new Intent(LogingActivity.this, MainActivity.class));
        // finish();
@@ -214,7 +215,6 @@ public class LogingActivity extends AppCompatActivity {
                         bean.setSdkAppId(logingBe.getResult().getSdkAppId());
                         bean.setIsBind(logingBe.getResult().getIsBind());
                         baoCunBeanBox.put(bean);
-
 
                         startActivity(new Intent(LogingActivity.this, MainActivity.class));
                         finish();

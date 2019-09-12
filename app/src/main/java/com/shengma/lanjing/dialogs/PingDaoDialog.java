@@ -56,6 +56,7 @@ public class PingDaoDialog extends DialogFragment implements View.OnClickListene
     private ImageView guanbi;
     private Button wancheng;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

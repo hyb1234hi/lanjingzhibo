@@ -24,6 +24,8 @@ import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.JuLiDialog;
 import com.shengma.lanjing.dialogs.PhotoDialog;
 import com.shengma.lanjing.dialogs.PingDaoDialog;
+import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
+import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.ui.zhibo.ZhiBoActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
@@ -302,8 +304,7 @@ public class KaiBoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
-                if (dialog != null)
-                    dialog.dismiss();
+
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
@@ -318,9 +319,20 @@ public class KaiBoActivity extends AppCompatActivity {
                       baoCunBean.setPushUrl(bean.getResult().getPushUrl());
                       baoCunBean.setPlayUrl(bean.getResult().getPlayUrl());
                       MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
-                      runOnUiThread(new Runnable() {
+
+                      MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setmHasAddAnchor(true,baoCunBean.getUserid()+"",1);
+                      MLVBLiveRoom.sharedInstance(MyApplication.myApplication).exitRoom(new IMLVBLiveRoomListener.ExitRoomCallback() {
                           @Override
-                          public void run() {
+                          public void onError(int errCode, String errInfo) {
+                              if (dialog != null)
+                                  dialog.dismiss();
+                              startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                          }
+
+                          @Override
+                          public void onSuccess() {
+                              if (dialog != null)
+                                  dialog.dismiss();
                               startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
                           }
                       });

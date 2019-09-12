@@ -8,7 +8,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.shengma.lanjing.R;
-import com.shengma.lanjing.beans.GuanZhuBean;
 import com.shengma.lanjing.beans.ZhiBoBean;
 
 import java.util.List;

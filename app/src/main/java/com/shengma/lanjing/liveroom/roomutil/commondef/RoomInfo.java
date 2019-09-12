@@ -127,4 +127,19 @@ public class RoomInfo implements Parcelable {
             return new RoomInfo[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "RoomInfo{" +
+                "roomID='" + roomID + '\'' +
+                ", roomInfo='" + roomInfo + '\'' +
+                ", roomName='" + roomName + '\'' +
+                ", roomCreator='" + roomCreator + '\'' +
+                ", mixedPlayURL='" + mixedPlayURL + '\'' +
+                ", pushers=" + pushers +
+                ", audienceCount=" + audienceCount +
+                ", audiences=" + audiences +
+                ", custom='" + custom + '\'' +
+                '}';
+    }
 }
