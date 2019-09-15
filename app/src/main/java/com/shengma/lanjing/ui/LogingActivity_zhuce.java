@@ -34,8 +34,8 @@ public class LogingActivity_zhuce extends AppCompatActivity {
     Button yanzhengma;
     @BindView(R.id.rrr)
     TextView rrr;
-    @BindView(R.id.fanhui)
-    ImageView fanhui;
+//    @BindView(R.id.fanhui)
+//    ImageView fanhui;
     private String wx = "";
 
 
@@ -60,7 +60,7 @@ public class LogingActivity_zhuce extends AppCompatActivity {
         }
     }
 
-    @OnClick({R.id.zhanghaomimadenglu, R.id.fanhui, R.id.yanzhengma})
+    @OnClick({R.id.zhanghaomimadenglu, R.id.yanzhengma})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.zhanghaomimadenglu:

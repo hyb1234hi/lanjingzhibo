@@ -3,6 +3,7 @@ package com.shengma.lanjing.ui.zhibo;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,6 +36,7 @@ import com.shengma.lanjing.beans.LiaoTianBean;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
+import com.shengma.lanjing.dialogs.PKDialog;
 import com.shengma.lanjing.dialogs.PKListDialog;
 import com.shengma.lanjing.dialogs.TuiChuDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
@@ -43,10 +45,13 @@ import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.RoomInfo;
+import com.shengma.lanjing.ui.WoDeZiLiaoActivity;
 import com.shengma.lanjing.utils.InputMethodUtils;
 import com.shengma.lanjing.utils.KeyboardStatusDetector;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.tencent.rtmp.ui.TXCloudVideoView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -113,6 +118,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private List<RoomInfo> pkList=new ArrayList<>();
     private boolean isAA=true;
     private PKListDialog pkListDialog;
+    private ZLoadingDialog dialog;
 
 
     @Override
@@ -322,7 +328,26 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
     @Override
     public void onRequestRoomPK(AnchorInfo anchorInfo) {
+        Log.d("ggggg","收到PK请求");
+        PKDialog pkDialog=new PKDialog(ZhiBoActivity.this,anchorInfo.userID);
+        pkDialog.setOnQueRenListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //拒绝
+                pkDialog.dismiss();
+                mlvbLiveRoom.responseRoomPK(anchorInfo.userID,false,"");
 
+            }
+        });
+        pkDialog.setQuXiaoListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //同意
+                pkDialog.dismiss();
+                mlvbLiveRoom.responseRoomPK(anchorInfo.userID,true,"");
+            }
+        });
+        pkDialog.show();
     }
 
     @Override
@@ -404,8 +429,47 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         if (msgWarp.getType()==1006){
             if (pkListDialog!=null)
             pkListDialog.dismiss();
+            dialog = new ZLoadingDialog(ZhiBoActivity.this);
+            dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
+                    .setLoadingColor(Color.parseColor("#FF3EE1F7"))//颜色
+                    .setHintText("等待对方接受...")
+                    .setHintTextSize(16) // 设置字体大小 dp
+                    .setHintTextColor(Color.WHITE)  // 设置字体颜色
+                    .setDurationTime(0.6) // 设置动画时间百分比 - 0.5倍
+                    .setDialogBackgroundColor(Color.parseColor("#bb111111")) // 设置背景色，默认白色
+                    .show();
+                mlvbLiveRoom.requestRoomPK(msgWarp.getMsg(), new RequestRoomPKCallback() {
+                    @Override
+                    public void onAccept(AnchorInfo anchorInfo) {
+                        //接受
+                        if (dialog!=null)
+                            dialog.dismiss();
+                        Log.d("ZhiBoActivity", "接受");
 
+                    }
 
+                    @Override
+                    public void onReject(String reason) {
+                        //拒绝
+                        if (dialog!=null)
+                            dialog.dismiss();
+                        Log.d("ZhiBoActivity", "拒绝");
+                    }
+
+                    @Override
+                    public void onTimeOut() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                        ToastUtils.showInfo(ZhiBoActivity.this,"超时未接受");
+                    }
+
+                    @Override
+                    public void onError(int errCode, String errInfo) {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                        ToastUtils.showInfo(ZhiBoActivity.this,"网络异常");
+                    }
+                });
 
 
         }

@@ -167,7 +167,6 @@ public class KaiBoActivity extends AppCompatActivity {
             liveType = msgWarp.getType();
             frrrd.setText(msgWarp.getMsg());
         }
-
     }
 
     @Override

@@ -29,8 +29,33 @@ public class BaoCunBean {
     private long roomId;
     private String pushUrl;
     private String playUrl;
+    private int age;
+    private String qianming;
+    private String jiaxiang;
 
+    public String getQianming() {
+        return qianming;
+    }
 
+    public void setQianming(String qianming) {
+        this.qianming = qianming;
+    }
+
+    public String getJiaxiang() {
+        return jiaxiang;
+    }
+
+    public void setJiaxiang(String jiaxiang) {
+        this.jiaxiang = jiaxiang;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 
     public long getRoomId() {
         return roomId;
