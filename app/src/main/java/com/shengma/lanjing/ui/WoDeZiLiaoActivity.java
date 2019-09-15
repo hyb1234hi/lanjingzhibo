@@ -59,7 +59,7 @@ import okhttp3.ResponseBody;
 public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClickListener, OnDateSetListener {
     private PhotoDialog photoDialog;
     ZLoadingDialog dialog;
-    private ImageView touxiang;
+    private ImageView touxiang,fanhui;
     private RelativeLayout rl1,rl2,rl3,rl4;
     private String fengmianPath;
     private TextView name,xingbie,nianling,qianming,jiaxiang,bianji;
@@ -72,6 +72,8 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_wo_de_zi_liao);
         EventBus.getDefault().register(this);
         BaoCunBean baoCunBean=MyApplication.myApplication.getBaoCunBean();
+        fanhui=findViewById(R.id.fanhui);
+        fanhui.setOnClickListener(this);
         touxiang=findViewById(R.id.touxiang);
         touxiang.setOnClickListener(this);
         rl1=findViewById(R.id.rl1);
@@ -131,8 +133,8 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onRestart() {
-        if (photoDialog != null)
-            photoDialog.dismiss();
+//        if (photoDialog != null)
+//            photoDialog.dismiss();
 
         Log.d("KaiBoActivity", "onRestart");
         super.onRestart();
@@ -199,6 +201,9 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.bianjiningcheng:
 
+                break;
+            case R.id.fanhui:
+                finish();
                 break;
         }
     }
@@ -274,15 +279,29 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
-                if (dialog != null)
-                    dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog != null)
+                            dialog.dismiss();
+                    }
+                });
+
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
-                if (dialog != null)
-                    dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog != null)
+                            dialog.dismiss();
+                        if (photoDialog != null)
+                            photoDialog.dismiss();
+                    }
+                });
+
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
@@ -306,8 +325,14 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败");
-                    if (dialog != null)
-                        dialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog != null)
+                                dialog.dismiss();
+                        }
+                    });
+
                 }
             }
         });
@@ -445,7 +470,9 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                         baoCunBean.setSex(saveBean.getResult().getSex());
                         baoCunBean.setQianming(saveBean.getResult().getSignature());
                         baoCunBean.setJiaxiang(saveBean.getResult().getCity());
+                        baoCunBean.setHeadImage(saveBean.getResult().getHeadImage());
                         MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
+                      //  Log.d("WoDeZiLiaoActivity", MyApplication.myApplication.getBaoCunBean().getHeadImage());
                     }
 
                 } catch (Exception e) {

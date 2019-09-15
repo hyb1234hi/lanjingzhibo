@@ -58,17 +58,17 @@ public class GuanZhuBean {
          * headImage : https://img-1259669722.cos.ap-guangzhou.myqcloud.com/images/27111567242259561.jpg
          */
 
-        private int code;
+        private int id;
         private String nickname;
         private int sex;
         private String headImage;
 
-        public int getCode() {
-            return code;
+        public int getId() {
+            return id;
         }
 
-        public void setCode(int code) {
-            this.code = code;
+        public void setId(int id) {
+            this.id = id;
         }
 
         public String getNickname() {

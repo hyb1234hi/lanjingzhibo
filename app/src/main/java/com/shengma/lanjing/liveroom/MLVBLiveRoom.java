@@ -152,7 +152,7 @@ public abstract class MLVBLiveRoom {
      * @param roomInfo 房间信息（非必填），用于房间描述的信息，比如房间名称，允许使用 JSON 格式作为房间信息。
      * @param callback 创建房间的结果回调
      */
-    public abstract void createRoom(final String roomID, final String roomInfo, final IMLVBLiveRoomListener.CreateRoomCallback callback);
+    public abstract void createRoom(final String roomID, final String roomInfo,String pushURL, final IMLVBLiveRoomListener.CreateRoomCallback callback);
 
 	 /**
      * 进入房间（观众调用）
@@ -166,7 +166,7 @@ public abstract class MLVBLiveRoom {
      * @param callback 进入房间的结果回调
      *
      */
-    public abstract void enterRoom(final String roomID, final TXCloudVideoView view, final IMLVBLiveRoomListener.EnterRoomCallback callback);
+    public abstract void enterRoom(final String roomID, final TXCloudVideoView view,String playPath, final IMLVBLiveRoomListener.EnterRoomCallback callback);
 
     /**
      * 离开房间

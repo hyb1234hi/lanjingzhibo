@@ -1,6 +1,7 @@
 package com.shengma.lanjing.ui.fargments;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -28,6 +29,7 @@ import com.shengma.lanjing.adapters.ZHiBoAdapter;
 import com.shengma.lanjing.beans.LiveType;
 import com.shengma.lanjing.beans.ZhiBoBean;
 import com.shengma.lanjing.cookies.CookiesManager;
+import com.shengma.lanjing.ui.zhibo.BoFangActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.DisplayUtils;
 import com.shengma.lanjing.utils.GsonUtil;
@@ -107,6 +109,10 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
+                Intent intent=new Intent(getActivity(), BoFangActivity.class);
+                intent.putExtra("idid",beanList.get(position).getId());
+                intent.putExtra("playPath",beanList.get(position).getPlayUrl());
+                startActivity(intent);
             }
         });
 
@@ -271,6 +277,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
        }
        type=Integer.parseInt(view.getTag().toString());
        beanList.clear();
+       pag=1;
        link_list();
 
     }

@@ -4,6 +4,24 @@ public class MsgWarp {
 
     private int type;
     private String msg;
+    private String temp;
+
+    public MsgWarp() {
+    }
+
+    public MsgWarp(int type, String msg, String temp) {
+        this.type = type;
+        this.msg = msg;
+        this.temp = temp;
+    }
+
+    public String getTemp() {
+        return temp;
+    }
+
+    public void setTemp(String temp) {
+        this.temp = temp;
+    }
 
     public int getType() {
         return type;

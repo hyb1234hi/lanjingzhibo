@@ -373,18 +373,18 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
      * @param callback 创建房间的结果回调
      */
     @Override
-    public void createRoom(final String roomID, final String roomInfo, final IMLVBLiveRoomListener.CreateRoomCallback callback) {
-        TXCLog.i("ZhiBoActivity", "API -> createRoom:" + roomID + ":" + roomInfo);
+    public void createRoom(final String roomID, final String roomInfo,String pushURL, final IMLVBLiveRoomListener.CreateRoomCallback callback) {
+        TXCLog.i("ZhiBoActivity", "API -> createRoom:" + roomID + ":" + roomInfo+" "+pushURL);
         mSelfRoleType = LIVEROOM_ROLE_PUSHER;
         //1. 在应用层调用startLocalPreview，启动本地预览
         //2. 请求CGI:get_push_url，异步获取到推流地址pushUrl
-        mHttpRequest.getPushUrl(mSelfAccountInfo.userID, roomID, new HttpRequests.OnResponseCallback<HttpResponse.PushUrl>() {
-            @Override
-            public void onResponse(int retcode, String retmsg, HttpResponse.PushUrl data) {
-                if (retcode == HttpResponse.CODE_OK && data != null && data.pushURL != null) {
-                    final String pushURL = data.pushURL;
-                    mSelfPushUrl = data.pushURL;
-                    mSelfAccelerateURL = data.accelerateURL;
+//        mHttpRequest.getPushUrl(mSelfAccountInfo.userID, roomID, new HttpRequests.OnResponseCallback<HttpResponse.PushUrl>() {
+//            @Override
+//            public void onResponse(int retcode, String retmsg, HttpResponse.PushUrl data) {
+//                if (retcode == HttpResponse.CODE_OK && data != null && data.pushURL != null) {
+                //    final String pushURL = data.pushURL;
+                    mSelfPushUrl = pushURL;
+                 //   mSelfAccelerateURL = data.accelerateURL;
 
                     //3.开始推流
                     startPushStream(pushURL, TXLiveConstants.VIDEO_QUALITY_HIGH_DEFINITION, new StandardCallback() {
@@ -458,12 +458,12 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                         }
                     });
 
-                }
-                else {
-                    callbackOnThread(callback, "onError", retcode, "[LiveRoom] 创建房间失败[获取推流地址失败]");
-                }
-            }
-        });
+             //   }
+//                else {
+//                    callbackOnThread(callback, "onError", retcode, "[LiveRoom] 创建房间失败[获取推流地址失败]");
+//                }
+        //    }
+      //  });
     }
 
     /**
@@ -478,8 +478,8 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
      * @param callback 进入房间的结果回调
      */
     @Override
-    public void enterRoom(final String roomID, final TXCloudVideoView view, final IMLVBLiveRoomListener.EnterRoomCallback callback) {
-        TXCLog.i(TAG, "API -> enterRoom:" + roomID);
+    public void enterRoom(final String roomID, final TXCloudVideoView view,String playPath, final IMLVBLiveRoomListener.EnterRoomCallback callback) {
+        TXCLog.i("BoFangActivity", "API -> enterRoom:" + roomID);
         if (roomID == null || roomID.length() == 0) {
             callbackOnThread(callback, "onError", MLVBCommonDef.LiveRoomErrorCode.ERROR_PARAMETERS_INVALID, "[LiveRoom] 进房失败[房间号为空]");
             return;
@@ -504,12 +504,12 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                         if (view != null) {
                             view.setVisibility(View.VISIBLE);
                         }
-                        String mixedPlayUrl = getMixedPlayUrlByRoomID(roomID);
+                        String mixedPlayUrl = playPath;
                         if (mixedPlayUrl != null && mixedPlayUrl.length() > 0) {
                             int playType = getPlayType(mixedPlayUrl);
                             mTXLivePlayer.setPlayerView(view);
-                            mTXLivePlayer.startPlay(mixedPlayUrl, playType);
-
+                          int tt=  mTXLivePlayer.startPlay(mixedPlayUrl, playType);
+                            Log.d("BoFangActivity", "播放状态:" + tt+" 播放地址"+playPath);
                             if (mHttpRequest != null) {
                                 String userInfo = "";
                                 try {

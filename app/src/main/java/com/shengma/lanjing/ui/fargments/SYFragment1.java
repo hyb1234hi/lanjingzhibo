@@ -2,6 +2,7 @@ package com.shengma.lanjing.ui.fargments;
 
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -24,6 +25,7 @@ import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.GuanZhuAdapter;
 import com.shengma.lanjing.beans.GuanZhuBean;
 import com.shengma.lanjing.cookies.CookiesManager;
+import com.shengma.lanjing.ui.zhibo.BoFangActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.DisplayUtils;
 import com.shengma.lanjing.utils.GsonUtil;
@@ -101,6 +103,9 @@ public class SYFragment1 extends Fragment {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
+                Intent intent=new Intent(getActivity(), BoFangActivity.class);
+                intent.putExtra("idid",beanList.get(position).getId());
+                startActivity(intent);
             }
         });
 

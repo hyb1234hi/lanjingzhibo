@@ -79,8 +79,8 @@ public class LogingActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
-     //  link_loging("18620124189","yoyo89757");
-        link_loging("16620954033","123456");
+       link_loging("18620124189","yoyo89757");
+      //  link_loging("16620954033","123456");
 
       //  startActivity(new Intent(LogingActivity.this, MainActivity.class));
        // finish();

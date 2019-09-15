@@ -171,8 +171,8 @@ public class KaiBoActivity extends AppCompatActivity {
 
     @Override
     protected void onRestart() {
-        if (photoDialog != null)
-            photoDialog.dismiss();
+//        if (photoDialog != null)
+//            photoDialog.dismiss();
 
         Log.d("KaiBoActivity", "onRestart");
         super.onRestart();
@@ -241,6 +241,9 @@ public class KaiBoActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             fengmian.setImageBitmap(BitmapFactory.decodeFile(path));
+                            if (photoDialog != null)
+                                photoDialog.dismiss();
+
                         }
                     });
 
@@ -303,7 +306,6 @@ public class KaiBoActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
-
                 //获得返回体
                 try {
                     ResponseBody body = response.body();

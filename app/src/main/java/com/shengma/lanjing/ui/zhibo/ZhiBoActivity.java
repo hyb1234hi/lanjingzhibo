@@ -217,7 +217,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mlvbLiveRoom.createRoom(baoCunBean.getUserid() + "", roomInfo, new CreateRoomCallback() {
+        mlvbLiveRoom.createRoom(baoCunBean.getUserid() + "", roomInfo,baoCunBean.getPushUrl(), new CreateRoomCallback() {
             @Override
             public void onError(int errCode, String errInfo) {
                 Log.d("ZhiBoActivity", "errCode:" + errCode);
@@ -235,13 +235,13 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         //设置Adapter
         liaoTianAdapter=new LiaoTianAdapter(liaoTianBeanList);
         liaotianReView.setAdapter(liaoTianAdapter);
-        liaoTianAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override public void onLoadMoreRequested() {
-                //mQuickAdapter.loadMoreEnd();mQuickAdapter.loadMoreComplete();mQuickAdapter.loadMoreFail();
-                liaoTianAdapter.loadMoreEnd();
-
-            }
-        }, liaotianReView);
+//        liaoTianAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+////            @Override public void onLoadMoreRequested() {
+////                //mQuickAdapter.loadMoreEnd();mQuickAdapter.loadMoreComplete();mQuickAdapter.loadMoreFail();
+////                liaoTianAdapter.loadMoreEnd();
+////
+////            }
+////        }, liaotianReView);
 
 
         ConstraintLayout.LayoutParams params= (ConstraintLayout.LayoutParams) liaotianReView.getLayoutParams();
@@ -252,6 +252,17 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         params2.height= (int) (hight*0.33);
         liwuReView.setLayoutParams(params2);
         liwuReView.invalidate();
+
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                Message message = new Message();
+                message.what = 222;
+                mHandler.sendMessage(message);
+
+            }
+        };
+        timer.schedule(task, 3000,4000);
     }
 
 
@@ -490,16 +501,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     .into(touxiang);
         }
 
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                Message message = new Message();
-                message.what = 222;
-                mHandler.sendMessage(message);
 
-            }
-        };
-        timer.schedule(task, 3000,4000);
 
     }
 
@@ -621,12 +623,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         }
                         pkListDialog=new PKListDialog(pkList);
                         pkListDialog.show(getSupportFragmentManager(),"pklist");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtils.showInfo(ZhiBoActivity.this,"暂无合适的PK主播");
-                            }
-                        });
+
                     }
                 });
 
