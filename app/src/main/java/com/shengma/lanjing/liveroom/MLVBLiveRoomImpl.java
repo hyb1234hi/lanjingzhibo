@@ -13,6 +13,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
@@ -384,7 +385,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
 //                if (retcode == HttpResponse.CODE_OK && data != null && data.pushURL != null) {
                 //    final String pushURL = data.pushURL;
                     mSelfPushUrl = pushURL;
-                 //   mSelfAccelerateURL = data.accelerateURL;
+                    mSelfAccelerateURL = MyApplication.myApplication.getBaoCunBean().getPlayUrl();
 
                     //3.开始推流
                     startPushStream(pushURL, TXLiveConstants.VIDEO_QUALITY_HIGH_DEFINITION, new StandardCallback() {
@@ -1282,7 +1283,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                 if (mSelfRoleType == LIVEROOM_ROLE_PUSHER) {
                     if (mPlayers.size() == 0) {
                         if (mTXLivePusher != null) {
-                            if (mMixMode == STREAM_MIX_MODE_PK) {
+                           // if (mMixMode == STREAM_MIX_MODE_PK) {
                                 //PK
                                 mTXLivePusher.setVideoQuality(TXLiveConstants.VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER, true, true);
                                 TXLivePushConfig config = mTXLivePusher.getConfig();
@@ -1290,10 +1291,10 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                                 config.setAutoAdjustBitrate(false);
                                 config.setVideoBitrate(800);
                                 mTXLivePusher.setConfig(config);
-                            } else {
+                         //   } else {
                                 //连麦，设置推流Quality为VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER
-                                mTXLivePusher.setVideoQuality(TXLiveConstants.VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER, true, false);
-                            }
+                          //      mTXLivePusher.setVideoQuality(TXLiveConstants.VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER, true, false);
+                          //  }
                         }
                     }
                 }
@@ -1307,19 +1308,22 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
 
                 PlayerItem anchorPlayer = new PlayerItem(view, anchorInfo, player);
                 mPlayers.put(anchorInfo.userID, anchorPlayer);
+                final boolean[] isA = {true};
 
                 player.setPlayListener(new ITXLivePlayListener() {
                     @Override
                     public void onPlayEvent(final int event, final Bundle param) {
+                        Log.d("ZhiBoActivity", "2222222222222222222");
                         if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
-                            if (mSelfRoleType == LIVEROOM_ROLE_PUSHER) {
+                           // if (mSelfRoleType == LIVEROOM_ROLE_PUSHER) {
                                 //主播进行混流
-                                if (mMixMode == STREAM_MIX_MODE_PK) {
-                                    mStreamMixturer.addPKVideoStream(anchorInfo.accelerateURL);
-                                } else {
-                                    mStreamMixturer.addSubVideoStream(anchorInfo.accelerateURL);
-                                }
-                            }
+//                                if (mMixMode == STREAM_MIX_MODE_PK) {
+//                                    mStreamMixturer.addPKVideoStream(anchorInfo.accelerateURL);
+//                                } else {
+//                                    mStreamMixturer.addSubVideoStream(anchorInfo.accelerateURL);
+//                                }
+                        //    }
+                            Log.d("ZhiBoActivity", "onBegin111111111");
                             callbackOnThread(callback, "onBegin");
                         }
                         else if (event == TXLiveConstants.PLAY_EVT_PLAY_END || event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT){
@@ -1335,6 +1339,11 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                         }
                         else {
                             callbackOnThread(callback, "onEvent", event, param);
+                            if (isA[0]){
+                                isA[0] =false;
+                                callbackOnThread(callback, "onBegin");
+                            }
+
                         }
                     }
 
@@ -1344,7 +1353,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                     }
                 });
 
-                int result = player.startPlay(anchorInfo.accelerateURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP_ACC);
+                int result = player.startPlay(anchorInfo.accelerateURL, TXLivePlayer.PLAY_TYPE_LIVE_FLV);
                 if (result != 0){
                     TXCLog.e(TAG, String.format("[BaseRoom] 播放成员 {%s} 地址 {%s} 失败", anchorInfo.userID, anchorInfo.accelerateURL));
                 }

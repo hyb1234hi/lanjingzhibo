@@ -132,7 +132,7 @@ public class PingDaoDialog extends DialogFragment implements View.OnClickListene
             case R.id.wancheng:
                 for (int i=0;i<resultBeanList.size();i++){
                     if (resultBeanList.get(i).getIsXZ()==1){
-                        EventBus.getDefault().post(new MsgWarp(i,resultBeanList.get(i).getName()));
+                        EventBus.getDefault().post(new MsgWarp(100,resultBeanList.get(i).getName()));
                         break;
                     }
                 }

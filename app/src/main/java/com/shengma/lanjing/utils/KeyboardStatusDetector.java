@@ -44,25 +44,26 @@ public class KeyboardStatusDetector {
                 //Log.d("ZhiBoActivity键盘", v.getRootView().getHeight() +"   "+ r.bottom +"  "+ r.top);
                // Log.d("ZhiBoActivity键盘", "heightDiff:" + heightDiff);
                // Log.d("ZhiBoActivity键盘", "keyboardVisible:" + keyboardVisible);
-                if (heightDiff > SOFT_KEY_BOARD_MIN_HEIGHT && heightDiff!=heightPixels) { // if more than 100 pixels, its probably a keyboard...
-                    if (!keyboardVisible) {
+                if (heightDiff > SOFT_KEY_BOARD_MIN_HEIGHT && heightDiff<heightPixels) { // if more than 100 pixels, its probably a keyboard...
+                  //  if (!keyboardVisible) {
                         keyboardVisible = true;
                         if (mVisibilityListener != null) {
                             mVisibilityListener.onVisibilityChanged(true, heightDiff);
                         }
-                    }else {
-                        keyboardVisible = false;
-                        if (mVisibilityListener != null) {
-                            mVisibilityListener.onVisibilityChanged(false, heightDiff);
-                        }
-                    }
-                } else {
-                    if (keyboardVisible) {
-                        keyboardVisible = false;
-                        if (mVisibilityListener != null) {
-                            mVisibilityListener.onVisibilityChanged(false, heightDiff);
-                        }
-                    }
+                  //  }
+//                    else {
+//                        keyboardVisible = false;
+//                        if (mVisibilityListener != null) {
+//                            mVisibilityListener.onVisibilityChanged(false, heightDiff);
+//                        }
+//                    }
+//                } else {
+//                    if (keyboardVisible) {
+//                        keyboardVisible = false;
+//                        if (mVisibilityListener != null) {
+//                            mVisibilityListener.onVisibilityChanged(false, heightDiff);
+//                        }
+//                    }
                 }
             }
         });

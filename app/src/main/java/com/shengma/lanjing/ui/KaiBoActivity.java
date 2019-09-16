@@ -26,6 +26,7 @@ import com.shengma.lanjing.dialogs.PhotoDialog;
 import com.shengma.lanjing.dialogs.PingDaoDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
+import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
 import com.shengma.lanjing.ui.zhibo.ZhiBoActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
@@ -163,7 +164,7 @@ public class KaiBoActivity extends AppCompatActivity {
 
             link_loging(msgWarp.getMsg());
             Log.d("KaiBoActivity", msgWarp.getMsg());
-        } else {
+        } else if (msgWarp.getType()==100){
             liveType = msgWarp.getType();
             frrrd.setText(msgWarp.getMsg());
         }
@@ -327,14 +328,37 @@ public class KaiBoActivity extends AppCompatActivity {
                           public void onError(int errCode, String errInfo) {
                               if (dialog != null)
                                   dialog.dismiss();
-                              startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                              LoginInfo loginInfo=new LoginInfo(Integer.parseInt(baoCunBean.getSdkAppId()),baoCunBean.getUserid()+"",baoCunBean.getNickname(),baoCunBean.getHeadImage(),baoCunBean.getImUserSig());
+                              MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
+                                  @Override
+                                  public void onError(int errCode, String errInfo) {
+                                      ToastUtils.showInfo(KaiBoActivity.this,"IM登录失败");
+                                  }
+
+                                  @Override
+                                  public void onSuccess() {
+                                      startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                                  }
+                              });
+
+
                           }
 
                           @Override
                           public void onSuccess() {
                               if (dialog != null)
                                   dialog.dismiss();
-                              startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                              LoginInfo loginInfo=new LoginInfo(Integer.parseInt(baoCunBean.getSdkAppId()),baoCunBean.getUserid()+"",baoCunBean.getNickname(),baoCunBean.getHeadImage(),baoCunBean.getImUserSig());
+                              MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
+                                  @Override
+                                  public void onError(int errCode, String errInfo) {
+                                      ToastUtils.showInfo(KaiBoActivity.this,"IM登录失败");
+                                  }
+                                  @Override
+                                  public void onSuccess() {
+                                      startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                                  }
+                              });
                           }
                       });
                   }

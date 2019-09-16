@@ -192,15 +192,25 @@ public class LogingActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(LogingActivity.this,"获取数据失败,请检查网络");
-                if (dialog!=null)
-                dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
-                if (dialog!=null)
-                dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
@@ -225,7 +235,14 @@ public class LogingActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(LogingActivity.this,"获取数据失败");
-                    dialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog!=null)
+                                dialog.dismiss();
+                        }
+                    });
+
                 }
             }
         });
@@ -248,7 +265,13 @@ public class LogingActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(LogingActivity.this,"获取数据失败,请检查网络");
-                dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
             }
 
             @Override
@@ -266,7 +289,13 @@ public class LogingActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(LogingActivity.this,"获取数据失败");
-                    dialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog!=null)
+                                dialog.dismiss();
+                        }
+                    });
                 }
             }
         });
@@ -288,7 +317,13 @@ public class LogingActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(LogingActivity.this,"获取数据失败,请检查网络");
-                dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
             }
 
             @Override
@@ -306,7 +341,13 @@ public class LogingActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(LogingActivity.this,"获取数据失败");
-                    dialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog!=null)
+                                dialog.dismiss();
+                        }
+                    });
                 }
             }
 
@@ -353,13 +394,25 @@ public class LogingActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(LogingActivity.this,"获取数据失败,请检查网络");
-                dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
-                dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
@@ -390,7 +443,13 @@ public class LogingActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(LogingActivity.this,"获取数据失败");
-                    dialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog!=null)
+                                dialog.dismiss();
+                        }
+                    });
                 }
             }
         });

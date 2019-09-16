@@ -117,7 +117,7 @@ public class Fragment4 extends Fragment {
             name.setText(baoCunBean.getNickname() + "");
             dengji.setText("Lv." + baoCunBean.getAnchorLevel());
             dengji2.setText("Lv." + baoCunBean.getUserLevel());
-            myid.setText("ID:" + baoCunBean.getUserCode());
+            myid.setText("ID:" + baoCunBean.getUserid());
             shichang.setText(baoCunBean.getDuration() + "");
             fensi.setText(baoCunBean.getFans() + "");
             guanzhu.setText(baoCunBean.getIdols() + "");
