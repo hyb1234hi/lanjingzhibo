@@ -1,5 +1,6 @@
 package com.shengma.lanjing.ui;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
@@ -32,7 +35,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,8 +52,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class LogingActivity extends AppCompatActivity {
+public class LogingActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks  {
     private OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .writeTimeout(18000, TimeUnit.MILLISECONDS)
             .connectTimeout(18000, TimeUnit.MILLISECONDS)
@@ -78,12 +86,17 @@ public class LogingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loging);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-
-       link_loging("18620124189","yoyo89757");
+        String aaa=getIntent().getStringExtra("aaa");
+        methodRequiresTwoPermission();
+        if (aaa==null){
+            if (MyApplication.myApplication.getBaoCunBean().getSession()!=null){
+                  startActivity(new Intent(LogingActivity.this, MainActivity.class));
+                  finish();
+            }
+        }
+       //link_loging("18620124189","yoyo89757");
       //  link_loging("16620954033","123456");
 
-      //  startActivity(new Intent(LogingActivity.this, MainActivity.class));
-       // finish();
     }
 
 
@@ -224,6 +237,7 @@ public class LogingActivity extends AppCompatActivity {
                         bean.setImUserSig(logingBe.getResult().getImUserSig());
                         bean.setSdkAppId(logingBe.getResult().getSdkAppId());
                         bean.setIsBind(logingBe.getResult().getIsBind());
+                        bean.setSession(logingBe.getResult().getSession());
                         baoCunBeanBox.put(bean);
 
                         startActivity(new Intent(LogingActivity.this, MainActivity.class));
@@ -247,6 +261,7 @@ public class LogingActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
     private void link_WX1(String code) {
@@ -427,6 +442,7 @@ public class LogingActivity extends AppCompatActivity {
                         bean.setImUserSig(logingBe.getResult().getImUserSig());
                         bean.setSdkAppId(logingBe.getResult().getSdkAppId());
                         bean.setIsBind(logingBe.getResult().getIsBind());
+                        bean.setSession(logingBe.getResult().getSession());
                         baoCunBeanBox.put(bean);
                         if (logingBe.getResult().getIsBind().equals("1")){
                             startActivity(new Intent(LogingActivity.this, MainActivity.class));
@@ -455,7 +471,58 @@ public class LogingActivity extends AppCompatActivity {
         });
     }
 
+    private final int RC_CAMERA_AND_LOCATION=10000;
 
+    @AfterPermissionGranted(RC_CAMERA_AND_LOCATION)
+    private void methodRequiresTwoPermission() {
+        String[] perms = {Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.RECEIVE_BOOT_COMPLETED, Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,Manifest.permission.INTERNET};
+
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // 已经得到许可，就去做吧 //第一次授权成功也会走这个方法
+            Log.d("BaseActivity", "成功获得权限");
+            File file = new File(MyApplication.SDPATH);
+            if (!file.exists()) {
+                Log.d("ggg", "file.mkdirs():" + file.mkdirs());
+            }
+
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, "需要授予app权限,请点击确定",
+                    RC_CAMERA_AND_LOCATION, perms);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> list) {
+        // Some permissions have been granted
+        Log.d("BaseActivity", "list.size():" + list.size());
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> list) {
+        // Some permissions have been denied
+        // ...
+        for (String s:list){
+            Log.d("BaseActivity", s);
+        }
+        Log.d("BaseActivity", "list.size():" + list.size());
+        Toast.makeText(LogingActivity.this,"权限被拒绝会导致无法正常使用app",Toast.LENGTH_LONG).show();
+        // finish();
+
+    }
 
 
     @Override

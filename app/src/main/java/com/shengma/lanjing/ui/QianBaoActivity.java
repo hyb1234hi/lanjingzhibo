@@ -92,6 +92,7 @@ public class QianBaoActivity extends AppCompatActivity {
         RequestBody body = RequestBody.create(object.toString(),JSON);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL+"/user/wallet");
         // step 3：创建 Call 对象

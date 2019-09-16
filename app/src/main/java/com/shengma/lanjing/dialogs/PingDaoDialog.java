@@ -29,11 +29,8 @@ import com.shengma.lanjing.adapters.PingDaoAdapter;
 import com.shengma.lanjing.beans.LiveType;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.utils.Consts;
-import com.shengma.lanjing.utils.DisplayUtils;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
-import com.shengma.lanjing.views.GridDividerItemDecoration;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
@@ -132,7 +129,7 @@ public class PingDaoDialog extends DialogFragment implements View.OnClickListene
             case R.id.wancheng:
                 for (int i=0;i<resultBeanList.size();i++){
                     if (resultBeanList.get(i).getIsXZ()==1){
-                        EventBus.getDefault().post(new MsgWarp(100,resultBeanList.get(i).getName()));
+                        EventBus.getDefault().post(new MsgWarp(100,resultBeanList.get(i).getName(),i+""));
                         break;
                     }
                 }
@@ -149,6 +146,7 @@ public class PingDaoDialog extends DialogFragment implements View.OnClickListene
     private void link_live_type() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
                 .url(Consts.URL+"/live/type");
 

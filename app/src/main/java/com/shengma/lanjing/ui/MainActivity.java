@@ -2,27 +2,36 @@ package com.shengma.lanjing.ui;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.mtp.MtpConstants;
 import android.os.Bundle;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloadListener;
+import com.liulishuo.filedownloader.FileDownloader;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.beans.LiwuPathBean;
+import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.beans.UserInfoBean;
+import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
@@ -33,24 +42,33 @@ import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.views.ControlScrollViewPager;
 import com.shengma.lanjing.views.MyFragmentPagerAdapter;
 
+
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.FileHeader;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener , EasyPermissions.PermissionCallbacks {
+
+
+
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     @BindView(R.id.ll1)
     LinearLayout ll1;
     @BindView(R.id.ll2)
@@ -75,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     ImageView im4;
     @BindView(R.id.tv4)
     TextView tv4;
+    private LinkedBlockingQueue<XiaZaiLiWuBean> linkedBlockingQueue=new LinkedBlockingQueue<>(200);
 
     private OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .writeTimeout(18000, TimeUnit.MILLISECONDS)
@@ -83,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             .cookieJar(new CookiesManager())
             //        .retryOnConnectionFailure(true)
             .build();
-
+    private TanChuangThread tanChuangThread;
     private ControlScrollViewPager viewpage;
     //几个代表页面的常量
     public static final int PAGE_ONE = 0;
@@ -107,60 +126,18 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewpage.addOnPageChangeListener(this);
         viewpage.setOffscreenPageLimit(4);
 
-        methodRequiresTwoPermission();
+
+        tanChuangThread = new TanChuangThread();
+        tanChuangThread.start();
+        link_xiazai();
+
+      //  Log.d("MainActivity", "MyA:" + MyApplication.myApplication.getLiwuPathBeanBox().getAll().size());
+
 
     }
 
 
-    private final int RC_CAMERA_AND_LOCATION=10000;
 
-    @AfterPermissionGranted(RC_CAMERA_AND_LOCATION)
-    private void methodRequiresTwoPermission() {
-        String[] perms = {Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.RECEIVE_BOOT_COMPLETED, Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.ACCESS_WIFI_STATE,Manifest.permission.INTERNET};
-
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            // 已经得到许可，就去做吧 //第一次授权成功也会走这个方法
-            Log.d("BaseActivity", "成功获得权限");
-
-
-        } else {
-            // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this, "需要授予app权限,请点击确定",
-                    RC_CAMERA_AND_LOCATION, perms);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> list) {
-        // Some permissions have been granted
-        Log.d("BaseActivity", "list.size():" + list.size());
-
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> list) {
-        // Some permissions have been denied
-        // ...
-        for (String s:list){
-            Log.d("BaseActivity", s);
-        }
-        Log.d("BaseActivity", "list.size():" + list.size());
-        Toast.makeText(MainActivity.this,"权限被拒绝会导致无法正常使用app",Toast.LENGTH_LONG).show();
-       // finish();
-
-    }
 
     @OnClick({R.id.ll1, R.id.ll2, R.id.ll3, R.id.ll4})
     public void onViewClicked(View view) {
@@ -195,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private void link_userinfo() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
                 .url(Consts.URL+"/user/info");
         // step 3：创建 Call 对象
@@ -208,14 +186,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-
+                JsonObject jsonObject = null;
                 Log.d("AllConnects", "请求成功" + call.request().toString());
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
                     Log.d("LogingActivity", "用户信息"+ss);
-                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     UserInfoBean userInfoBean = gson.fromJson(jsonObject, UserInfoBean.class);
                     Box<BaoCunBean> baoCunBeanBox = MyApplication.myApplication.getBaoCunBeanBox();
@@ -255,7 +233,219 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(MainActivity.this,"获取数据失败");
+                    try {
+                        if (jsonObject!=null)
+                       if (jsonObject.get("code").getAsInt()==4401){
+                           Intent intent=new Intent(MainActivity.this,LogingActivity.class);
+                           intent.putExtra("aaa","aaa");
+                           startActivity(intent);
+                       }
+                    }catch (Exception e1){
+                        e1.printStackTrace();
+                    }
 
+                }
+            }
+        });
+    }
+
+    private class TanChuangThread extends Thread {
+        boolean isRing;
+        boolean isX=true;
+        int A=1;
+
+        @Override
+        public void run() {
+            while (!isRing) {
+                try {
+                    //有动画 ，延迟到一秒一次
+                    if (isX) {
+                        isX=false;
+                        XiaZaiLiWuBean subject = linkedBlockingQueue.poll();
+                        if (subject==null){
+                            A+=1;
+                            if (A==10){
+
+                                Log.d("MainActivity", "结束大循环");
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        jieya();
+                                    }
+                                }).start();
+                                isRing=true;
+                            }
+                            SystemClock.sleep(2000);
+                            isX=true;
+                        }else {
+                            if (!subject.getSpecialUrl().equals("")){
+                                FileDownloader.getImpl().create(subject.getSpecialUrl())
+                                        .setPath(MyApplication.SDPATH+File.separator+subject.getId()+".zip")
+                                        .setListener(new FileDownloadListener() {
+                                            @Override
+                                            protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                                            }
+                                            @Override
+                                            protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int totalBytes) {
+                                            }
+                                            @Override
+                                            protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                                            }
+
+                                            @Override
+                                            protected void blockComplete(BaseDownloadTask task) {
+                                            }
+
+                                            @Override
+                                            protected void retry(final BaseDownloadTask task, final Throwable ex, final int retryingTimes, final int soFarBytes) {
+                                                isX=true;
+                                            }
+                                            @Override
+                                            protected void completed(BaseDownloadTask task) {
+                                                //完成
+                                                isX=true;
+                                                subject.setD(true);
+                                                MyApplication.myApplication.getXiaZaiLiWuBeanBox().put(subject);
+                                            }
+                                            @Override
+                                            protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                                                isX=true;
+                                            }
+                                            @Override
+                                            protected void error(BaseDownloadTask task, Throwable e) {
+                                                isX=true;
+                                            }
+                                            @Override
+                                            protected void warn(BaseDownloadTask task) {
+                                                isX=true;
+                                            }
+                                        }).start();
+                            }else {//下一个
+                                isX=true;
+                            }
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void interrupt() {
+            isRing = true;
+            super.interrupt();
+        }
+    }
+
+    private void jieya(){
+        List<XiaZaiLiWuBean> xiaZaiLiWuBeanList=MyApplication.myApplication.getXiaZaiLiWuBeanBox().getAll();
+        for (XiaZaiLiWuBean xiaZaiLiWuBean:xiaZaiLiWuBeanList){
+            if (!xiaZaiLiWuBean.isJY() && xiaZaiLiWuBean.isD()){//没有解压
+                ZipFile zipFile=null;
+                List fileHeaderList=null;
+                try {
+                    // Initiate ZipFile object with the path/name of the zip file.
+                  //  Log.d("MainActivity", MyApplication.SDPATH + File.separator + xiaZaiLiWuBean.getId() + ".zip");
+                    zipFile = new ZipFile(MyApplication.SDPATH+File.separator+xiaZaiLiWuBean.getId()+".zip");
+                    zipFile.setFileNameCharset("GBK");
+                    fileHeaderList = zipFile.getFileHeaders();
+                    // Loop through the file headers
+                    Log.d("MainActivity", "fileHeaderList.size():" + fileHeaderList.size());
+                    //创建解压文件目录
+                    String path222=MyApplication.SDPATH+File.separator+xiaZaiLiWuBean.getId();
+                    File file = new File(path222);
+                    if (!file.exists()) {
+                        Log.d("ggg", "file.mkdirs():" + file.mkdirs());
+                    }
+                    for (int i = 0; i < fileHeaderList.size(); i++) {
+                        FileHeader fileHeader = (FileHeader) fileHeaderList.get(i);
+                        //	FileHeader fileHeader2 = (FileHeader) fileHeaderList.get(0);
+                        //Log.d(TAG, fileHeader2.getFileName());
+                      //  zipFile.extractFile(fileHeader.getFileName(), path222);
+                       // Log.d("MainActivity", fileHeader.getFileName());
+                        //重命名
+                        fileHeader.setFileName(fileHeader.getFileName().replaceAll("img_",""));
+                        LiwuPathBean pathBean=new LiwuPathBean();
+                        pathBean.setId(System.currentTimeMillis());
+                        pathBean.setPath(path222+File.separator+fileHeader.getFileName());
+                        pathBean.setSid(xiaZaiLiWuBean.getId());
+                        MyApplication.myApplication.getLiwuPathBeanBox().put(pathBean);
+                        // Various other properties are available in FileHeader. Please have a look at FileHeader
+                        // class to see all the properties
+                    }
+                    //重命名之后解压
+                    zipFile.setRunInThread(true); // true 在子线程中进行解压 false主线程中解压
+                    zipFile.extractAll(path222); // 将压缩文件解压到filePath中..
+                    xiaZaiLiWuBean.setJY(true);
+                    MyApplication.myApplication.getXiaZaiLiWuBeanBox().put(xiaZaiLiWuBean);
+                } catch (final ZipException e) {
+                    e.printStackTrace();
+                    Log.d("MainActivity", e.getMessage()+"解压异常");
+                }
+            }
+        }
+    }
+
+
+    private void link_xiazai() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL+"/gift/load?page=1&pageSize=200");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                ToastUtils.showError(MainActivity.this,"获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "下载礼物:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    JsonArray jsonArray=jsonObject.get("result").getAsJsonArray();
+                    int size=jsonArray.size();
+                    Log.d("MainActivity", "size:" + size);
+                    for (int i=0;i<size;i++){
+                       JsonObject object=jsonArray.get(i).getAsJsonObject();
+                      XiaZaiLiWuBean xiaZaiLiWuBean=MyApplication.myApplication.getXiaZaiLiWuBeanBox().get(object.get("id").getAsInt());
+                      if (xiaZaiLiWuBean==null){
+                          Log.d("MainActivity", "新礼物");
+                          XiaZaiLiWuBean bean=new XiaZaiLiWuBean();
+                          bean.setD(false);
+                          bean.setGiftMoney(object.get("giftMoney").getAsString());
+                          bean.setGiftName(object.get("giftName").getAsString());
+                          bean.setGiftUrl(object.get("giftUrl").getAsString());
+                          bean.setSpecialUrl(object.get("specialUrl").getAsString());
+                          bean.setId(object.get("id").getAsInt());
+                          MyApplication.myApplication.getXiaZaiLiWuBeanBox().put(bean);
+                          linkedBlockingQueue.offer(bean);
+                      }else {
+                          Log.d("MainActivity", "已经存在礼物");
+                          if (!xiaZaiLiWuBean.isD()){//没有下载
+                              Log.d("MainActivity", "没有下载的礼物");
+                              linkedBlockingQueue.offer(xiaZaiLiWuBean);
+                          }else {
+                              Log.d("MainActivity", "已经下载的礼物");
+                          }
+                      }
+                    }
+
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    ToastUtils.showError(MainActivity.this,"获取数据失败");
                 }
             }
         });
@@ -316,4 +506,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         im4.setBackgroundResource(R.drawable.wode2);
     }
 
+    @Override
+    protected void onDestroy() {
+
+        if (tanChuangThread != null) {
+            tanChuangThread.isRing = true;
+            tanChuangThread.interrupt();
+        }
+        super.onDestroy();
+    }
 }

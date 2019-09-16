@@ -293,6 +293,7 @@ public class LogingActivity_yzm extends AppCompatActivity {
         //   RequestBody body = RequestBody.create(object.toString(),JSON);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+
                 .post(body)
                 .url(Consts.URL+"/user/bind");
         // step 3：创建 Call 对象
@@ -322,6 +323,7 @@ public class LogingActivity_yzm extends AppCompatActivity {
                         bean.setImUserSig(logingBe.getResult().getImUserSig());
                         bean.setSdkAppId(logingBe.getResult().getSdkAppId());
                         bean.setIsBind(logingBe.getResult().getIsBind());
+                        bean.setSession(logingBe.getResult().getSession());
                         baoCunBeanBox.put(bean);
                         link_chaxun();
                     }else {

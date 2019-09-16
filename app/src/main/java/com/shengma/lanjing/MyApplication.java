@@ -13,14 +13,15 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.liulishuo.filedownloader.FileDownloader;
 import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.beans.LiwuPathBean;
 import com.shengma.lanjing.beans.MyObjectBox;
+import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.dialogall.CommonData;
 import com.shengma.lanjing.dialogall.CommonDialogService;
 import com.shengma.lanjing.dialogall.ToastUtils;
-
-import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
 import com.shengma.lanjing.utils.TCUserMgr;
 import com.tencent.bugly.Bugly;
@@ -49,13 +50,15 @@ import static com.shengma.lanjing.utils.Consts.APP_ID;
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
     private Box<BaoCunBean> baoCunBeanBox=null;
+    private Box<XiaZaiLiWuBean> xiaZaiLiWuBeanBox=null;
+    private Box<LiwuPathBean> liwuPathBeanBox=null;
     public static MyApplication myApplication;
 
     public OkHttpClient okHttpClient =null;
     // IWXAPI 是第三方app和微信通信的openApi接口
     private IWXAPI api;
     public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+
-            File.separator+"ruitongzipyqt";
+            File.separator+"lanjing";
     public static final String SDPATH2 = Environment.getExternalStorageDirectory().getAbsolutePath()+
             File.separator+"ruitongyqt";
 
@@ -87,7 +90,11 @@ public class MyApplication extends Application implements Application.ActivityLi
         // 必须：初始化全局的 用户信息管理类，记录个人信息。
         TCUserMgr.getInstance().initContext(getApplicationContext());
 
+        FileDownloader.setup(this);//下载初始化
+
         baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
+        xiaZaiLiWuBeanBox= mBoxStore.boxFor(XiaZaiLiWuBean.class);
+        liwuPathBeanBox= mBoxStore.boxFor(LiwuPathBean.class);
 
         BaoCunBean  baoCunBean = mBoxStore.boxFor(BaoCunBean.class).get(123456L);
         if (baoCunBean == null) {
@@ -100,7 +107,7 @@ public class MyApplication extends Application implements Application.ActivityLi
                 .writeTimeout(18000, TimeUnit.MILLISECONDS)
                 .connectTimeout(18000, TimeUnit.MILLISECONDS)
                 .readTimeout(18000, TimeUnit.MILLISECONDS)
-                .cookieJar(new CookiesManager())
+              //  .cookieJar(new CookiesManager())
                 //        .retryOnConnectionFailure(true)
                 .build();
 
@@ -112,6 +119,12 @@ public class MyApplication extends Application implements Application.ActivityLi
     }
     public Box<BaoCunBean> getBaoCunBeanBox(){
         return baoCunBeanBox;
+    }
+    public Box<XiaZaiLiWuBean> getXiaZaiLiWuBeanBox(){
+        return xiaZaiLiWuBeanBox;
+    }
+    public Box<LiwuPathBean> getLiwuPathBeanBox(){
+        return liwuPathBeanBox;
     }
 
     public BaoCunBean getBaoCunBean(){

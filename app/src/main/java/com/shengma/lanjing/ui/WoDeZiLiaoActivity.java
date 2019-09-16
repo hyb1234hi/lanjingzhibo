@@ -269,6 +269,7 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                 .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(requestBody)
                 .url(Consts.URL + "/user/upload/img");
         // step 3：创建 Call 对象
@@ -439,6 +440,7 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
 //                .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL + "/user/save");
         // step 3：创建 Call 对象

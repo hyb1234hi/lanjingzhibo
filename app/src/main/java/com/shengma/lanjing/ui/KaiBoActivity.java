@@ -115,18 +115,18 @@ public class KaiBoActivity extends AppCompatActivity {
                 break;
             }
             case R.id.kaibo:
-//                if (fengmianPath==null || fengmianPath.equals("")){
-//                    ToastUtils.showInfo(KaiBoActivity.this,"请先上传封面");
-//                    return;
-//                }
-//                if (zhuti.getText().toString().trim().equals("")){
-//                    ToastUtils.showInfo(KaiBoActivity.this,"请先填写主题");
-//                    return;
-//                }
-//                if (liveType==-1){
-//                    ToastUtils.showInfo(KaiBoActivity.this,"请先选择直播类型");
-//                    return;
-//                }
+                if (fengmianPath==null || fengmianPath.equals("")){
+                    ToastUtils.showInfo(KaiBoActivity.this,"请先上传封面");
+                    return;
+                }
+                if (zhuti.getText().toString().trim().equals("")){
+                    ToastUtils.showInfo(KaiBoActivity.this,"请先填写主题");
+                    return;
+                }
+                if (liveType==-1){
+                    ToastUtils.showInfo(KaiBoActivity.this,"请先选择直播类型");
+                    return;
+                }
 
                 dialog = new ZLoadingDialog(KaiBoActivity.this);
                 dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
@@ -165,7 +165,7 @@ public class KaiBoActivity extends AppCompatActivity {
             link_loging(msgWarp.getMsg());
             Log.d("KaiBoActivity", msgWarp.getMsg());
         } else if (msgWarp.getType()==100){
-            liveType = msgWarp.getType();
+            liveType = Integer.parseInt(msgWarp.getTemp());
             frrrd.setText(msgWarp.getMsg());
         }
     }
@@ -210,6 +210,7 @@ public class KaiBoActivity extends AppCompatActivity {
                 .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(requestBody)
                 .url(Consts.URL + "/user/upload/img");
         // step 3：创建 Call 对象
@@ -268,28 +269,29 @@ public class KaiBoActivity extends AppCompatActivity {
     private void link_kaibo() {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject object=new JSONObject();
-//        try {
-//            object.put("coverImg",fengmianPath);
-//            object.put("latitude",0);
-//            object.put("longitude",0);
-//            object.put("title",zhuti.getText().toString().trim());
-//            object.put("type",liveType);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         try {
-            object.put("coverImg","h");
+            object.put("coverImg",fengmianPath);
             object.put("latitude",0);
             object.put("longitude",0);
             object.put("title",zhuti.getText().toString().trim());
-            object.put("type","1");
+            object.put("type",liveType);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+//        try {
+//            object.put("coverImg","h");
+//            object.put("latitude",0);
+//            object.put("longitude",0);
+//            object.put("title",zhuti.getText().toString().trim());
+//            object.put("type","1");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        Log.d("KaiBoActivity", "liveType:" + liveType);
         RequestBody body = RequestBody.create(object.toString(),JSON);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL + "/live/start");
         // step 3：创建 Call 对象
@@ -383,6 +385,7 @@ public class KaiBoActivity extends AppCompatActivity {
         RequestBody body = RequestBody.create(object.toString(),JSON);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL + "/live/end");
         // step 3：创建 Call 对象

@@ -34,12 +34,16 @@ import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.GuanZhongAdapter;
+import com.shengma.lanjing.adapters.LiWuBoFangAdapter;
 import com.shengma.lanjing.adapters.LiaoTianAdapter;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.GuanZhongBean;
+import com.shengma.lanjing.beans.LiWuBoFangBean;
 import com.shengma.lanjing.beans.LiaoTianBean;
+import com.shengma.lanjing.beans.LiwuPathBean;
 import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.beans.MsgWarp;
+import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
 import com.shengma.lanjing.dialogs.PKDialog;
@@ -169,6 +173,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private  CountDownTimer timer2;//惩罚
     private AnchorInfo anchorInfo;
     private int jianpangHight;
+    private List<LiWuBoFangBean> boFangBeanList=new ArrayList<>();
+    private LiWuBoFangAdapter liWuBoFangAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +186,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
         width = outMetrics.widthPixels;
         hight = outMetrics.heightPixels;
+        liWuBoFangAdapter=new LiWuBoFangAdapter(boFangBeanList);
         mHandler = new WeakHandler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message message) {
@@ -291,7 +298,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 ////
 ////            }
 ////        }, liaotianReView);
-
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(ZhiBoActivity.this,LinearLayoutManager.VERTICAL,true);
+        liwuReView.setLayoutManager(layoutManager2);
+        liwuReView.setAdapter(liWuBoFangAdapter);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) liaotianReView.getLayoutParams();
         params.height = (int) (hight * 0.33);
@@ -483,7 +492,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
     @Override
     public void onRecvRoomCustomMsg(String roomID, String userID, String userName, String userAvatar, String cmd, String message) {
-        if (cmd.equals("1")) {//发送普通消息
+        if (cmd.equals("1")) {//收到普通消息
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -497,6 +506,10 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     lingshiList.add(0, bean);
                 }
             });
+        }else if (cmd.equals("liwudonghua1")){//收到普通礼物消息
+            LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message,LiWuBoFangBean.class);
+            boFangBeanList.add(0,parseUser);
+            liWuBoFangAdapter.notifyDataSetChanged();
 
         }
 
@@ -655,7 +668,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     ToastUtils.showInfo(ZhiBoActivity.this, "网络异常");
                 }
             });
-
 
         }
 
@@ -852,6 +864,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL+"/live/mix");
         // step 3：创建 Call 对象
@@ -893,6 +906,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL+"/live/mix/cancel");
         // step 3：创建 Call 对象

@@ -98,6 +98,7 @@ public class PKDialog extends Dialog {
     private void link_get(String id) {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
                 .url(Consts.URL+"/anchor/info/"+id);
         // step 3：创建 Call 对象

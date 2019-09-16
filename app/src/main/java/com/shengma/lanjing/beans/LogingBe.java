@@ -59,6 +59,15 @@ public class LogingBe {
         private String sdkAppId;
         private String isBind;
         private String imUserSig;
+        private String session;
+
+        public String getSession() {
+            return session;
+        }
+
+        public void setSession(String session) {
+            this.session = session;
+        }
 
         public String getSdkAppId() {
             return sdkAppId;

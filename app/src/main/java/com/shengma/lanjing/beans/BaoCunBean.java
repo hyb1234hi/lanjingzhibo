@@ -32,6 +32,15 @@ public class BaoCunBean {
     private int age;
     private String qianming;
     private String jiaxiang;
+    private String session;
+
+    public String getSession() {
+        return session;
+    }
+
+    public void setSession(String session) {
+        this.session = session;
+    }
 
     public String getQianming() {
         return qianming;

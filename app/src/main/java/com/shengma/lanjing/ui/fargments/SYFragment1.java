@@ -21,6 +21,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.GuanZhuAdapter;
 import com.shengma.lanjing.beans.GuanZhuBean;
@@ -117,6 +118,7 @@ public class SYFragment1 extends Fragment {
     private void link_list() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
                 .url(Consts.URL+"/user/idols?page="+pag+"&pageSize=10");
 

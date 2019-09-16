@@ -126,6 +126,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
     private void link_list() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()//live/list?page=1&pageSize=10&type=0
                 .url(Consts.URL+"/live/list?page="+pag+"&pageSize=10&type="+type);
 
@@ -195,6 +196,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
     private void link_live_type() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
                 .url(Consts.URL+"/live/type");
         // step 3：创建 Call 对象

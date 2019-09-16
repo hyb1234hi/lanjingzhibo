@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.JsonObject;
+import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.cookies.CookiesManager;
@@ -121,6 +122,7 @@ public class LogingActivity_mima extends AppCompatActivity {
         //   RequestBody body = RequestBody.create(object.toString(),JSON);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL+"/user/pwd/set");
         // step 3：创建 Call 对象

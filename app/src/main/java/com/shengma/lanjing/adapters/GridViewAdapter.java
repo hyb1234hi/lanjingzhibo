@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.shengma.lanjing.R;
-import com.shengma.lanjing.beans.LiWuBean;
 import com.shengma.lanjing.beans.MsgWarp;
+import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -23,7 +23,7 @@ import java.util.List;
  * Created by zhangxutong on 2016/2/16.
  */
 public class GridViewAdapter extends BaseAdapter {
-    private List<LiWuBean.ResultBean> mDatas;
+    private List<XiaZaiLiWuBean> mDatas;
     private LayoutInflater mLayoutInflater;
     /**
      * 页数下标,从0开始
@@ -35,7 +35,7 @@ public class GridViewAdapter extends BaseAdapter {
     private int mPageSize;
     private Context context;
 
-    public GridViewAdapter(Context context, List<LiWuBean.ResultBean> mDatas, int mIndex) {
+    public GridViewAdapter(Context context, List<XiaZaiLiWuBean> mDatas, int mIndex) {
         this.mDatas = mDatas;
         this.context=context;
         mLayoutInflater = LayoutInflater.from(context);
@@ -66,7 +66,7 @@ public class GridViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.i("TAG", "position:" + position);
+       // Log.i("TAG", "position:" + position);
         ViewHolder vh = null;
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_gridview_header, parent, false);
@@ -89,6 +89,7 @@ public class GridViewAdapter extends BaseAdapter {
         }else {
             vh.iv.setBackgroundResource(R.color.transparent);
         }
+       // Log.d("GridViewAdapter", mDatas.get(pos).getGiftUrl()+"  "+mDatas.get(pos).getId());
         Glide.with(context)
                 .load(mDatas.get(pos).getGiftUrl())
                 //.apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -104,7 +105,7 @@ public class GridViewAdapter extends BaseAdapter {
     }
 
 
-    class ViewHolder {
+   private class ViewHolder {
         private TextView name,jingbi;
         private ImageView iv;
     }
