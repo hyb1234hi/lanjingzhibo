@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -26,9 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -47,6 +46,8 @@ public class WoDeZhiBoActivity extends AppCompatActivity {
     TextView shouru;
     @BindView(R.id.rl1)
     RelativeLayout rl1;
+    @BindView(R.id.top2)
+    View top2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +61,13 @@ public class WoDeZhiBoActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-       BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBeanBox().get(123456);
+        BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBeanBox().get(123456);
         if (baoCunBean != null) {
 
             Glide.with(WoDeZhiBoActivity.this)
-                        .load(baoCunBean.getHeadImage())
-                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(touxiang);
+                    .load(baoCunBean.getHeadImage())
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .into(touxiang);
             //RequestOptions.bitmapTransform(new CircleCrop())//圆形
             //RequestOptions.bitmapTransform(new RoundedCorners( 5))//圆角
             name.setText(baoCunBean.getNickname() + "");
@@ -77,14 +78,17 @@ public class WoDeZhiBoActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.fanhui, R.id.rl1})
+    @OnClick({R.id.fanhui, R.id.rl1,R.id.top2})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fanhui:
                 finish();
                 break;
             case R.id.rl1:
-                startActivity(new Intent(WoDeZhiBoActivity.this,ZHiBoShiChangActivity.class));
+                startActivity(new Intent(WoDeZhiBoActivity.this, ZHiBoShiChangActivity.class));
+                break;
+            case R.id.top2:
+                startActivity(new Intent(WoDeZhiBoActivity.this, WoDeFenSiActivity.class));
                 break;
         }
     }
@@ -93,9 +97,9 @@ public class WoDeZhiBoActivity extends AppCompatActivity {
 
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL+"/anchor/income");
+                .url(Consts.URL + "/anchor/income");
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -113,11 +117,11 @@ public class WoDeZhiBoActivity extends AppCompatActivity {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    if (jsonObject.get("code").getAsInt()==2000) {
+                    if (jsonObject.get("code").getAsInt() == 2000) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                shouru.setText(jsonObject.get("total").getAsInt()+"");
+                                shouru.setText(jsonObject.get("total").getAsInt() + "");
                             }
                         });
                     }
@@ -129,4 +133,6 @@ public class WoDeZhiBoActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

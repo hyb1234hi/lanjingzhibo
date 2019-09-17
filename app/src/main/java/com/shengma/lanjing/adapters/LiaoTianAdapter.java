@@ -15,8 +15,8 @@ public class LiaoTianAdapter extends BaseMultiItemQuickAdapter<LiaoTianBean,Base
 
     public LiaoTianAdapter(List<LiaoTianBean> list) {
         super(list);
-        addItemType(LiaoTianBean.ONE,R.layout.liaotian_item);
-        addItemType(LiaoTianBean.TOW, R.layout.liaotian_item2);
+        addItemType(1,R.layout.liaotian_item);//带等级的
+        addItemType(2, R.layout.liaotian_item2);//进入直播间
 
     }
 
@@ -24,12 +24,12 @@ public class LiaoTianAdapter extends BaseMultiItemQuickAdapter<LiaoTianBean,Base
     @Override
     protected void convert(BaseViewHolder helper, LiaoTianBean item) {
         switch (helper.getItemViewType()) {
-            case LiaoTianBean.ONE:
+            case 1:
                 helper.setText(R.id.name1, item.getNickname());
                 helper.setText(R.id.neirong1, item.getNeirong());
                 helper.setText(R.id.dengjilt, "Lv."+item.getDengji());
                 break;
-            case LiaoTianBean.TOW:
+            case 2:
                 helper.setText(R.id.name, item.getNickname());
                 helper.setText(R.id.neirong, "加入直播间");
                 break;

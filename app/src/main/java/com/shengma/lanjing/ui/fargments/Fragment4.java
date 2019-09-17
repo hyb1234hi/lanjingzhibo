@@ -24,6 +24,8 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.ui.GeXinSheZhiActivity;
 import com.shengma.lanjing.ui.KaiBoActivity;
 import com.shengma.lanjing.ui.QianBaoActivity;
+import com.shengma.lanjing.ui.WoDeFenSiActivity;
+import com.shengma.lanjing.ui.WoDeGuanZhuActivity;
 import com.shengma.lanjing.ui.WoDeZhiBoActivity;
 import com.shengma.lanjing.ui.WoDeZiLiaoActivity;
 import com.shengma.lanjing.views.MyTopView;
@@ -140,10 +142,10 @@ public class Fragment4 extends Fragment {
                 startActivity(new Intent(getActivity(), WoDeZhiBoActivity.class));
                 break;
             case R.id.textView2:
-
+                startActivity(new Intent(getActivity(), WoDeGuanZhuActivity.class));
                 break;
             case R.id.textView3:
-
+                startActivity(new Intent(getActivity(), WoDeFenSiActivity.class));
                 break;
             case R.id.rl1:
                 startActivity(new Intent(getActivity(), QianBaoActivity.class));

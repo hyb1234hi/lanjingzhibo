@@ -496,13 +496,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    LiaoTianBean bean = new LiaoTianBean();
-                    bean.setNickname(userName);
-                    bean.setType(1);
-                    //bean.setUserInfo(audienceInfo.userInfo);
-                    bean.setHeadImage(userAvatar);
-                    bean.setUserid(Long.parseLong(userID));
-                    bean.setNeirong(message);
+                    LiaoTianBean bean = com.alibaba.fastjson.JSONObject.parseObject(message,LiaoTianBean.class);
                     lingshiList.add(0, bean);
                 }
             });
@@ -517,7 +511,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void wxMSG(MsgWarp msgWarp) {
-        if (msgWarp.getType() == 1005) {
+        if (msgWarp.getType() == 1005) {//收到输入的消息广播
             if (!msgWarp.getMsg().equals("")) {
                 try {
                     ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -537,22 +531,16 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 bean.setHeadImage(baoCunBean.getHeadImage());
                 bean.setUserid(baoCunBean.getUserid());
                 bean.setNeirong(msgWarp.getMsg());
+                bean.setSex(baoCunBean.getSex());
                 liaoTianBeanList.add(0, bean);
                 liaoTianAdapter.notifyDataSetChanged();
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("sex", baoCunBean.getSex());
-                    jsonObject.put("level", baoCunBean.getAnchorLevel());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mlvbLiveRoom.sendRoomCustomMsg("1", jsonObject.toString(), new SendRoomCustomMsgCallback() {
+                String js= com.alibaba.fastjson.JSONObject.toJSONString(bean);
+                mlvbLiveRoom.sendRoomCustomMsg("1", js, new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
                         Log.d("ZhiBoActivity", "errCode:" + errCode);
                         Log.d("ZhiBoActivity", "errInfo:" + errInfo);
                     }
-
                     @Override
                     public void onSuccess() {
                         Log.d("ZhiBoActivity", "发送自定义消息成功1");

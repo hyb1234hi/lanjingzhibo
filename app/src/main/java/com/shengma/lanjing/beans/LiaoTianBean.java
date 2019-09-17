@@ -4,9 +4,6 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 public class LiaoTianBean implements MultiItemEntity {
 
-    public static final int ONE = 1;
-    public static final int TOW = 2;
-
 
     private int dengji;
     private String neirong;
@@ -15,7 +12,16 @@ public class LiaoTianBean implements MultiItemEntity {
     private long userid;
     private String nickname;
     private String headImage;
-    public String userInfo;   //观众信息
+    private String userInfo;   //观众信息
+    private int sex;   //观众信息
+
+    public int getSex() {
+        return sex;
+    }
+
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
 
     public String getUserInfo() {
         return userInfo;
