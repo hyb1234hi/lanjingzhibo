@@ -1,6 +1,7 @@
 package com.shengma.lanjing.ui.fargments;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,14 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.gson.Gson;
@@ -25,8 +24,8 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.FuJinAdapter;
 import com.shengma.lanjing.beans.FuJinBean;
-import com.shengma.lanjing.beans.GuanZhuBean;
 import com.shengma.lanjing.cookies.CookiesManager;
+import com.shengma.lanjing.ui.zhibo.BoFangActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.DisplayUtils;
 import com.shengma.lanjing.utils.GsonUtil;
@@ -109,6 +108,10 @@ public class Fragment2 extends Fragment {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
+                Intent intent=new Intent(getActivity(), BoFangActivity.class);
+                intent.putExtra("idid",beanList.get(position).getId());
+                intent.putExtra("playPath",beanList.get(position).getPlayUrl());
+                startActivity(intent);
             }
         });
 

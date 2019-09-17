@@ -59,7 +59,7 @@ public class FuJinBean {
          * pushUrl : rtmp://56626.livepush.myqcloud.com/live/lanjing_1?txSecret=8aa56e3d957764d1eb6d8c68466c87c7&txTime=9A7EC800
          * playUrl : http://www.curpep.com/live/lanjing_1.flv
          */
-
+        private Long id;
         private int distance;
         private String coverImg;
         private String title;
@@ -67,6 +67,14 @@ public class FuJinBean {
         private int roomId;
         private String pushUrl;
         private String playUrl;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
 
         public int getDistance() {
             return distance;

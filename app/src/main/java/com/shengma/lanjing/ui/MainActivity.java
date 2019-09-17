@@ -247,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                            Intent intent=new Intent(MainActivity.this,LogingActivity.class);
                            intent.putExtra("aaa","aaa");
                            startActivity(intent);
+                           finish();
                        }
                     }catch (Exception e1){
                         e1.printStackTrace();
