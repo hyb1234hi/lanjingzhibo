@@ -368,6 +368,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 bean.setHeadImage(audienceInfo.userAvatar);
                 bean.setUserid(Long.parseLong(audienceInfo.userID));
                 lingshiList.add(0, bean);
+
             }
         });
 

@@ -18,6 +18,7 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.LiwuPathBean;
 import com.shengma.lanjing.beans.MyObjectBox;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
+import com.shengma.lanjing.beans.YongHuListBean;
 import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.dialogall.CommonData;
 import com.shengma.lanjing.dialogall.CommonDialogService;
@@ -52,6 +53,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     private Box<BaoCunBean> baoCunBeanBox=null;
     private Box<XiaZaiLiWuBean> xiaZaiLiWuBeanBox=null;
     private Box<LiwuPathBean> liwuPathBeanBox=null;
+    private Box<YongHuListBean> yongHuListBeanBox=null;
     public static MyApplication myApplication;
 
     public OkHttpClient okHttpClient =null;
@@ -95,6 +97,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
         xiaZaiLiWuBeanBox= mBoxStore.boxFor(XiaZaiLiWuBean.class);
         liwuPathBeanBox= mBoxStore.boxFor(LiwuPathBean.class);
+        yongHuListBeanBox= mBoxStore.boxFor(YongHuListBean.class);
 
         BaoCunBean  baoCunBean = mBoxStore.boxFor(BaoCunBean.class).get(123456L);
         if (baoCunBean == null) {
@@ -126,7 +129,9 @@ public class MyApplication extends Application implements Application.ActivityLi
     public Box<LiwuPathBean> getLiwuPathBeanBox(){
         return liwuPathBeanBox;
     }
-
+    public Box<YongHuListBean> getYongHuListBeanBox(){
+        return yongHuListBeanBox;
+    }
     public BaoCunBean getBaoCunBean(){
         return baoCunBeanBox.get(123456);
     }

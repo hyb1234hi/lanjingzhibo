@@ -21,7 +21,7 @@ public class ZHiBoAdapter extends BaseQuickAdapter<ZhiBoBean.ResultBean,BaseView
 
     @Override
     protected void convert(BaseViewHolder helper, ZhiBoBean.ResultBean item) {
-        helper.setText(R.id.title, item.getNickname());
+        helper.setText(R.id.title, item.getTitle());
         helper.setText(R.id.dengji, "Lv.11");
         Glide.with(mContext)
                 .load(item.getCoverImg())

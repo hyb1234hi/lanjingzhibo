@@ -193,8 +193,6 @@ public class KaiBoActivity extends AppCompatActivity {
 //                .add("uname", uname)
 //                .add("pwd", pwd)
 //                .build();
-
-
 //        JSONObject object=new JSONObject();
 //        try {
 //            object.put("uname",uname);
@@ -305,7 +303,6 @@ public class KaiBoActivity extends AppCompatActivity {
                 if (dialog != null)
                     dialog.dismiss();
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());

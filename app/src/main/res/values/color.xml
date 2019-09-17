@@ -4,18 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
-    <color name="huise33">#34e9d2d6</color>
-    <color name="lanse33">#1b37d6</color>
     <color name="transparent">#00000000</color>
 
     <color name="colorBar_bg">#0d2cf9</color>
-    <color name="tabtextcolo">#b7868686</color>
     <color name="write">#ffffffff</color>
     <color name="blake">#ff111111</color>
-    <color name="textcolor">#9a050505</color>
     <!-- 半透明 -->
-
-    <color name="ijk_transparent_dark">#77000000</color>
 
     <!-- 用于页面背景 -->
     <!-- 用于页面背景 -->
@@ -25,7 +19,6 @@
     <!-- 橙色 -->
     <!-- 深灰 -->
     <!-- 深灰 -->
-    <color name="dabg">#f7f7f7</color>
 
 
 </resources>
