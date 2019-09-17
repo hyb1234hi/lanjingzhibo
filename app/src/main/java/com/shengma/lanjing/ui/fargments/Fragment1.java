@@ -10,10 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.views.GZFragmentPagerAdapter;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -39,6 +42,12 @@ public class Fragment1 extends Fragment implements ViewPager.OnPageChangeListene
     ImageView im33;
     @BindView(R.id.sousuo)
     RelativeLayout sousuo;
+    @BindView(R.id.rl1)
+    RelativeLayout rl1;
+    @BindView(R.id.rl2)
+    RelativeLayout rl2;
+    @BindView(R.id.rl3)
+    RelativeLayout rl3;
     private ViewPager viewpage;
     private Unbinder unbinder;
 
@@ -134,4 +143,30 @@ public class Fragment1 extends Fragment implements ViewPager.OnPageChangeListene
 
     }
 
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.rl1:
+                viewpage.setCurrentItem(0);
+                resize();
+                tv11.setTextColor(Color.BLACK);
+                tv11.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                im11.setVisibility(View.VISIBLE);
+                break;
+            case R.id.rl2:
+                viewpage.setCurrentItem(1);
+                resize();
+                tv22.setTextColor(Color.BLACK);
+                tv22.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                im22.setVisibility(View.VISIBLE);
+                break;
+            case R.id.rl3:
+                viewpage.setCurrentItem(2);
+                resize();
+                tv33.setTextColor(Color.BLACK);
+                tv33.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                im33.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
 }

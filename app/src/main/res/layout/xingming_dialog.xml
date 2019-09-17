@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/yuanjiao_top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="212dp">
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:textColor="#333333"
+            android:layout_marginStart="30dp"
+            android:textSize="17sp"
+            android:text="我的昵称"
+            android:id="@+id/fff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+       <LinearLayout
+           android:orientation="vertical"
+           android:gravity="center"
+           android:layout_below="@+id/fff"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
+
+        <EditText
+            android:hint="请输入姓名"
+            android:maxLength="8"
+            android:id="@+id/name"
+            android:textColor="#666666"
+            android:textSize="15sp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"/>
+
+
+           <Button
+               android:id="@+id/wancheng"
+               android:text="完成"
+               android:layout_marginTop="30dp"
+               android:background="@drawable/wanchengbg"
+               android:textSize="15sp"
+               android:textColor="#FFFFFF"
+               android:layout_width="327dp"
+               android:layout_height="50dp"/>
+
+       </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

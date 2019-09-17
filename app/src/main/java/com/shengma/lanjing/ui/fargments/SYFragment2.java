@@ -162,7 +162,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("LogingActivity", "关注列表"+ss);
+                    Log.d("LogingActivity", "直播列表"+ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     ZhiBoBean bean = gson.fromJson(jsonObject, ZhiBoBean.class);
@@ -218,7 +218,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("LogingActivity", "关注列表"+ss);
+                    Log.d("LogingActivity", "直播类型"+ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     LiveType bean = gson.fromJson(jsonObject, LiveType.class);

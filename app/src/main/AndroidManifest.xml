@@ -7,23 +7,40 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".ui.ZhangHaoAnQuanActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.GeXinSheZhiActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.ChongZhiActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.QianBaoActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.KaiBoActivity" android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"
-            android:configChanges="orientation|keyboardHidden"/>
-        <activity android:name=".ui.WoDeZiLiaoActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.zhibo.BoFangActivity" android:screenOrientation="portrait" android:launchMode="singleTask"/>
-        <activity android:name=".ui.zhibo.ZhiBoActivity"
+        <activity android:name=".ui.XiTongXiaoXiActivity"></activity>
+        <activity
+            android:name=".ui.ZhangHaoAnQuanActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.GeXinSheZhiActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ChongZhiActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.QianBaoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.KaiBoActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask" android:windowSoftInputMode="adjustPan"/>
-
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
+        <activity
+            android:name=".ui.WoDeZiLiaoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.zhibo.BoFangActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.zhibo.ZhiBoActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.LogingActivity"
             android:screenOrientation="portrait">
@@ -33,7 +50,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.LogingActivity_zhuce"
             android:screenOrientation="portrait" />
@@ -60,9 +76,7 @@
         <meta-data
             android:name="design_width_in_dp"
             android:value="375" />
-
     </application>
-
     <uses-feature android:name="android.hardware.Camera" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />

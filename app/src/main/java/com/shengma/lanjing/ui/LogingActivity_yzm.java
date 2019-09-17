@@ -295,7 +295,7 @@ public class LogingActivity_yzm extends AppCompatActivity {
                 .header("Content-Type", "application/json")
 
                 .post(body)
-                .url(Consts.URL+"/user/bind");
+                .url(Consts.URL+"/login/phone");
         // step 3：创建 Call 对象
         Call call = okHttpClient.newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -313,7 +313,7 @@ public class LogingActivity_yzm extends AppCompatActivity {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("LogingActivity", "微信绑定手机"+ss);
+                    Log.d("LogingActivity", "手机号注册登录"+ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
@@ -384,8 +384,8 @@ public class LogingActivity_yzm extends AppCompatActivity {
                     if (jsonObject.get("code").getAsInt()==0){
                         startActivity(new Intent(LogingActivity_yzm.this,LogingActivity_mima.class));
                     }else {
+                        EventBus.getDefault().post(new MsgWarp(1002,""));
                         startActivity(new Intent(LogingActivity_yzm.this,MainActivity.class));
-                       EventBus.getDefault().post(new MsgWarp(1002,""));
                     }
                     ToastUtils.showInfo(LogingActivity_yzm.this,jsonObject.get("desc").getAsString());
                 } catch (Exception e) {

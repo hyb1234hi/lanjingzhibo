@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/yuanjiao_top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="146dp">
+
+        <TextView
+            android:textColor="#AAB5CA"
+            android:textSize="16sp"
+            android:text="取消"
+            android:padding="5dp"
+            android:id="@+id/quxiao"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:textColor="#5DAAF8"
+            android:textSize="16sp"
+            android:text="确定"
+            android:padding="5dp"
+            android:id="@+id/queding"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:textColor="#181818"
+            android:textSize="18sp"
+            android:id="@+id/fff"
+            android:text="性别选择"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_below="@+id/fff"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <!--
+             RadioButton 要想实现多选一的效果必须放到RadioGroup 中,否则无法实现多选一的效果.
+             技巧:要面向RadioGroup 编程,不要面向RaidoButton 编程,否则将增加很大代码量
+              android:orientation="vertical":执行按钮组的方向,默认值是vertical.
+             RadioGroup的父类时LinearLayout,但方向的默认值不再是线性布局的水平方向了,而是改成了垂直方向.
+             -->
+            <RadioGroup
+                android:id="@+id/radioGroup_gender"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                >
+                <RadioButton
+                    android:id="@+id/nan"
+                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:checked="false"
+                    android:text="男" />
+                <RadioButton
+                    android:textColor="#333333"
+                    android:textSize="14sp"
+                    android:layout_marginStart="12dp"
+                    android:id="@+id/nv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:checked="false"
+                    android:text="女" />
+            </RadioGroup>
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

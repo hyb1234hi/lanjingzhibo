@@ -81,9 +81,7 @@ public class LogingActivity_zhuce extends AppCompatActivity {
             case R.id.yanzhengma:
                 Intent intent = new Intent(LogingActivity_zhuce.this, LogingActivity_yzm.class);
                 intent.putExtra("phone", phone.getText().toString().trim());
-                intent.putExtra("wx", wx);
                 startActivity(intent);
-
                 break;
         }
     }

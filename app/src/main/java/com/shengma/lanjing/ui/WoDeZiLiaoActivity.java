@@ -29,6 +29,9 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.SaveBean;
 import com.shengma.lanjing.dialogs.PhotoDialog;
+import com.shengma.lanjing.dialogs.XIuGaiQianMingDialog;
+import com.shengma.lanjing.dialogs.XIuGaiXingBieDialog;
+import com.shengma.lanjing.dialogs.XIuGaiXingIMingDialog;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -100,7 +103,7 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                 }
             }
             if (baoCunBean.getAge()!=0)
-            nianling.setText(baoCunBean.getAge()+"");
+            nianling.setText(baoCunBean.getAge()+"岁");
             if (baoCunBean.getQianming()!=null)
             qianming.setText(baoCunBean.getQianming());
             if (baoCunBean.getJiaxiang()!=null)
@@ -127,7 +130,25 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
 
             link_loging(msgWarp.getMsg());
             Log.d("KaiBoActivity", msgWarp.getMsg());
+        }else if (msgWarp.getType()==1111){//姓名广播
+            link_save(msgWarp.getMsg(),"nickname");
+            name.setText(msgWarp.getMsg());
+        }else if (msgWarp.getType()==1112){//姓名广播
+            link_save(msgWarp.getMsg(),"sex");
+            if (msgWarp.getMsg().equals("1")){
+                xingbie.setText("男");
+            }else if (msgWarp.getMsg().equals("2")){
+                xingbie.setText("女");
+            }else {
+                xingbie.setText("保密");
+            }
+
+        }else if (msgWarp.getType()==1113){
+            link_save(msgWarp.getMsg(),"signature");
+            qianming.setText(msgWarp.getMsg());
         }
+
+
     }
 
 
@@ -149,11 +170,12 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                 photoDialog.show(getSupportFragmentManager(), "photodialog");
                 break;
             case R.id.rl1:
-
+                XIuGaiXingBieDialog xIuGaiXingBieDialog=new XIuGaiXingBieDialog();
+                xIuGaiXingBieDialog.show(getSupportFragmentManager(),"xingbie");
                 break;
             case R.id.rl2:
                 //1442246400000
-                long tenYears = 100L * 365 * 1000 * 60 * 60 * 24L;
+               // long tenYears = 100L * 365 * 1000 * 60 * 60 * 24L;
                 mDialogAll = new TimePickerDialog.Builder()
                         .setCallBack(WoDeZiLiaoActivity.this)
                         .setCancelStringId("取消")
@@ -168,16 +190,17 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                         .setMinMillseconds(Long.parseLong(dateToStamp("1950-01-01")))
                         .setMaxMillseconds(System.currentTimeMillis())
                         .setCurrentMillseconds(System.currentTimeMillis())
-                        .setThemeColor(getResources().getColor(R.color.timepicker_dialog_bg))
+                        .setThemeColor(Color.parseColor("#5DAAF8"))
                         .setType(Type.YEAR_MONTH_DAY)
-                        .setWheelItemTextNormalColor(getResources().getColor(R.color.timetimepicker_default_text_color))
-                        .setWheelItemTextSelectorColor(getResources().getColor(R.color.timepicker_toolbar_bg))
+                        .setWheelItemTextNormalColor(Color.parseColor("#dddddd"))
+                        .setWheelItemTextSelectorColor(Color.parseColor("#333333"))
                         .setWheelItemTextSize(14)
                         .build();
                 mDialogAll.show(getSupportFragmentManager(), "year_month_day");
                 break;
             case R.id.rl3:
-
+                XIuGaiQianMingDialog xIuGaiQianMingDialog=new XIuGaiQianMingDialog();
+                xIuGaiQianMingDialog.show(getSupportFragmentManager(),"qianming");
                 break;
             case R.id.rl4:
                 JDCityPicker cityPicker = new JDCityPicker();
@@ -192,7 +215,6 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                         jiaxiang.setText(city.getName());
                         link_save(city.getName(),"city");
                     }
-
                     @Override
                     public void onCancel() {
                     }
@@ -200,6 +222,8 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                 cityPicker.showCityPicker();
                 break;
             case R.id.bianjiningcheng:
+                XIuGaiXingIMingDialog xingIMingDialog=new XIuGaiXingIMingDialog();
+                xingIMingDialog.show(getSupportFragmentManager(),"xiugaixiugaixingm");
 
                 break;
             case R.id.fanhui:
@@ -230,7 +254,7 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
      */
     public static String stampToDate(String s){
         String res;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
         long lt = Long.valueOf(s);
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
@@ -488,8 +512,13 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onDateSet(TimePickerDialog timePickerView, long millseconds) {
-       Log.d( "dddd",timePickerView.getCurrentMillSeconds()+"");
-        Log.d( "dddd",millseconds+"");
-        Log.d("fffff",stampToDate(millseconds+""));
+      // Log.d( "dddd",timePickerView.getCurrentMillSeconds()+"");
+      //  Log.d( "dddd",millseconds+"");
+       // Log.d("fffff",stampToDate(millseconds+""));
+        String year = (Integer.parseInt(stampToDate(System.currentTimeMillis()+"")) - Integer.parseInt(stampToDate(millseconds+"")))+"";
+     //   Log.d("WoDeZiLiaoActivity", year);
+        link_save(year,"year");
+        nianling.setText(year+"岁");
+
     }
 }

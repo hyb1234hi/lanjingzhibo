@@ -145,8 +145,8 @@ public class LogingActivity_mima extends AppCompatActivity {
                     Log.d("LogingActivity", "设置密码"+ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     if (jsonObject.get("code").getAsInt()==1){
-                        startActivity(new Intent(LogingActivity_mima.this,MainActivity.class));
                         EventBus.getDefault().post(new MsgWarp(1002,""));
+                        startActivity(new Intent(LogingActivity_mima.this,MainActivity.class));
                     }
                     ToastUtils.showInfo(LogingActivity_mima.this,jsonObject.get("desc").getAsString());
                 } catch (Exception e) {

@@ -49,8 +49,6 @@
     <!-- pushstream -->
 
 
-
-
     <!-- userinfo fragment-->
     <string name="userinfo_title">编辑个人信息</string>
     <string name="userinfo_head">头像</string>

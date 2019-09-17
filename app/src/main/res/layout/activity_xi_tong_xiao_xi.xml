@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.XiTongXiaoXiActivity">
+
+
+    <ImageView
+        android:id="@+id/fanhui"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/fanhui_hei"
+        android:layout_width="15dp"
+        android:layout_height="20dp"/>
+
+
+    <TextView
+        app:layout_constraintTop_toTopOf="@+id/fanhui"
+        app:layout_constraintBottom_toBottomOf="@+id/fanhui"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:text="系统消息"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:id="@+id/ggg"
+        app:layout_constraintTop_toBottomOf="@+id/fanhui"
+        android:layout_marginTop="15dp"
+        android:background="#E5E5E5"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/refreshLayout"
+    app:layout_constraintTop_toBottomOf="@+id/ggg"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:layout_width="match_parent"
+    android:layout_height="0dp">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

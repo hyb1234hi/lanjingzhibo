@@ -12,6 +12,7 @@
 
         <ImageView
             android:id="@+id/bgbg"
+            android:scaleType="fitXY"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
@@ -48,6 +49,26 @@
                 android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <TextView
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:id="@+id/juli"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <ImageView
+            app:layout_constraintTop_toTopOf="@+id/juli"
+            app:layout_constraintBottom_toBottomOf="@+id/juli"
+            app:layout_constraintRight_toLeftOf="@+id/juli"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/julibg"
+            android:layout_width="9dp"
+            android:layout_height="12dp"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

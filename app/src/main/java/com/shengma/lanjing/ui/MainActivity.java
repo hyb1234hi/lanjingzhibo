@@ -1,24 +1,20 @@
 package com.shengma.lanjing.ui;
 
 
-import android.Manifest;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.mtp.MtpConstants;
+
 import android.os.Bundle;
-import android.os.Message;
+
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
-
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,7 +25,7 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.LiwuPathBean;
-import com.shengma.lanjing.beans.LogingBe;
+import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.cookies.CookiesManager;
@@ -46,6 +42,10 @@ import com.shengma.lanjing.views.MyFragmentPagerAdapter;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         link_userinfo();
         viewpage = findViewById(R.id.viewpage);
         MyFragmentPagerAdapter myFragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
@@ -137,6 +138,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void wxMSG(MsgWarp msgWarp){
+
+        if (msgWarp.getType()==1002){
+            finish();
+        }
+    }
 
 
     @OnClick({R.id.ll1, R.id.ll2, R.id.ll3, R.id.ll4})
@@ -513,6 +521,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             tanChuangThread.isRing = true;
             tanChuangThread.interrupt();
         }
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 }

@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.FuJinAdapter;
-import com.shengma.lanjing.adapters.GuanZhuAdapter;
+import com.shengma.lanjing.beans.FuJinBean;
 import com.shengma.lanjing.beans.GuanZhuBean;
 import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.utils.Consts;
@@ -60,7 +60,7 @@ public class Fragment2 extends Fragment {
             .build();
     private int pag=1;
     private float jd=0,wd=0;
-    private List<GuanZhuBean.ResultBean> beanList=new ArrayList<>();
+    private List<FuJinBean.ResultBean> beanList=new ArrayList<>();
     private FuJinAdapter adapter;
     private EditText sousuo;
     private TextView rrr;
@@ -163,10 +163,10 @@ public class Fragment2 extends Fragment {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("LogingActivity", "关注列表"+ss);
+                    Log.d("LogingActivity", "附近列表"+ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
-                    GuanZhuBean bean = gson.fromJson(jsonObject, GuanZhuBean.class);
+                    FuJinBean bean = gson.fromJson(jsonObject, FuJinBean.class);
                     if (bean.getCode()==2000) {
                         if (getActivity()!=null)
                             getActivity().runOnUiThread(new Runnable() {

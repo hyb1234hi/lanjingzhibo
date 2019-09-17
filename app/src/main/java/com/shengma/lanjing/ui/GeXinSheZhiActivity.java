@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
-
+import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.dialogs.TuiChuDialog2;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -62,7 +62,29 @@ public class GeXinSheZhiActivity extends AppCompatActivity {
 
                 break;
             case R.id.tuichu:
-
+                TuiChuDialog2 tuiChuDialog2=new TuiChuDialog2(GeXinSheZhiActivity.this);
+                tuiChuDialog2.setOnQueRenListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MyApplication.myApplication.getBaoCunBeanBox().removeAll();
+                        BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBeanBox().get(123456L);
+                        if (baoCunBean == null) {
+                            baoCunBean = new BaoCunBean();
+                            baoCunBean.setId(123456L);
+                            MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
+                        }
+                        startActivity(new Intent(GeXinSheZhiActivity.this,LogingActivity.class));
+                        tuiChuDialog2.dismiss();
+                        finish();
+                    }
+                });
+                tuiChuDialog2.setQuXiaoListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tuiChuDialog2.dismiss();
+                    }
+                });
+                tuiChuDialog2.show();
                 break;
         }
     }

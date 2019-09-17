@@ -41,7 +41,7 @@
         <RelativeLayout
             android:layout_toRightOf="@+id/rl1"
             android:id="@+id/rl2"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_width="50dp"
             android:layout_height="44dp">
 
@@ -66,8 +66,9 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl3"
             android:layout_toRightOf="@+id/rl2"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:orientation="vertical"
             android:layout_width="50dp"
             android:layout_height="44dp">
