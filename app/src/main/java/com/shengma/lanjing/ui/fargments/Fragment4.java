@@ -24,6 +24,7 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.ui.GeXinSheZhiActivity;
 import com.shengma.lanjing.ui.KaiBoActivity;
 import com.shengma.lanjing.ui.QianBaoActivity;
+import com.shengma.lanjing.ui.WoDeZhiBoActivity;
 import com.shengma.lanjing.ui.WoDeZiLiaoActivity;
 import com.shengma.lanjing.views.MyTopView;
 
@@ -136,7 +137,7 @@ public class Fragment4 extends Fragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.textView1:
-
+                startActivity(new Intent(getActivity(), WoDeZhiBoActivity.class));
                 break;
             case R.id.textView2:
 
