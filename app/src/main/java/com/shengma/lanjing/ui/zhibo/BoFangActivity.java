@@ -48,6 +48,7 @@ import com.shengma.lanjing.dialogs.InputPopupwindow;
 import com.shengma.lanjing.dialogs.LiWuDialog;
 import com.shengma.lanjing.dialogs.PKDialog;
 import com.shengma.lanjing.dialogs.TuiChuDialog;
+import com.shengma.lanjing.dialogs.ZhuanPanDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
@@ -701,6 +702,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 break;
             case R.id.meiyan:
                 //美颜是转盘
+                ZhuanPanDialog zhuanPanDialog=new ZhuanPanDialog();
+                zhuanPanDialog.show(getSupportFragmentManager(),"zhuanpan");
 
                 break;
             case R.id.pk:

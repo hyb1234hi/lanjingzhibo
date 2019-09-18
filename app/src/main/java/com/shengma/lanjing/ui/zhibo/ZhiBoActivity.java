@@ -781,6 +781,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
                 break;
             case R.id.paihangView:
+                //mlvbLiveRoom.setEyeScaleLevel(9);
+               // mlvbLiveRoom.setFaceSlimLevel(9);
 
                 break;
             case R.id.tuichu:
