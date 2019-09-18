@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/yuanjiao_top_hei"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="179dp">
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:text="设置美颜"
+            android:id="@+id/fff"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    <ImageView
+        android:layout_marginTop="14dp"
+        android:layout_marginRight="10dp"
+        android:padding="5dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/guanbi"
+        android:id="@+id/guanbi"
+        android:layout_width="32dp"
+        android:layout_height="32dp"/>
+
+
+       <LinearLayout
+           android:id="@+id/ggg"
+           android:orientation="horizontal"
+           android:gravity="center"
+           android:layout_marginTop="30dp"
+           android:layout_below="@+id/fff"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+           <TextView
+               android:text="美颜"
+               android:id="@+id/title"
+               android:textSize="17sp"
+               android:textColor="#ffffff"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+
+           <androidx.appcompat.widget.AppCompatSeekBar
+               style="@style/Widget.AppCompat.SeekBar.Discrete"
+               android:layout_marginStart="12dp"
+               android:max="9"
+               android:background="@drawable/yuanxian_bai10"
+               android:id="@+id/progressBar"
+               android:layout_width="260dp"
+               android:layout_height="20dp"/>
+
+
+       </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:layout_below="@+id/ggg"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/meiyan"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="美颜"
+                android:layout_weight="1"
+                android:padding="3dp"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+
+            <TextView
+                android:id="@+id/meibai"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="美白"
+                android:layout_weight="1"
+                android:padding="3dp"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/hongrun"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="红润"
+                android:gravity="center"
+                android:padding="3dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -2,9 +2,8 @@ package com.shengma.lanjing.ui.zhibo;
 
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,6 +26,7 @@ import com.badoo.mobile.util.WeakHandler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
@@ -37,8 +37,12 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.GuanZhongBean;
 import com.shengma.lanjing.beans.LiWuBoFangBean;
 import com.shengma.lanjing.beans.LiaoTianBean;
+import com.shengma.lanjing.beans.LiwuPathBean;
+import com.shengma.lanjing.beans.LiwuPathBean_;
 import com.shengma.lanjing.beans.MsgWarp;
+import com.shengma.lanjing.beans.QianBaoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
+import com.shengma.lanjing.beans.YongHuListBean;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
 import com.shengma.lanjing.dialogs.LiWuDialog;
@@ -55,25 +59,30 @@ import com.shengma.lanjing.utils.InputMethodUtils;
 import com.shengma.lanjing.utils.KeyboardStatusDetector;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.tencent.rtmp.ui.TXCloudVideoView;
-import com.zyao89.view.zloading.ZLoadingDialog;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.objectbox.query.LazyList;
+import kotlin.Lazy;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -109,6 +118,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     RecyclerView liaotianReView;
     @BindView(R.id.liwuReView)
     RecyclerView liwuReView;
+    @BindView(R.id.donghua)
+    ImageView donghua;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;    // 主播本地预览的 View
@@ -120,20 +131,19 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     private WeakHandler mHandler;
     private KeyboardStatusDetector keyboardStatusDetector;
     private InputPopupwindow popupwindow = null;
-    private int width,hight;
-    private List<LiaoTianBean> liaoTianBeanList=new ArrayList<>();
-    private List<LiaoTianBean> lingshiList=new ArrayList<>();
+    private int width, hight;
+    private List<LiaoTianBean> liaoTianBeanList = new ArrayList<>();
+    private List<LiaoTianBean> lingshiList = new ArrayList<>();
     private LiaoTianAdapter liaoTianAdapter;
-    private boolean keyboardVisible=false;
-   // private List<RoomInfo> pkList=new ArrayList<>();
-   // private PKListDialog pkListDialog;
-    private ZLoadingDialog dialog;
+    // private List<RoomInfo> pkList=new ArrayList<>();
+    // private PKListDialog pkListDialog;
     private int idid;
     private String playPath;
     private int jianpangHight;
-    private List<LiWuBoFangBean> boFangBeanList=new ArrayList<>();
+    private List<LiWuBoFangBean> boFangBeanList = new ArrayList<>();
     private LiWuBoFangAdapter liWuBoFangAdapter;
-
+    private LinkedBlockingQueue<Integer> linkedBlockingQueue;
+    private TanChuangThread tanChuangThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,12 +151,15 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         setContentView(R.layout.activity_bo_fang);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        playPath=getIntent().getStringExtra("playPath");
-        idid=getIntent().getIntExtra("idid",0);
+        MyApplication.myApplication.getYongHuListBeanBox().removeAll();
+        playPath = getIntent().getStringExtra("playPath");
+        idid = getIntent().getIntExtra("idid", 0);
+        linkedBlockingQueue = new LinkedBlockingQueue<>();
         DisplayMetrics outMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
-        width = outMetrics.widthPixels;hight = outMetrics.heightPixels;
-        liWuBoFangAdapter=new LiWuBoFangAdapter(boFangBeanList);
+        width = outMetrics.widthPixels;
+        hight = outMetrics.heightPixels;
+        liWuBoFangAdapter = new LiWuBoFangAdapter(boFangBeanList);
         mHandler = new WeakHandler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message message) {
@@ -155,15 +168,15 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
                         break;
                     case 222://聊天的
-                        if (liaoTianBeanList.size()>40){
+                        if (liaoTianBeanList.size() > 40) {
                             Iterator<LiaoTianBean> iter = liaoTianBeanList.iterator();
-                            int i=0;
+                            int i = 0;
                             while (iter.hasNext()) {
                                 i++;
                                 LiaoTianBean item = iter.next();
-                                if (i<10) {
+                                if (i < 10) {
                                     iter.remove();
-                                }else {
+                                } else {
                                     break;
                                 }
                             }
@@ -183,8 +196,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         keyboardStatusDetector.setVisibilityListener(new KeyboardStatusDetector.KeyboardVisibilityListener() {
             @Override
             public void onVisibilityChanged(boolean keyboardVisible, int heightDiff) {
-                BoFangActivity.this.keyboardVisible=keyboardVisible;
-                jianpangHight=heightDiff;
+                jianpangHight = heightDiff;
 //                if (keyboardVisible && isAA) {
 //                    if (popupwindow != null)
 //                        popupwindow.dismiss();
@@ -221,7 +233,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         gz_recyclerView.setAdapter(guanZhongAdapter);
 
         mlvbLiveRoom.setListener(this);
-       // mlvbLiveRoom.setCameraMuteImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
+        // mlvbLiveRoom.setCameraMuteImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
         String roomInfo = "";
         try {
             roomInfo = new JSONObject()
@@ -232,7 +244,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mlvbLiveRoom.enterRoom(idid+"", txCloudVideoView,playPath, new EnterRoomCallback() {
+        mlvbLiveRoom.enterRoom(idid + "", txCloudVideoView, playPath, new EnterRoomCallback() {
             @Override
             public void onError(int errCode, String errInfo) {
                 Log.d("BoFangActivity", "errCode:" + errCode);
@@ -241,14 +253,16 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
             @Override
             public void onSuccess() {
+                link_qianbao();//发送进房自定义消息
                 Log.d("BoFangActivity", "加入直播间成功");
+
             }
         });
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(BoFangActivity.this,LinearLayoutManager.VERTICAL,true);
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(BoFangActivity.this, LinearLayoutManager.VERTICAL, true);
         //设置布局管理器
         liaotianReView.setLayoutManager(layoutManager1);
         //设置Adapter
-        liaoTianAdapter=new LiaoTianAdapter(liaoTianBeanList);
+        liaoTianAdapter = new LiaoTianAdapter(liaoTianBeanList);
         liaotianReView.setAdapter(liaoTianAdapter);
 //        liaoTianAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
 ////            @Override public void onLoadMoreRequested() {
@@ -257,20 +271,21 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 ////
 ////            }
 ////        }, liaotianReView);
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(BoFangActivity.this,LinearLayoutManager.VERTICAL,true);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(BoFangActivity.this, LinearLayoutManager.VERTICAL, true);
         liwuReView.setLayoutManager(layoutManager2);
         liwuReView.setAdapter(liWuBoFangAdapter);
 
-        ConstraintLayout.LayoutParams params= (ConstraintLayout.LayoutParams) liaotianReView.getLayoutParams();
-        params.height= (int) (hight*0.33);
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) liaotianReView.getLayoutParams();
+        params.height = (int) (hight * 0.33);
         liaotianReView.setLayoutParams(params);
         liaotianReView.invalidate();
-        ConstraintLayout.LayoutParams params2= (ConstraintLayout.LayoutParams) liwuReView.getLayoutParams();
-        params2.height= (int) (hight*0.33);
+        ConstraintLayout.LayoutParams params2 = (ConstraintLayout.LayoutParams) liwuReView.getLayoutParams();
+        params2.height = (int) (hight * 0.33);
         liwuReView.setLayoutParams(params2);
         liwuReView.invalidate();
 
-
+        tanChuangThread = new TanChuangThread();
+        tanChuangThread.start();
         link_userinfo();
         task = new TimerTask() {
             @Override
@@ -281,7 +296,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
             }
         };
-        timer.schedule(task, 3000,4000);
+        timer.schedule(task, 3000, 4000);
     }
 
 
@@ -322,13 +337,13 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LiaoTianBean bean=new LiaoTianBean();
+                LiaoTianBean bean = new LiaoTianBean();
                 bean.setNickname(audienceInfo.userName);
                 bean.setType(2);
                 bean.setUserInfo(audienceInfo.userInfo);
                 bean.setHeadImage(audienceInfo.userAvatar);
                 bean.setUserid(Long.parseLong(audienceInfo.userID));
-                lingshiList.add(0,bean);
+                lingshiList.add(0, bean);
             }
         });
 
@@ -358,14 +373,14 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
     @Override
     public void onRequestRoomPK(AnchorInfo anchorInfo) {
-        Log.d("ggggg","收到PK请求");
-        PKDialog pkDialog=new PKDialog(BoFangActivity.this,anchorInfo.userID);
+        Log.d("ggggg", "收到PK请求");
+        PKDialog pkDialog = new PKDialog(BoFangActivity.this, anchorInfo.userID);
         pkDialog.setOnQueRenListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //拒绝
                 pkDialog.dismiss();
-                mlvbLiveRoom.responseRoomPK(anchorInfo.userID,false,"");
+                mlvbLiveRoom.responseRoomPK(anchorInfo.userID, false, "");
 
             }
         });
@@ -374,7 +389,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             public void onClick(View view) {
                 //同意
                 pkDialog.dismiss();
-                mlvbLiveRoom.responseRoomPK(anchorInfo.userID,true,"");
+                mlvbLiveRoom.responseRoomPK(anchorInfo.userID, true, "");
             }
         });
         pkDialog.show();
@@ -392,20 +407,34 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
     @Override
     public void onRecvRoomCustomMsg(String roomID, String userID, String userName, String userAvatar, String cmd, String message) {
-        if (cmd.equals("1")){//发送普通消息
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    LiaoTianBean bean = com.alibaba.fastjson.JSONObject.parseObject(message,LiaoTianBean.class);
-                    lingshiList.add(0,bean);
+        switch (cmd) {
+            case "1": //发送普通消息
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LiaoTianBean bean = com.alibaba.fastjson.JSONObject.parseObject(message, LiaoTianBean.class);
+                        lingshiList.add(0, bean);
+                    }
+                });
+                break;
+            case "liwudonghua1": //收到普通礼物消息
+                synchronized (BoFangActivity.this) {
+                    LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message, LiWuBoFangBean.class);
+                    boFangBeanList.add(0, parseUser);
+                    liWuBoFangAdapter.notifyDataSetChanged();
+                    linkedBlockingQueue.offer(1);
                 }
-            });
-        }else if (cmd.equals("liwudonghua1")){//收到普通礼物消息
-            LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message,LiWuBoFangBean.class);
-            boFangBeanList.add(0,parseUser);
-            liWuBoFangAdapter.notifyDataSetChanged();
-        }
+                break;
+            case "liwudonghua2": //收到大型礼物消息
 
+
+                break;
+            case "rufang": //收到观众入房消息
+                YongHuListBean yongHuListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
+                MyApplication.myApplication.getYongHuListBeanBox().put(yongHuListBean);
+                break;
+
+        }
 
     }
 
@@ -424,7 +453,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 }
                 //发送消息
                 Log.d("BoFangActivity", msgWarp.getMsg());
-                LiaoTianBean bean=new LiaoTianBean();
+                LiaoTianBean bean = new LiaoTianBean();
                 bean.setNickname(baoCunBean.getNickname());
                 bean.setType(1);
                 bean.setDengji(baoCunBean.getAnchorLevel());
@@ -432,15 +461,16 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 bean.setUserid(baoCunBean.getUserid());
                 bean.setNeirong(msgWarp.getMsg());
                 bean.setSex(baoCunBean.getSex());
-                liaoTianBeanList.add(0,bean);
+                liaoTianBeanList.add(0, bean);
                 liaoTianAdapter.notifyDataSetChanged();
-                String js= com.alibaba.fastjson.JSONObject.toJSONString(bean);
+                String js = com.alibaba.fastjson.JSONObject.toJSONString(bean);
                 mlvbLiveRoom.sendRoomCustomMsg("1", js, new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
                         Log.d("BoFangActivity", "errCode:" + errCode);
                         Log.d("BoFangActivity", "errInfo:" + errInfo);
                     }
+
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送自定义消息成功1");
@@ -450,18 +480,17 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             }
         }
 
-        if (msgWarp.getType()==1100){//发送礼物之后的广播1.播放自己的礼物动画，2发送自定义消息，让其他人播放礼物动画
-            Log.d("BoFangActivity", "msgWarp.getTemp()"+msgWarp.getTemp());
-            if (Integer.parseInt(msgWarp.getTemp())==0){
+        if (msgWarp.getType() == 1100) {//发送礼物之后的广播1.播放自己的礼物动画，2发送自定义消息，让其他人播放礼物动画
+            Log.d("BoFangActivity", "msgWarp.getTemp()" + msgWarp.getTemp());
+            if (Integer.parseInt(msgWarp.getTemp()) == 0) {
                 //礼物类型1
-
-                LiWuBoFangBean liWuBoFangBean=new LiWuBoFangBean();
+                LiWuBoFangBean liWuBoFangBean = new LiWuBoFangBean();
                 liWuBoFangBean.setHeadImage(baoCunBean.getHeadImage());
                 liWuBoFangBean.setId(baoCunBean.getUserid());
                 liWuBoFangBean.setName(baoCunBean.getNickname());
-                XiaZaiLiWuBean nliwuname=MyApplication.myApplication.getXiaZaiLiWuBeanBox().get(Integer.parseInt(msgWarp.getMsg()));
-                if (nliwuname==null){
-                    ToastUtils.showError(BoFangActivity.this,"未找到本地礼物");
+                XiaZaiLiWuBean nliwuname = MyApplication.myApplication.getXiaZaiLiWuBeanBox().get(Integer.parseInt(msgWarp.getMsg()));
+                if (nliwuname == null) {
+                    ToastUtils.showError(BoFangActivity.this, "未找到本地礼物");
                     return;
                 }
                 liWuBoFangBean.setLiwuName(nliwuname.getGiftName());
@@ -470,27 +499,72 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 mlvbLiveRoom.sendRoomCustomMsg("liwudonghua1", jsonString, new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
-                        Log.d("BoFangActivity", "发送礼物自定义消息失败"+errInfo+errCode);
-                        ToastUtils.showError(BoFangActivity.this,"发送礼物消息失败");
+                        Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
+                        ToastUtils.showError(BoFangActivity.this, "发送礼物消息失败");
                     }
+
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送礼物自定义消息成功");
-                         boFangBeanList.add(0,liWuBoFangBean);
-                         liWuBoFangAdapter.notifyDataSetChanged();
+                        synchronized (BoFangActivity.this) {
+                            boFangBeanList.add(0, liWuBoFangBean);
+                            liWuBoFangAdapter.notifyDataSetChanged();
+                            linkedBlockingQueue.offer(1);
+                        }
+
                     }
                 });
 
-
-            }else { //礼物类型2
-                mlvbLiveRoom.sendRoomCustomMsg("liwudonghua2", msgWarp.getMsg(), new SendRoomCustomMsgCallback() {
+            } else { //礼物类型2
+                LiWuBoFangBean liWuBoFangBean = new LiWuBoFangBean();
+                liWuBoFangBean.setHeadImage(baoCunBean.getHeadImage());
+                liWuBoFangBean.setId(baoCunBean.getUserid());
+                liWuBoFangBean.setName(baoCunBean.getNickname());
+                XiaZaiLiWuBean nliwuname = MyApplication.myApplication.getXiaZaiLiWuBeanBox().get(Integer.parseInt(msgWarp.getMsg()));
+                if (nliwuname == null) {
+                    ToastUtils.showError(BoFangActivity.this, "未找到本地礼物");
+                    return;
+                }
+                liWuBoFangBean.setLiwuName(nliwuname.getGiftName());
+                liWuBoFangBean.setLiwuPath(nliwuname.getGiftUrl());
+                String jsonString = com.alibaba.fastjson.JSONObject.toJSONString(liWuBoFangBean);
+                mlvbLiveRoom.sendRoomCustomMsg("liwudonghua2", jsonString, new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
-                        Log.d("BoFangActivity", "发送礼物自定义消息失败"+errInfo+errCode);
+                        Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
+                        ToastUtils.showError(BoFangActivity.this, "发送礼物消息失败");
                     }
+
                     @Override
                     public void onSuccess() {
-                        Log.d("BoFangActivity", "发送礼物自定义消息成功");
+                        Log.d("BoFangActivity", "发送礼物自定义消息成功2");
+                        //播放.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build()
+
+                        LazyList<LiwuPathBean> list=MyApplication.myApplication.getLiwuPathBeanBox().query().equal(LiwuPathBean_.sid,nliwuname.getId())
+                                .build().findLazy();
+                        if (list.size()==0){
+                            ToastUtils.showError(BoFangActivity.this, "未找到礼物资源,请等待后台下载完成");
+                        }
+                        AnimationDrawable animationDrawable = new AnimationDrawable();
+                        animationDrawable.setOneShot(true);//播放一次
+                        int duration = 0;
+                        for (LiwuPathBean bean:list) {
+                            Drawable drawable = Drawable.createFromPath(bean.getPath());
+                            if (drawable!=null){
+                                duration+=200;
+                                animationDrawable.addFrame(drawable, 200);
+                                Log.d("BoFangActivity", "drawable");
+                            }
+                        }
+                        donghua.setBackground(animationDrawable);
+                        animationDrawable.start();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            public void run() {//动画结束
+                                donghua.setBackground(null);
+                            }
+                        }, duration);
+
                     }
                 });
             }
@@ -514,15 +588,31 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         }
 
 
-
     }
 
 
     @Override
     protected void onDestroy() {
         timer.cancel();
+        //退出时发送退房自定义通知
+        YongHuListBean yongHuListBean = new YongHuListBean();
+        yongHuListBean.setId(baoCunBean.getUserid());
+        String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
+        mlvbLiveRoom.sendRoomCustomMsg("tuifang", js, new SendRoomCustomMsgCallback() {
+            @Override
+            public void onError(int errCode, String errInfo) {
+            }
+
+            @Override
+            public void onSuccess() {
+            }
+        });
+
         if (task != null)
             task.cancel();
+        if (tanChuangThread != null)
+            tanChuangThread.interrupt();
+
         EventBus.getDefault().unregister(this);
 
         super.onDestroy();
@@ -614,8 +704,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
                 break;
             case R.id.pk:
-              //pk是礼物
-                LiWuDialog liWuDialog = new LiWuDialog(idid+"");
+                //pk是礼物
+                LiWuDialog liWuDialog = new LiWuDialog(idid + "");
                 liWuDialog.show(getSupportFragmentManager(), "liWuDialog");
 
                 break;
@@ -675,7 +765,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 //                .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
                 .url(Consts.URL + "/user/info");
         // step 3：创建 Call 对象
@@ -685,7 +775,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
-              //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
             }
 
             @Override
@@ -711,10 +801,127 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     });
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
-                   // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
 
                 }
             }
         });
     }
+
+
+    private void link_qianbao() {
+        //  MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("", "")
+                .build();
+//        JSONObject object=new JSONObject();
+//        try {
+//            object.put("uname",uname);
+//            object.put("pwd",pwd);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        //RequestBody body = RequestBody.create(object.toString(),JSON);
+//        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
+//        RequestBody requestBody = new MultipartBody.Builder()
+//                .setType(MultipartBody.FORM)
+//                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
+//                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/user/wallet");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                ToastUtils.showError(BoFangActivity.this, "进房失败,请退出后重试");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "钱包:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    QianBaoBean logingBe = gson.fromJson(jsonObject, QianBaoBean.class);
+                    if (logingBe.getCode() == 2000) {
+                        YongHuListBean yongHuListBean = new YongHuListBean();
+                        yongHuListBean.setName(baoCunBean.getNickname());
+                        yongHuListBean.setDengji(baoCunBean.getAnchorLevel());
+                        yongHuListBean.setHeadImage(baoCunBean.getHeadImage());
+                        yongHuListBean.setId(baoCunBean.getUserid());
+                        yongHuListBean.setJingbi(logingBe.getResult().getConsumption());
+                        yongHuListBean.setSex(baoCunBean.getSex());
+                        yongHuListBean.setType(0);
+                        String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
+                        // Log.d("BoFangActivity", js);
+                        mlvbLiveRoom.sendRoomCustomMsg("rufang", js, new SendRoomCustomMsgCallback() {
+                            @Override
+                            public void onError(int errCode, String errInfo) {
+                                ToastUtils.showError(BoFangActivity.this, "发送进房消息失败,请退出后重试");
+                            }
+
+                            @Override
+                            public void onSuccess() {
+
+                            }
+                        });
+                    } else {
+                        ToastUtils.showError(BoFangActivity.this, "进房失败,请退出后重试");
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    ToastUtils.showError(BoFangActivity.this, "进房失败,请退出后重试");
+
+                }
+            }
+        });
+    }
+
+    private class TanChuangThread extends Thread {
+        boolean isRing;
+
+        @Override
+        public void run() {
+            while (!isRing) {
+                try {
+
+                    //有动画 ，延迟到一秒一次
+                    Integer subject = linkedBlockingQueue.take();
+                    SystemClock.sleep(4000);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            synchronized (BoFangActivity.this) {
+                                boFangBeanList.remove(boFangBeanList.size() - 1);
+                                liWuBoFangAdapter.notifyDataSetChanged();
+                            }
+
+                        }
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void interrupt() {
+            isRing = true;
+            // Log.d("RecognizeThread", "中断了弹窗线程");
+            super.interrupt();
+        }
+    }
+
 }

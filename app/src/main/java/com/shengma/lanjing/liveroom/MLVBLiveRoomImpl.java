@@ -1,6 +1,7 @@
 package com.shengma.lanjing.liveroom;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -13,7 +14,10 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
+import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
@@ -24,6 +28,11 @@ import com.shengma.lanjing.liveroom.roomutil.http.HttpResponse;
 import com.shengma.lanjing.liveroom.roomutil.im.IMMessageMgr;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.shengma.lanjing.ui.LogingActivity;
+import com.shengma.lanjing.ui.MainActivity;
+import com.shengma.lanjing.utils.Consts;
+import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.ToastUtils;
 import com.tencent.imsdk.TIMUserProfile;
 import com.tencent.imsdk.TIMValueCallBack;
 import com.tencent.liteav.basic.log.TXCLog;
@@ -40,6 +49,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
@@ -50,6 +60,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
+import io.objectbox.Box;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.HeartBeatCallback, IMMessageMgr.IMMessageListener {
@@ -3081,6 +3100,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                 if (mSelfAccountInfo != null && mSelfAccountInfo.userID != null && mSelfAccountInfo.userID.length() > 0 && mCurrRoomID != null && mCurrRoomID.length() > 0) {
                     if (mHttpRequest != null) {
                         mHttpRequest.heartBeat(mSelfAccountInfo.userID, mCurrRoomID, mRoomStatusCode);
+                        link_loging(mSelfAccountInfo.userID);
                     }
                     if (handler != null) {
                         handler.postDelayed(heartBeatRunnable, 8000);
@@ -3102,6 +3122,49 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
             running = false;
             handler.removeCallbacks(heartBeatRunnable);
         }
+    }
+
+
+    private void link_loging(String id) {
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        JSONObject object=new JSONObject();
+        try {
+            object.put("id",id);
+            object.put("nums", MyApplication.myApplication.getYongHuListBeanBox().getAll().size());
+            object.put("roomId",id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody body = RequestBody.create(object.toString(),JSON);
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .post(body)
+                .url(Consts.URL+"/live/heartbeat");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "心跳请求失败" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                   // JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                   // Gson gson = new Gson();
+                    Log.d("AllConnects", "心跳:" + ss);
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "心跳异常");
+                }
+            }
+        });
     }
 
     private class TXLivePushListenerImpl implements ITXLivePushListener {

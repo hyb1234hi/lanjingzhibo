@@ -97,9 +97,11 @@ public class GeXinSheZhiActivity extends AppCompatActivity {
                         if (baoCunBean == null) {
                             baoCunBean = new BaoCunBean();
                             baoCunBean.setId(123456L);
+                            baoCunBean.setMeiyan(5);
+                            baoCunBean.setMeibai(5);
+                            baoCunBean.setHongrun(5);
                             MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
                         }
-
                         startActivity(new Intent(GeXinSheZhiActivity.this,LogingActivity.class));
                         tuiChuDialog2.dismiss();
                         EventBus.getDefault().post(new MsgWarp(1002,""));

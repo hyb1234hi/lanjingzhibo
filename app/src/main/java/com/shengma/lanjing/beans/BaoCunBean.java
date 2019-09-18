@@ -33,6 +33,31 @@ public class BaoCunBean {
     private String qianming;
     private String jiaxiang;
     private String session;
+    private int meiyan,meibai,hongrun;
+
+    public int getMeiyan() {
+        return meiyan;
+    }
+
+    public void setMeiyan(int meiyan) {
+        this.meiyan = meiyan;
+    }
+
+    public int getMeibai() {
+        return meibai;
+    }
+
+    public void setMeibai(int meibai) {
+        this.meibai = meibai;
+    }
+
+    public int getHongrun() {
+        return hongrun;
+    }
+
+    public void setHongrun(int hongrun) {
+        this.hongrun = hongrun;
+    }
 
     public String getSession() {
         return session;

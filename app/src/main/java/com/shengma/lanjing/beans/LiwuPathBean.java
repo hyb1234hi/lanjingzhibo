@@ -6,12 +6,21 @@ import io.objectbox.annotation.Id;
 
 
 @Entity
-public class LiwuPathBean {
+public class LiwuPathBean implements Comparable<LiwuPathBean>{
 
     @Id(assignable = true)
     private Long id;
     private String path;
     private Long sid;
+    private int uid;
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 
     public Long getId() {
         return id;
@@ -35,5 +44,11 @@ public class LiwuPathBean {
 
     public void setSid(Long sid) {
         this.sid = sid;
+    }
+
+    @Override
+    public int compareTo(LiwuPathBean o) {
+
+        return this.getUid() - o.getUid();
     }
 }

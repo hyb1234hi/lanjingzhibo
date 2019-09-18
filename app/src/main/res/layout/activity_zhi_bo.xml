@@ -275,6 +275,12 @@
 
 
     <!--////////////////////////////////////////////////////-->
+
+    <ImageView
+        android:id="@+id/donghua"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <TextView
         android:textColor="#C7C7C7"
         android:textSize="13sp"
@@ -362,6 +368,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="10dp"
         android:id="@+id/liaotianReView"
+        android:overScrollMode="never"
         android:layout_width="286dp"
         android:layout_height="wrap_content"/>
 
@@ -369,6 +376,7 @@
     <androidx.recyclerview.widget.RecyclerView
         app:layout_constraintBottom_toTopOf="@+id/liaotianReView"
         android:layout_marginBottom="6dp"
+        android:overScrollMode="never"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="10dp"
         android:id="@+id/liwuReView"

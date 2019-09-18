@@ -14,7 +14,7 @@ public class YongHuListBean {
     private int sex;
     private int dengji;
     private int type;//0是普通观众。1是管理员，2是被禁言
-    private int jingbi;
+    private double jingbi;
 
 
     public Long getId() {
@@ -65,11 +65,11 @@ public class YongHuListBean {
         this.type = type;
     }
 
-    public int getJingbi() {
+    public double getJingbi() {
         return jingbi;
     }
 
-    public void setJingbi(int jingbi) {
+    public void setJingbi(double jingbi) {
         this.jingbi = jingbi;
     }
 }

@@ -2,7 +2,6 @@ package com.shengma.lanjing.ui.zhibo;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -40,23 +39,22 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.GuanZhongBean;
 import com.shengma.lanjing.beans.LiWuBoFangBean;
 import com.shengma.lanjing.beans.LiaoTianBean;
-import com.shengma.lanjing.beans.LiwuPathBean;
 import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.beans.MsgWarp;
-import com.shengma.lanjing.beans.XiaZaiLiWuBean;
+import com.shengma.lanjing.beans.YongHuListBean;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
+import com.shengma.lanjing.dialogs.MeiYanDialog;
 import com.shengma.lanjing.dialogs.PKDialog;
 import com.shengma.lanjing.dialogs.PKListDialog;
 import com.shengma.lanjing.dialogs.TuiChuDialog;
+import com.shengma.lanjing.dialogs.YongHuListDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.RoomInfo;
-import com.shengma.lanjing.ui.LogingActivity;
-import com.shengma.lanjing.ui.MainActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.InputMethodUtils;
@@ -79,15 +77,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -149,6 +146,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     TextView pktv2;
     @BindView(R.id.chengfa)
     TextView chengfa;
+    @BindView(R.id.donghua)
+    ImageView donghua;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;      // 主播本地预览的 View
@@ -164,29 +163,33 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private List<LiaoTianBean> liaoTianBeanList = new ArrayList<>();
     private List<LiaoTianBean> lingshiList = new ArrayList<>();
     private LiaoTianAdapter liaoTianAdapter;
-    private boolean keyboardVisible = false;
     private List<RoomInfo> pkList = new ArrayList<>();
-    private boolean isAA = true;
     private PKListDialog pkListDialog;
     private ZLoadingDialog dialog;
-    private  CountDownTimer timer1;//pk
-    private  CountDownTimer timer2;//惩罚
+    private CountDownTimer timer1;//pk
+    private CountDownTimer timer2;//惩罚
     private AnchorInfo anchorInfo;
     private int jianpangHight;
-    private List<LiWuBoFangBean> boFangBeanList=new ArrayList<>();
+    private List<LiWuBoFangBean> boFangBeanList = new ArrayList<>();
     private LiWuBoFangAdapter liWuBoFangAdapter;
+    private boolean isPK = false;
+    private LinkedBlockingQueue<Integer> linkedBlockingQueue;
+    private TanChuangThread tanChuangThread;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zhi_bo);
         ButterKnife.bind(this);
+        MyApplication.myApplication.getYongHuListBeanBox().removeAll();
         EventBus.getDefault().register(this);
         DisplayMetrics outMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
         width = outMetrics.widthPixels;
         hight = outMetrics.heightPixels;
-        liWuBoFangAdapter=new LiWuBoFangAdapter(boFangBeanList);
+        linkedBlockingQueue = new LinkedBlockingQueue<>();
+        liWuBoFangAdapter = new LiWuBoFangAdapter(boFangBeanList);
         mHandler = new WeakHandler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message message) {
@@ -208,7 +211,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                 }
                             }
                         }
-                        liaoTianBeanList.addAll(lingshiList);
+                        liaoTianBeanList.addAll(0,lingshiList);
                         lingshiList.clear();
                         liaoTianAdapter.notifyDataSetChanged();
 
@@ -223,8 +226,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         keyboardStatusDetector.setVisibilityListener(new KeyboardStatusDetector.KeyboardVisibilityListener() {
             @Override
             public void onVisibilityChanged(boolean keyboardVisible, int heightDiff) {
-                ZhiBoActivity.this.keyboardVisible = keyboardVisible;
-                jianpangHight=heightDiff;
+                jianpangHight = heightDiff;
 //                if (keyboardVisible && isAA) {
 //                    if (popupwindow != null)
 //                        popupwindow.dismiss();
@@ -298,7 +300,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 ////
 ////            }
 ////        }, liaotianReView);
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(ZhiBoActivity.this,LinearLayoutManager.VERTICAL,true);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(ZhiBoActivity.this, LinearLayoutManager.VERTICAL, true);
         liwuReView.setLayoutManager(layoutManager2);
         liwuReView.setAdapter(liWuBoFangAdapter);
 
@@ -310,6 +312,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         params2.height = (int) (hight * 0.33);
         liwuReView.setLayoutParams(params2);
         liwuReView.invalidate();
+
+        tanChuangThread = new TanChuangThread();
+        tanChuangThread.start();
 
         task = new TimerTask() {
             @Override
@@ -399,91 +404,99 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     @Override
     public void onRequestRoomPK(AnchorInfo anchorInfo2) {
         Log.d("ggggg", "被动收到PK请求");
-        anchorInfo=anchorInfo2;
-        PKDialog pkDialog = new PKDialog(ZhiBoActivity.this, anchorInfo.userID);
-        pkDialog.setOnQueRenListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //拒绝
-                pkDialog.dismiss();
-                mlvbLiveRoom.responseRoomPK(anchorInfo.userID, false, "");
+        if (!isPK) {
+            isPK = true;
+            anchorInfo = anchorInfo2;
+            PKDialog pkDialog = new PKDialog(ZhiBoActivity.this, anchorInfo.userID);
+            pkDialog.setOnQueRenListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //拒绝
+                    pkDialog.dismiss();
+                    mlvbLiveRoom.responseRoomPK(anchorInfo.userID, false, "");
+                }
+            });
+            pkDialog.setQuXiaoListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //同意
+                    pkDialog.dismiss();
+                    mlvbLiveRoom.responseRoomPK(anchorInfo.userID, true, "");
+                    mlvbLiveRoom.startRemoteView(anchorInfo, videoPlayer2, new PlayCallback() {
+                        @Override
+                        public void onBegin() {
+                            link_kaishihunliu(anchorInfo.userID, baoCunBean.getUserid() + "");
+                            Log.d("ZhiBoActivity", "onBegin");
+                            txCloudVideoView.setVisibility(View.GONE);
+                            group.setVisibility(View.VISIBLE);
+                            timer1 = new CountDownTimer(600000, 1000) {
 
-            }
-        });
-        pkDialog.setQuXiaoListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //同意
-                pkDialog.dismiss();
-                mlvbLiveRoom.responseRoomPK(anchorInfo.userID, true, "");
-                mlvbLiveRoom.startRemoteView(anchorInfo, videoPlayer2, new PlayCallback() {
-                    @Override
-                    public void onBegin() {
-                        link_kaishihunliu(anchorInfo.userID,baoCunBean.getId()+"");
-                        Log.d("ZhiBoActivity", "onBegin");
-                        txCloudVideoView.setVisibility(View.GONE);
-                        group.setVisibility(View.VISIBLE);
-                        timer1 = new CountDownTimer(300000, 1000) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+                                    String st = Utils.timeParse((millisUntilFinished));
+                                    daojishi.setFocusable(false);
+                                    daojishi.setEnabled(false);
+                                    daojishi.setText(st);
+                                }
 
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-                                String st= Utils.timeParse((millisUntilFinished));
-                                daojishi.setFocusable(false);
-                                daojishi.setEnabled(false);
-                                daojishi.setText(st);
-                            }
+                                @Override
+                                public void onFinish() {
+                                    //第一次倒计时结束
+                                    chengfa.setVisibility(View.VISIBLE);
+                                    timer2 = new CountDownTimer(100000, 1000) {
 
-                            @Override
-                            public void onFinish() {
-                                //第一次倒计时结束
-                                chengfa.setVisibility(View.VISIBLE);
-                                timer2 = new CountDownTimer(100000, 1000) {
+                                        @Override
+                                        public void onTick(long millisUntilFinished) {
+                                            String st = Utils.timeParse((millisUntilFinished));
+                                            daojishi.setFocusable(false);
+                                            daojishi.setEnabled(false);
+                                            daojishi.setText(st);
+                                        }
 
-                                    @Override
-                                    public void onTick(long millisUntilFinished) {
-                                        String st= Utils.timeParse((millisUntilFinished));
-                                        daojishi.setFocusable(false);
-                                        daojishi.setEnabled(false);
-                                        daojishi.setText(st);
-                                    }
+                                        @Override
+                                        public void onFinish() {
+                                            //惩罚倒计时结束
+                                            chengfa.setVisibility(View.GONE);
+                                            group.setVisibility(View.GONE);
+                                            link_jieshuhunliu(anchorInfo.userID, baoCunBean.getId() + "");
+                                            mlvbLiveRoom.stopRemoteView(anchorInfo);
+                                            txCloudVideoView.setVisibility(View.VISIBLE);
+                                            isPK = false;
+                                        }
+                                    };
+                                    timer2.start();
 
-                                    @Override
-                                    public void onFinish() {
-                                        //惩罚倒计时结束
-                                        chengfa.setVisibility(View.GONE);
-                                        group.setVisibility(View.GONE);
-                                        link_jieshuhunliu(anchorInfo.userID,baoCunBean.getId()+"");
-                                        mlvbLiveRoom.stopRemoteView(anchorInfo);
-                                        txCloudVideoView.setVisibility(View.VISIBLE);
-                                    }
-                                };
-                                timer2.start();
+                                }
+                            };
+                            timer1.start();
 
-                            }
-                        };
-                        timer1.start();
+                        }
 
-                    }
+                        @Override
+                        public void onError(int errCode, String errInfo) {
 
-                    @Override
-                    public void onError(int errCode, String errInfo) {
+                        }
 
-                    }
+                        @Override
+                        public void onEvent(int event, Bundle param) {
 
-                    @Override
-                    public void onEvent(int event, Bundle param) {
+                        }
+                    });
 
-                    }
-                });
-
-            }
-        });
-        pkDialog.show();
+                }
+            });
+            pkDialog.show();
+        }
     }
 
     @Override
     public void onQuitRoomPK(AnchorInfo anchorInfo) {
-
+        //结束Pk
+        chengfa.setVisibility(View.GONE);
+        group.setVisibility(View.GONE);
+        link_jieshuhunliu(anchorInfo.userID, baoCunBean.getId() + "");
+        mlvbLiveRoom.stopRemoteView(anchorInfo);
+        txCloudVideoView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -493,19 +506,45 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
     @Override
     public void onRecvRoomCustomMsg(String roomID, String userID, String userName, String userAvatar, String cmd, String message) {
-        if (cmd.equals("1")) {//收到普通消息
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    LiaoTianBean bean = com.alibaba.fastjson.JSONObject.parseObject(message,LiaoTianBean.class);
-                    lingshiList.add(0, bean);
+        switch (cmd) {
+            case "1": //收到普通消息
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LiaoTianBean bean = com.alibaba.fastjson.JSONObject.parseObject(message, LiaoTianBean.class);
+                        lingshiList.add(0, bean);
+                    }
+                });
+                break;
+            case "liwudonghua1": //收到普通礼物消息
+                synchronized (ZhiBoActivity.this) {
+                    LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message, LiWuBoFangBean.class);
+                    boFangBeanList.add(0, parseUser);
+                    liWuBoFangAdapter.notifyDataSetChanged();
+                    linkedBlockingQueue.offer(1);
                 }
-            });
-        }else if (cmd.equals("liwudonghua1")){//收到普通礼物消息
-            LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message,LiWuBoFangBean.class);
-            boFangBeanList.add(0,parseUser);
-            liWuBoFangAdapter.notifyDataSetChanged();
 
+                break;
+            case "rufang": //收到观众入房消息
+                YongHuListBean yongHuListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
+                MyApplication.myApplication.getYongHuListBeanBox().put(yongHuListBean);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("ZhiBoActivity", "收到观众入房"+yongHuListBean.getName());
+                        LiaoTianBean bean = new LiaoTianBean();
+                        bean.setNickname(yongHuListBean.getName());
+                        bean.setType(2);
+                        bean.setHeadImage(yongHuListBean.getHeadImage());
+                        bean.setUserid((yongHuListBean.getId()));
+                        lingshiList.add(0, bean);
+                    }
+                });
+                break;
+            case "tuifang": //收到观众tui房消息
+                YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
+                MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
+                break;
         }
 
     }
@@ -535,13 +574,14 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 bean.setSex(baoCunBean.getSex());
                 liaoTianBeanList.add(0, bean);
                 liaoTianAdapter.notifyDataSetChanged();
-                String js= com.alibaba.fastjson.JSONObject.toJSONString(bean);
+                String js = com.alibaba.fastjson.JSONObject.toJSONString(bean);
                 mlvbLiveRoom.sendRoomCustomMsg("1", js, new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
                         Log.d("ZhiBoActivity", "errCode:" + errCode);
                         Log.d("ZhiBoActivity", "errInfo:" + errInfo);
                     }
+
                     @Override
                     public void onSuccess() {
                         Log.d("ZhiBoActivity", "发送自定义消息成功1");
@@ -565,24 +605,24 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             mlvbLiveRoom.requestRoomPK(msgWarp.getMsg(), new RequestRoomPKCallback() {
                 @Override
                 public void onAccept(AnchorInfo anchorInfo2) {
-                    anchorInfo=anchorInfo2;
+                    anchorInfo = anchorInfo2;
                     //接受
                     if (dialog != null)
                         dialog.dismiss();
-                    Log.d("ZhiBoActivity", "接受"+anchorInfo.accelerateURL);
+                    Log.d("ZhiBoActivity", "接受" + anchorInfo.accelerateURL);
 
                     mlvbLiveRoom.startRemoteView(anchorInfo, videoPlayer2, new PlayCallback() {
                         @Override
                         public void onBegin() {
-                            link_kaishihunliu(anchorInfo.userID,baoCunBean.getId()+"");
+                            link_kaishihunliu(anchorInfo.userID, baoCunBean.getUserid() + "");
                             Log.d("ZhiBoActivity", "onBegin");
                             txCloudVideoView.setVisibility(View.GONE);
                             group.setVisibility(View.VISIBLE);
-                            timer1 = new CountDownTimer(300000, 1000) {
+                            timer1 = new CountDownTimer(600000, 1000) {
 
                                 @Override
                                 public void onTick(long millisUntilFinished) {
-                                    String st= Utils.timeParse((millisUntilFinished));
+                                    String st = Utils.timeParse((millisUntilFinished));
                                     daojishi.setFocusable(false);
                                     daojishi.setEnabled(false);
                                     daojishi.setText(st);
@@ -596,7 +636,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
                                         @Override
                                         public void onTick(long millisUntilFinished) {
-                                            String st= Utils.timeParse((millisUntilFinished));
+                                            String st = Utils.timeParse((millisUntilFinished));
                                             daojishi.setFocusable(false);
                                             daojishi.setEnabled(false);
                                             daojishi.setText(st);
@@ -607,7 +647,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                             //惩罚倒计时结束
                                             chengfa.setVisibility(View.GONE);
                                             group.setVisibility(View.GONE);
-                                            link_jieshuhunliu(anchorInfo.userID,baoCunBean.getId()+"");
+                                            link_jieshuhunliu(anchorInfo.userID, baoCunBean.getId() + "");
                                             mlvbLiveRoom.stopRemoteView(anchorInfo);
                                             txCloudVideoView.setVisibility(View.VISIBLE);
                                         }
@@ -621,12 +661,12 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
                         @Override
                         public void onError(int errCode, String errInfo) {
-                            Log.d("ZhiBoActivity", "onError"+errInfo+errCode);
+                            Log.d("ZhiBoActivity", "onError" + errInfo + errCode);
                         }
 
                         @Override
                         public void onEvent(int event, Bundle param) {
-                            Log.d("ZhiBoActivity", "onEvent"+event+param.toString());
+                            Log.d("ZhiBoActivity", "onEvent" + event + param.toString());
 
 
                         }
@@ -685,14 +725,15 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         if (task != null)
             task.cancel();
         EventBus.getDefault().unregister(this);
-        if (anchorInfo!=null)
-            link_jieshuhunliu(anchorInfo.userID,baoCunBean.getId()+"");
-        if (timer1!=null)
+        if (anchorInfo != null)
+            link_jieshuhunliu(anchorInfo.userID, baoCunBean.getId() + "");
+        if (timer1 != null)
             timer1.cancel();
-        if (timer2!=null)
+        if (timer2 != null)
             timer2.cancel();
+        if (tanChuangThread!=null)
+            tanChuangThread.interrupt();
         super.onDestroy();
-
 
     }
 
@@ -702,8 +743,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (anchorInfo!=null)
-                    link_jieshuhunliu(anchorInfo.userID,baoCunBean.getId()+"");
+                if (anchorInfo != null)
+                    link_jieshuhunliu(anchorInfo.userID, baoCunBean.getId() + "");
                 mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
@@ -735,6 +776,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.guanzhongxiangqiang:
+                YongHuListDialog yongHuListDialog = new YongHuListDialog();
+                yongHuListDialog.show(getSupportFragmentManager(), "yuanogn");
 
                 break;
             case R.id.paihangView:
@@ -745,8 +788,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (anchorInfo!=null)
-                            link_jieshuhunliu(anchorInfo.userID,baoCunBean.getId()+"");
+                        if (anchorInfo != null)
+                            link_jieshuhunliu(anchorInfo.userID, baoCunBean.getId() + "");
                         mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
                             @Override
                             public void onError(int errCode, String errInfo) {
@@ -779,10 +822,11 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 mlvbLiveRoom.switchCamera();
                 break;
             case R.id.meiyan:
-
+                MeiYanDialog meiYanDialog = new MeiYanDialog();
+                meiYanDialog.show(getSupportFragmentManager(), "meiyan");
+                // mlvbLiveRoom.setBeautyStyle()
                 break;
             case R.id.pk:
-                isAA = false;
                 mlvbLiveRoom.getRoomList(0, 400, new GetRoomListCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
@@ -823,7 +867,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
                 break;
             case R.id.shuodian:
-                isAA = true;
                 InputMethodUtils.showOrHide(this);
                 new Thread(new Runnable() {
                     @Override
@@ -845,7 +888,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         }
     }
 
-    private void link_kaishihunliu(String id1,String id2) {
+    private void link_kaishihunliu(String id1, String id2) {
+        Log.d("ZhiBoActivity", "混流fromId:" + id1);
+        Log.d("ZhiBoActivity", "混流toId" + id2);
         RequestBody body = null;
         body = new FormBody.Builder()
                 .add("fromId", id1)
@@ -853,9 +898,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL+"/live/mix");
+                .url(Consts.URL + "/live/mix");
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -863,8 +908,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
-                ToastUtils.showError(ZhiBoActivity.this,"获取数据失败,请检查网络");
+                ToastUtils.showError(ZhiBoActivity.this, "获取数据失败,请检查网络");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -878,7 +924,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
-                    ToastUtils.showError(ZhiBoActivity.this,"获取数据失败");
+                    ToastUtils.showError(ZhiBoActivity.this, "获取数据失败");
 
                 }
             }
@@ -886,8 +932,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     }
 
 
-
-    private void link_jieshuhunliu(String id1,String id2) {
+    private void link_jieshuhunliu(String id1, String id2) {
         RequestBody body = null;
         body = new FormBody.Builder()
                 .add("fromId", id1)
@@ -895,9 +940,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL+"/live/mix/cancel");
+                .url(Consts.URL + "/live/mix/cancel");
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -905,8 +950,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
-                ToastUtils.showError(ZhiBoActivity.this,"获取数据失败,请检查网络");
+                ToastUtils.showError(ZhiBoActivity.this, "获取数据失败,请检查网络");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -920,9 +966,44 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
-                    ToastUtils.showError(ZhiBoActivity.this,"获取数据失败");
+                    ToastUtils.showError(ZhiBoActivity.this, "获取数据失败");
                 }
             }
         });
+    }
+
+
+    private class TanChuangThread extends Thread {
+        boolean isRing;
+
+        @Override
+        public void run() {
+            while (!isRing) {
+                try {
+                    //有动画 ，延迟到一秒一次
+                    Integer subject = linkedBlockingQueue.take();
+                    SystemClock.sleep(4000);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            synchronized (ZhiBoActivity.this){
+                                boFangBeanList.remove(boFangBeanList.size()-1);
+                                liWuBoFangAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void interrupt() {
+            isRing = true;
+            // Log.d("RecognizeThread", "中断了弹窗线程");
+            super.interrupt();
+        }
     }
 }

@@ -25,6 +25,7 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.LiwuPathBean;
+import com.shengma.lanjing.beans.LiwuPathBean_;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
@@ -49,6 +50,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -56,6 +59,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.objectbox.Box;
+import io.objectbox.query.LazyList;
+import io.objectbox.query.Query;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -133,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         link_xiazai();
 
       //  Log.d("MainActivity", "MyA:" + MyApplication.myApplication.getLiwuPathBeanBox().getAll().size());
+
 
 
     }
@@ -244,6 +250,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     try {
                         if (jsonObject!=null)
                        if (jsonObject.get("code").getAsInt()==4401){
+                           MyApplication.myApplication.getBaoCunBeanBox().removeAll();
+                           BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBeanBox().get(123456L);
+                           if (baoCunBean == null) {
+                               baoCunBean = new BaoCunBean();
+                               baoCunBean.setId(123456L);
+                               baoCunBean.setMeiyan(5);
+                               baoCunBean.setMeibai(5);
+                               baoCunBean.setHongrun(5);
+                               MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
+                           }
                            Intent intent=new Intent(MainActivity.this,LogingActivity.class);
                            intent.putExtra("aaa","aaa");
                            startActivity(intent);
@@ -368,27 +384,36 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     if (!file.exists()) {
                         Log.d("ggg", "file.mkdirs():" + file.mkdirs());
                     }
+
+                    List<LiwuPathBean> lll = new ArrayList<>();
                     for (int i = 0; i < fileHeaderList.size(); i++) {
                         FileHeader fileHeader = (FileHeader) fileHeaderList.get(i);
                         //	FileHeader fileHeader2 = (FileHeader) fileHeaderList.get(0);
                         //Log.d(TAG, fileHeader2.getFileName());
                       //  zipFile.extractFile(fileHeader.getFileName(), path222);
-                       // Log.d("MainActivity", fileHeader.getFileName());
                         //重命名
                         fileHeader.setFileName(fileHeader.getFileName().replaceAll("img_",""));
                         LiwuPathBean pathBean=new LiwuPathBean();
                         pathBean.setId(System.currentTimeMillis());
                         pathBean.setPath(path222+File.separator+fileHeader.getFileName());
+                      // Log.d("MainActivity", fileHeader.getFileName().replaceAll(".png",""));
+                        int ss = Integer.parseInt(fileHeader.getFileName().replaceAll(".png",""));
+                        pathBean.setUid(ss);
                         pathBean.setSid(xiaZaiLiWuBean.getId());
-                        MyApplication.myApplication.getLiwuPathBeanBox().put(pathBean);
-                        // Various other properties are available in FileHeader. Please have a look at FileHeader
-                        // class to see all the properties
+                        lll.add(pathBean);
                     }
+
+                    Collections.sort(lll);
+                    for (LiwuPathBean liwuPathBean:lll){
+                        MyApplication.myApplication.getLiwuPathBeanBox().put(liwuPathBean);
+                    }
+                    lll.clear();
                     //重命名之后解压
                     zipFile.setRunInThread(true); // true 在子线程中进行解压 false主线程中解压
                     zipFile.extractAll(path222); // 将压缩文件解压到filePath中..
                     xiaZaiLiWuBean.setJY(true);
                     MyApplication.myApplication.getXiaZaiLiWuBeanBox().put(xiaZaiLiWuBean);
+
                 } catch (final ZipException e) {
                     e.printStackTrace();
                     Log.d("MainActivity", e.getMessage()+"解压异常");
@@ -439,6 +464,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                           bean.setGiftUrl(object.get("giftUrl").getAsString());
                           bean.setSpecialUrl(object.get("specialUrl").getAsString());
                           bean.setId(object.get("id").getAsInt());
+                          bean.setType(object.get("type").getAsInt());
                           MyApplication.myApplication.getXiaZaiLiWuBeanBox().put(bean);
                           linkedBlockingQueue.offer(bean);
                       }else {
