@@ -25,10 +25,14 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.LiwuPathBean;
-import com.shengma.lanjing.beans.LiwuPathBean_;
+
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
+
+
+import com.shengma.lanjing.beans.YongHuListBean;
+import com.shengma.lanjing.beans.YongHuListBean_;
 import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
@@ -53,20 +57,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.objectbox.Box;
-import io.objectbox.query.LazyList;
-import io.objectbox.query.Query;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
+
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -138,8 +141,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         link_xiazai();
 
       //  Log.d("MainActivity", "MyA:" + MyApplication.myApplication.getLiwuPathBeanBox().getAll().size());
-
-
+//        for (int i=0;i<1000;i++){
+//            YongHuListBean bean=new YongHuListBean();
+//            bean.setId(System.currentTimeMillis());
+//            bean.setName("恻然");
+//            bean.setHeadImage("http://pic13.nipic.com/20110409/7119492_114440620000_2.jpg");
+//            Random random=new Random();
+//            bean.setJingbi(random.nextInt(1000000));
+//            MyApplication.myApplication.getYongHuListBeanBox().put(bean);
+//        }≤≥lololoõ8i9
 
     }
 

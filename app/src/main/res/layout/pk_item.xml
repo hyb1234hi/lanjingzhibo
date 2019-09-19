@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -17,8 +17,8 @@
            android:layout_marginStart="16sp"
            app:layout_constraintTop_toTopOf="parent"
            app:layout_constraintLeft_toLeftOf="parent"
-           android:layout_width="24dp"
-           android:layout_height="24dp"/>
+           android:layout_width="26dp"
+           android:layout_height="26dp"/>
 
         <TextView
             android:id="@+id/name"

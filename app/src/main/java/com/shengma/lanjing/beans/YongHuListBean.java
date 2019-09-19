@@ -72,4 +72,18 @@ public class YongHuListBean {
     public void setJingbi(double jingbi) {
         this.jingbi = jingbi;
     }
+
+
+    @Override
+    public String toString() {
+        return "YongHuListBean{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", headImage='" + headImage + '\'' +
+                ", sex=" + sex +
+                ", dengji=" + dengji +
+                ", type=" + type +
+                ", jingbi=" + jingbi +
+                '}';
+    }
 }

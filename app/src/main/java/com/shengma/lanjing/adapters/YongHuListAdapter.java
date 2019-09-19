@@ -1,0 +1,59 @@
+package com.shengma.lanjing.adapters;
+
+import android.graphics.Color;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.shengma.lanjing.R;
+import com.shengma.lanjing.beans.YongHuListBean;
+
+import java.util.List;
+
+public class YongHuListAdapter extends BaseQuickAdapter<YongHuListBean,BaseViewHolder> {
+
+    public YongHuListAdapter(List<YongHuListBean> list) {
+        super(R.layout.yonghulist_item, list);
+    }
+
+
+    @Override
+    protected void convert(BaseViewHolder helper, YongHuListBean item) {
+        helper.setText(R.id.name, item.getName());
+        helper.setText(R.id.dengji, "Lv."+item.getDengji());
+        helper.setText(R.id.paihang, (helper.getLayoutPosition()+1)+"");
+        helper.setText(R.id.jingbi,item.getJingbi()+"");
+        if (helper.getLayoutPosition()==0 || helper.getLayoutPosition()==1 ||helper.getLayoutPosition()==2 ){
+            helper.setTextColor(R.id.paihang, Color.parseColor("#F36D87"));
+        }else {
+            helper.setTextColor(R.id.paihang, Color.parseColor("#ffffff"));
+        }
+        if (item.getSex()==1){
+            helper.setImageResource(R.id.xingbie,R.drawable.nan);
+        }else {
+            helper.setImageResource(R.id.xingbie,R.drawable.nv);
+        }
+        if (item.getType()==1){
+            helper.setGone(R.id.guanliyuan,true);
+        }else {
+            helper.setGone(R.id.guanliyuan,false);
+        }
+        if (item.getType()==2){
+            helper.setGone(R.id.jingyan,true);
+        }else {
+            helper.setGone(R.id.jingyan,false);
+        }
+        Glide.with(mContext)
+                .load(item.getHeadImage())
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into((ImageView) helper.getView(R.id.touxiang));
+        //RequestOptions.bitmapTransform(new CircleCrop())//圆形
+        //RequestOptions.bitmapTransform(new RoundedCorners( 5))//圆角
+    }
+
+
+
+}

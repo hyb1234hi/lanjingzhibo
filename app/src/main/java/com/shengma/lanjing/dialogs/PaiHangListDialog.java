@@ -1,6 +1,5 @@
 package com.shengma.lanjing.dialogs;
 
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -9,43 +8,50 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
-
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
-import com.shengma.lanjing.adapters.YongHuListAdapter;
+import com.shengma.lanjing.adapters.PaiHangListAdapter;
+import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.beans.YongHuListBean;
-import com.shengma.lanjing.beans.YongHuListBean_;
 
+import com.shengma.lanjing.utils.Consts;
+import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.ToastUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.objectbox.Box;
+import okhttp3.Call;
+import okhttp3.Callback;
+
+import okhttp3.Request;
+
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
-
-public class YongHuListDialog extends DialogFragment {
+public class PaiHangListDialog extends DialogFragment {
 
     private Window window;
     private RefreshLayout refreshLayout;
     private RecyclerView recyclerView;
-    private YongHuListAdapter yongHuListAdapter;
+    private PaiHangListAdapter paiHangListAdapter;
     private List<YongHuListBean> yongHuListBeanList=new ArrayList<>();
     private Box<YongHuListBean> yongHuListBeanBox= MyApplication.myApplication.getYongHuListBeanBox();
-    private int size=20,page=0;
+    private int page=1;
 
     @Nullable
     @Override
@@ -53,45 +59,23 @@ public class YongHuListDialog extends DialogFragment {
 
         // 去掉默认的标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View  view = inflater.inflate(R.layout.yonghu_dialog, null);
+        View  view = inflater.inflate(R.layout.paihang_dialog, null);
         refreshLayout = view.findViewById(R.id.refreshLayout);
         recyclerView = view.findViewById(R.id.recyclerView);
-        ImageView fanhui=view.findViewById(R.id.fanhui);
-        fanhui.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
         LinearLayoutManager manager=new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(manager);
-        yongHuListAdapter=new YongHuListAdapter(yongHuListBeanList);
-        recyclerView.setAdapter(yongHuListAdapter);
-        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
-            @Override
-            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.d(TAG, "position:" + position);
-
-            }
-        });
+        paiHangListAdapter=new PaiHangListAdapter(yongHuListBeanList);
        // refreshLayout.setRefreshHeader(new ClassicsHeader(this));
         refreshLayout.setRefreshFooter(new ClassicsFooter(getActivity()));
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
                 page+=1;
-                List<YongHuListBean> listBeans= yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(size*page,size);
-                yongHuListBeanList.addAll(listBeans);
-                yongHuListAdapter.notifyDataSetChanged();
-                refreshlayout.finishLoadMore(600/*,false*/);//传入false表示加载失败
+                link_u();
             }
         });
 
-      yongHuListBeanList.clear();
-      List<YongHuListBean> listBeans= yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(size*page,size);
-      yongHuListBeanList.addAll(listBeans);
-      yongHuListAdapter.notifyDataSetChanged();
-       // Log.d("YongHuListDialog", "yongHuListBeanList.size():" + yongHuListBeanList.size());
+        link_u();
         return view;
     }
 
@@ -114,8 +98,44 @@ public class YongHuListDialog extends DialogFragment {
 
     }
 
+    private void link_u() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/anchor/rank?page="+page+"&pageSize=18");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                if (getActivity()!=null)
+                ToastUtils.showError(getActivity(), "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "获取主播排行" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
 
 
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    if (getActivity()!=null)
+                    ToastUtils.showError(getActivity(), "获取数据失败");
+                }
+            }
+        });
+    }
 
 
 }

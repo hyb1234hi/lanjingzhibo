@@ -182,7 +182,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zhi_bo);
         ButterKnife.bind(this);
-        MyApplication.myApplication.getYongHuListBeanBox().removeAll();
+      //  MyApplication.myApplication.getYongHuListBeanBox().removeAll();
         EventBus.getDefault().register(this);
         DisplayMetrics outMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);

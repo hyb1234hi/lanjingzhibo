@@ -6,10 +6,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 
@@ -26,8 +29,11 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 
 
-
+import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.ChouJiangBean;
+import com.shengma.lanjing.beans.MsgWarp;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,8 +51,10 @@ public class PieView extends View {
     private int mCount;
     private List<String> mStrings=new ArrayList<>();
     private List<Bitmap> mBitmaps=new ArrayList<>();
+    private Activity activity;
 
     public void setChouJiangBeanList(List<ChouJiangBean.ResultBean> chouJiangBeanList, Activity activity){
+        this.activity=activity;
             if (chouJiangBeanList != null) {
                 for (ChouJiangBean.ResultBean bean : chouJiangBeanList) {
                     mStrings.add(bean.getName());
@@ -58,11 +66,18 @@ public class PieView extends View {
                                 .get();
                         if (bitmap!=null){
                             mBitmaps.add(bitmap);
+                            Log.d(TAG, "mBitmaps.size()1:" + mBitmaps.size());
+                        }else {
+                            mBitmaps.add(BitmapFactory.decodeResource(getResources(),R.drawable.weizhongjiang));
+                            Log.d(TAG, "mBitmaps.size()2:" + mBitmaps.size());
                         }
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
+                        mBitmaps.add(BitmapFactory.decodeResource(getResources(),R.drawable.weizhongjiang));
+                        Log.d(TAG, "mBitmaps.size()3:" + mBitmaps.size());
                     }
                 }
+
                 mCount = mStrings.size();
                 angles = new int[mCount];
                 activity.runOnUiThread(new Runnable() {
@@ -76,7 +91,7 @@ public class PieView extends View {
     }
 
 
-    private int[] sectorColor = new int[]{Color.parseColor("#EE82EE"), Color.parseColor("#FFDEAD")};
+   // private int[] sectorColor = new int[]{Color.parseColor("#EE82EE"), Color.parseColor("#FFDEAD")};
 
     /**
      * 图片
@@ -115,9 +130,10 @@ public class PieView extends View {
 
     private int[] angles;
 
-    private float mTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SHIFT, 48, getResources().getDisplayMetrics());
+    private float mTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SHIFT, 28, getResources().getDisplayMetrics());
     private RectF sectorRectF;
-
+    private Bitmap bitmapBG=BitmapFactory.decodeResource(getResources(),R.drawable.zhanpandabg);
+   // private Bitmap bitmapKS=BitmapFactory.decodeResource(getResources(),R.drawable.kaishichoujiang);
     /**
      * 弧形划过的角度
      */
@@ -129,7 +145,8 @@ public class PieView extends View {
     private ObjectAnimator animator;
     private RotateListener listener;
     private int rotateToPosition;
-
+    private Rect rectBG=new Rect();
+    private Rect rectKS=new Rect();
     public PieView(Context context) {
         this(context, null);
     }
@@ -152,10 +169,14 @@ public class PieView extends View {
 
         mCenter = width / 2;
         //半径
-        mRadius = (width - getPaddingLeft() * 2) / 2;
+        mRadius = (width ) / 2;
 
         //设置框高都一样
         setMeasuredDimension(width, width);
+        int s = width/10;
+        rectKS.set(mCenter-s*2,mCenter-s*2,mCenter+s*2,mCenter+s*2);
+        rectBG.set(0,0,width,width);
+
     }
 
     /**
@@ -178,27 +199,38 @@ public class PieView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            float x = (event.getX() - mCenter);
-            float y = (event.getY() - mCenter);
-            float touchAngle = 0;
-            int touchRadius = 0;
-            //判断点击的范围是否在转盘内
-            if (x < 0 && y > 0) {//第二象限
-                touchAngle += 180;
-            } else if (x < 0 && y < 0) {//第三象限
-                touchAngle += 180;
-            } else if (x > 0 && y < 0) {//第四象限
-                touchAngle += 360;
-            }
-            //Math.atan(y/x) 返回正数值表示相对于 x 轴的逆时针转角，返回负数值则表示顺时针转角。
-            // 返回值乘以 180/π，将弧度转换为角度。
-            touchAngle += (float) Math.toDegrees(Math.atan(y / x));
+            float x = (event.getX() );
+            float y = (event.getY() );
+//            float touchAngle = 0;
+//            int touchRadius = 0;
+//            //判断点击的范围是否在转盘内
+//            if (x < 0 && y > 0) {//第二象限
+//                touchAngle += 180;
+//            } else if (x < 0 && y < 0) {//第三象限
+//                touchAngle += 180;
+//            } else if (x > 0 && y < 0) {//第四象限
+//                touchAngle += 360;
+//            }
+//            //Math.atan(y/x) 返回正数值表示相对于 x 轴的逆时针转角，返回负数值则表示顺时针转角。
+//            // 返回值乘以 180/π，将弧度转换为角度。
+//            touchAngle += (float) Math.toDegrees(Math.atan(y / x));
+//
+//            touchRadius = (int) Math.sqrt(x * x + y * y);
+//            if (touchRadius < mRadius) {
+//                position = -Arrays.binarySearch(angles, (int) touchAngle) - 1;
+//                Log.d(TAG, "onTouchEvent: " + mStrings.get(position - 1));
+//            }
+            double s = mRadius/1.8;
 
-            touchRadius = (int) Math.sqrt(x * x + y * y);
-            if (touchRadius < mRadius) {
-                position = -Arrays.binarySearch(angles, (int) touchAngle) - 1;
-                Log.d(TAG, "onTouchEvent: " + mStrings.get(position - 1));
+            if (x>s && x< s*2 && y>s && y<s*2 ){
+                Log.d(TAG, "onTouchEvent: " + "点击了");
+            }else {
+                Log.d(TAG, "x:" + x);
+                Log.d(TAG, "y:" + y);
             }
+
+            EventBus.getDefault().post(new MsgWarp(2222,""));
+
 
             return true;
         }
@@ -207,23 +239,24 @@ public class PieView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.d(TAG, "mBitmaps.size():" + mBitmaps.size());
+       // Log.d(TAG, "mBitmaps.size():" + mBitmaps.size());
         if (mBitmaps.size()!=0) {
 
             //1.绘制背景
-            canvas.drawCircle(mCenter, mCenter, mCenter - getPaddingLeft() / 2, mBgPaint);
+           // canvas.drawCircle(mCenter, mCenter, mCenter - getPaddingLeft() / 2, mBgPaint);
+            canvas.drawBitmap(bitmapBG,null,rectBG,mBgPaint);
             //2.绘制扇形
             //2.1设置每一个扇形的角度
             sweepAngle = 360 / mCount;
-            startAngle = 0;
+            startAngle = 10;
             //2.2设置扇形绘制的范围
             sectorRectF = new RectF(getPaddingLeft(), getPaddingLeft(),
                     mCenter * 2 - getPaddingLeft(), mCenter * 2 - getPaddingLeft());
             for (int i = 0; i < mCount; i++) {
-                mArcPaint.setColor(sectorColor[i % 2]);
+               // mArcPaint.setColor(sectorColor[i % 2]);
                 //sectorRectF 扇形绘制范围  startAngle 弧开始绘制角度 sweepAngle 每次绘制弧的角度
                 // useCenter 是否连接圆心
-                canvas.drawArc(sectorRectF, startAngle, sweepAngle, true, mArcPaint);
+               // canvas.drawArc(sectorRectF, startAngle, sweepAngle, true, mArcPaint);
                 //3.绘制文字
                 drawTexts(canvas, mStrings.get(i));
                 //4.绘制图片
@@ -231,11 +264,12 @@ public class PieView extends View {
 
                 angles[i] = startAngle;
 
-                Log.d(TAG, "startAngle:" + startAngle);
-                Log.d(TAG, "angles.length:" + angles.length);
                 Log.d(TAG, "onDraw: " + angles[i] + "     " + i);
                 startAngle += sweepAngle;
             }
+            //绘制开始按钮
+          //  canvas.drawBitmap(bitmapKS,null,rectKS,mBgPaint);
+
             super.onDraw(canvas);
         }
     }
@@ -257,7 +291,16 @@ public class PieView extends View {
         float y = (float) (mCenter + r * Math.sin(angle));
         //设置绘制图片的范围
         RectF rectF = new RectF(x - imageWidth, y - imageWidth, x + imageWidth, y + imageWidth);
-        canvas.drawBitmap(mBitmap, null, rectF, null);
+
+      //  Matrix matrix1 = new Matrix();
+       // Log.d(TAG, "angle:" + angle);
+       // matrix1.postRotate(40);
+        // 生成新的图片
+       // Bitmap dstbmp1 = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(),
+       //         mBitmap.getHeight(), matrix1, true);
+        
+        canvas.drawBitmap(mBitmap, null,rectF ,null);
+
     }
 
     /**
@@ -305,49 +348,54 @@ public class PieView extends View {
 
 
     public void rotate(final int i) {
-
-        rotateToPosition = 360 / mCount * (mCount - i);
-        float toDegree = 360f * 5 + rotateToPosition;
-
-        animator = ObjectAnimator.ofFloat(PieView.this, "rotation", 0, toDegree);
-        animator.setDuration(5000);
-        animator.setRepeatCount(0);
-        animator.setInterpolator(new DecelerateInterpolator());
-        animator.setAutoCancel(true);
-        animator.start();
-
-        animator.addListener(new Animator.AnimatorListener() {
+        activity.runOnUiThread(new Runnable() {
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void run() {
+                rotateToPosition = 360 / mCount * (mCount - i);
+                float toDegree = 360f * 5 + rotateToPosition;
 
-            }
+                animator = ObjectAnimator.ofFloat(PieView.this, "rotation", 0, toDegree);
+                animator.setDuration(5000);
+                animator.setRepeatCount(0);
+                animator.setInterpolator(new DecelerateInterpolator());
+                animator.setAutoCancel(true);
+                animator.start();
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                //指针指向的方向为270度
-                if (listener != null) {
-                    rotateToPosition = 270 - rotateToPosition;
-                    if (rotateToPosition < 0) {
-                        rotateToPosition += 360;
-                    } else if (rotateToPosition == 0) {
-                        rotateToPosition = 270;
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
                     }
-                    position = -Arrays.binarySearch(angles, rotateToPosition) - 1;
-                    listener.value(mStrings.get(position - 1));
-                }
-            }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        //指针指向的方向为270度
+                        if (listener != null) {
+                            rotateToPosition = 270 - rotateToPosition;
+                            if (rotateToPosition < 0) {
+                                rotateToPosition += 360;
+                            } else if (rotateToPosition == 0) {
+                                rotateToPosition = 270;
+                            }
+                            position = -Arrays.binarySearch(angles, rotateToPosition) - 1;
+                            listener.value(mStrings.get(position - 1));
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
 
 
-            }
+                    }
 
-            @Override
-            public void onAnimationRepeat(Animator animation) {
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
 
+                    }
+                });
             }
         });
+
     }
 
     public void setListener(RotateListener listener) {
