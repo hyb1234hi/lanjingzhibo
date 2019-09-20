@@ -1,5 +1,6 @@
 package com.shengma.lanjing.dialogs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -9,12 +10,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
-
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
@@ -23,7 +22,8 @@ import com.shengma.lanjing.beans.ChouJiangBean;
 import com.shengma.lanjing.beans.ChouJiangBs;
 
 import com.shengma.lanjing.beans.MsgWarp;
-
+import com.shengma.lanjing.beans.QianBaoBean;
+import com.shengma.lanjing.ui.ChongZhiActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -50,7 +50,7 @@ public class ZhuanPanDialog extends DialogFragment  {
 
     private Window window;
     private PieView pieView;
-    private ImageView guanbi;
+    private TextView yue;
     private boolean isR;
     private List<ChouJiangBean.ResultBean> beanList=new ArrayList<>();
     private ImageView kaishi;
@@ -63,8 +63,22 @@ public class ZhuanPanDialog extends DialogFragment  {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         View  view = inflater.inflate(R.layout.zhuanpan_dialog, null);
         EventBus.getDefault().register(this);
+        ImageView fanhui=view.findViewById(R.id.fanhui);
+        yue=view.findViewById(R.id.yue);
+        fanhui.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
         kaishi=view.findViewById(R.id.kaishi);
-        guanbi=view.findViewById(R.id.guanbi);
+        TextView chongzhi=view.findViewById(R.id.chongzhi);
+        chongzhi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), ChongZhiActivity.class));
+            }
+        });
         pieView=view.findViewById(R.id.pieview);
         pieView.setListener(new PieView.RotateListener() {
             @Override
@@ -77,6 +91,8 @@ public class ZhuanPanDialog extends DialogFragment  {
         });
        // pieView.rotate(1);
         link_iu();
+        link_qianbao();
+        kaishi.setVisibility(View.VISIBLE);
         return view;
     }
 
@@ -148,12 +164,6 @@ public class ZhuanPanDialog extends DialogFragment  {
                     logingBe.getResult().add(bbb);
                     beanList.addAll(logingBe.getResult());
                     pieView.setChouJiangBeanList(logingBe.getResult(),getActivity());
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            kaishi.setVisibility(View.VISIBLE);
-                        }
-                    });
 
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
@@ -211,11 +221,75 @@ public class ZhuanPanDialog extends DialogFragment  {
 //                    if (s==9){
 //                        pieView.rotate(1);
 //                    }
-
+                    link_qianbao();
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     if (getActivity()!=null)
                         ToastUtils.showError(getActivity(), "获取数据失败");
+                }
+            }
+        });
+    }
+
+
+    private void link_qianbao() {
+        //  MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("", "")
+                .build();
+//        JSONObject object=new JSONObject();
+//        try {
+//            object.put("uname",uname);
+//            object.put("pwd",pwd);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        //RequestBody body = RequestBody.create(object.toString(),JSON);
+//        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
+//        RequestBody requestBody = new MultipartBody.Builder()
+//                .setType(MultipartBody.FORM)
+//                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
+//                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/user/wallet");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+               // ToastUtils.showError(getActivity().this, "进房失败,请退出后重试");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "钱包:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    QianBaoBean logingBe = gson.fromJson(jsonObject, QianBaoBean.class);
+                    if (logingBe.getCode() == 2000) {
+                        if (getActivity()!=null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    yue.setText("余额:"+logingBe.getResult().getBalance());
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                  //  ToastUtils.showError(BoFangActivity.this, "进房失败,请退出后重试");
+
                 }
             }
         });

@@ -10,29 +10,23 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
-
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.YongHuListAdapter;
 import com.shengma.lanjing.beans.YongHuListBean;
 import com.shengma.lanjing.beans.YongHuListBean_;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 import io.objectbox.Box;
 
 
@@ -46,6 +40,7 @@ public class YongHuListDialog extends DialogFragment {
     private List<YongHuListBean> yongHuListBeanList=new ArrayList<>();
     private Box<YongHuListBean> yongHuListBeanBox= MyApplication.myApplication.getYongHuListBeanBox();
     private int size=20,page=0;
+    private boolean isZB=false;
 
     @Nullable
     @Override
@@ -71,7 +66,9 @@ public class YongHuListDialog extends DialogFragment {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
+                if (isZB){//是主播才能点击
 
+                }
             }
         });
        // refreshLayout.setRefreshHeader(new ClassicsHeader(this));
@@ -93,6 +90,10 @@ public class YongHuListDialog extends DialogFragment {
       yongHuListAdapter.notifyDataSetChanged();
        // Log.d("YongHuListDialog", "yongHuListBeanList.size():" + yongHuListBeanList.size());
         return view;
+    }
+
+    public void setzhu(boolean isZB){
+        this.isZB=isZB;
     }
 
     @Override

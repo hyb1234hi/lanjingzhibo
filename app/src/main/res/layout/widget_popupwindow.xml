@@ -26,7 +26,7 @@
         android:layout_height="36dp"/>
     
         <Button
-            android:background="@drawable/xianshibg"
+            android:background="@drawable/fasongte"
             android:id="@+id/fasong"
             android:textColor="#ffffff"
             android:paddingTop="8dp"
@@ -37,8 +37,8 @@
             android:gravity="center_horizontal"
             android:textSize="13sp"
             android:text="发送"
-            android:layout_width="60dp"
-            android:layout_height="34dp"/>
+            android:layout_width="65dp"
+            android:layout_height="33dp"/>
 
    </androidx.constraintlayout.widget.ConstraintLayout>
 

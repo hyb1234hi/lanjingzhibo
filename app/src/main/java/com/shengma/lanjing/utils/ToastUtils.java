@@ -13,7 +13,7 @@ public class ToastUtils {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast tastyToast = TastyToast.makeText(context, msg, TastyToast.LENGTH_LONG, TastyToast.INFO);
+                Toast tastyToast = TastyToast.makeText(context, msg, TastyToast.LENGTH_SHORT, TastyToast.INFO);
                 tastyToast.setGravity(Gravity.CENTER, 0, 0);
                 tastyToast.show();
             }
@@ -24,7 +24,7 @@ public class ToastUtils {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast tastyToast = TastyToast.makeText(context, msg, TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                Toast tastyToast = TastyToast.makeText(context, msg, TastyToast.LENGTH_SHORT, TastyToast.ERROR);
                 tastyToast.setGravity(Gravity.CENTER, 0, 0);
                 tastyToast.show();
             }

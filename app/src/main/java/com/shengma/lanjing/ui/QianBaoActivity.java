@@ -13,10 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
-import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.QianBaoBean;
-import com.shengma.lanjing.beans.UserInfoBean;
-import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -25,17 +22,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.objectbox.Box;
+
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
+
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;

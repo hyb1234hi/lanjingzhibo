@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.gson.Gson;
@@ -25,7 +27,6 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.GuanZhuAdapter;
 import com.shengma.lanjing.beans.GuanZhuBean;
-import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.ui.zhibo.BoFangActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.DisplayUtils;
@@ -35,12 +36,9 @@ import com.shengma.lanjing.views.GridDividerItemDecoration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -54,7 +52,7 @@ public class SYFragment1 extends Fragment {
     private int pag=1;
     private List<GuanZhuBean.ResultBean> beanList=new ArrayList<>();
     private GuanZhuAdapter adapter;
-
+    private LinearLayout rrr;
 
     public SYFragment1() {
         // Required empty public constructor
@@ -66,6 +64,7 @@ public class SYFragment1 extends Fragment {
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_syfragment1, container, false);
         swipeRefreshLayout=view.findViewById(R.id.refreshLayout);
+        rrr= view.findViewById(R.id.rrr);
         recyclerView=view.findViewById(R.id.recyclerview);
         //设置进度View的组合颜色，在手指上下滑时使用第一个颜色，在刷新中，会一个个颜色进行切换
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#3EE1F7"), Color.GREEN, Color.RED, Color.YELLOW, Color.BLUE);
@@ -113,7 +112,7 @@ public class SYFragment1 extends Fragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL+"/user/idols?page="+pag+"&pageSize=10");
+                .url(Consts.URL+"/live/list/focus?page="+pag+"&pageSize=10");
 
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
@@ -159,6 +158,11 @@ public class SYFragment1 extends Fragment {
                                 public void run() {
                                     beanList.addAll(bean.getResult());
                                     adapter.notifyDataSetChanged();
+                                    if (beanList.size()==0){
+                                        rrr.setVisibility(View.VISIBLE);
+                                    }else {
+                                        rrr.setVisibility(View.GONE);
+                                    }
                                 }
                             });
                     }

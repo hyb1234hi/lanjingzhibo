@@ -1,11 +1,16 @@
 package com.shengma.lanjing.ui.zhibo;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -24,6 +29,9 @@ import androidx.constraintlayout.widget.Group;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.ImageAssetDelegate;
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieImageAsset;
 import com.badoo.mobile.util.WeakHandler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -42,13 +50,16 @@ import com.shengma.lanjing.beans.LiaoTianBean;
 import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.YongHuListBean;
+import com.shengma.lanjing.beans.YongHuListBean_;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
 import com.shengma.lanjing.dialogs.MeiYanDialog;
 import com.shengma.lanjing.dialogs.PKDialog;
 import com.shengma.lanjing.dialogs.PKListDialog;
+import com.shengma.lanjing.dialogs.PaiHangListDialog;
 import com.shengma.lanjing.dialogs.TuiChuDialog;
 import com.shengma.lanjing.dialogs.YongHuListDialog;
+import com.shengma.lanjing.dialogs.ZhuBoXinxiDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
@@ -59,6 +70,7 @@ import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.InputMethodUtils;
 import com.shengma.lanjing.utils.KeyboardStatusDetector;
+import com.shengma.lanjing.utils.ReadAssetsJsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.utils.Utils;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -71,6 +83,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -82,6 +96,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -89,6 +104,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+import static android.content.ContentValues.TAG;
 
 
 public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomListener {
@@ -153,7 +170,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private TXCloudVideoView txCloudVideoView;      // 主播本地预览的 View
     private RecyclerView gz_recyclerView;
     private GuanZhongAdapter guanZhongAdapter;
-    private List<GuanZhongBean> guanZhuBeanList = new ArrayList<>();
+    private List<YongHuListBean> guanZhuBeanList = new ArrayList<>();
     private Timer timer = new Timer();
     private TimerTask task;
     private WeakHandler mHandler;
@@ -175,14 +192,49 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private boolean isPK = false;
     private LinkedBlockingQueue<Integer> linkedBlockingQueue;
     private TanChuangThread tanChuangThread;
-
+    private Box<YongHuListBean> yongHuListBeanBox= MyApplication.myApplication.getYongHuListBeanBox();
+    private LottieAnimationView animationView;
+    private long numberGZ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zhi_bo);
         ButterKnife.bind(this);
-      //  MyApplication.myApplication.getYongHuListBeanBox().removeAll();
+
+        animationView=findViewById(R.id.animation_view);
+
+        final String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        //提供一个代理接口从 SD 卡读取 images 下的图片
+        animationView.setImageAssetDelegate(new ImageAssetDelegate() {
+            @Override
+            public Bitmap fetchBitmap(LottieImageAsset asset) {
+                Log.d("ZhiBoActivity", asset.getFileName());
+                Bitmap bitmap = null;
+                FileInputStream fileInputStream = null;
+                try {
+                    fileInputStream = new FileInputStream(absolutePath + File.separator + "lanjing/39/"+asset.getFileName());
+                    bitmap = BitmapFactory.decodeStream(fileInputStream);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    try {
+                        if (bitmap == null) {
+                            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+                        }
+                        if (fileInputStream != null) {
+                            fileInputStream.close();
+                        }
+                    } catch (IOException e) {
+                        Log.d(TAG, "e:" + e);
+                    }
+                }
+                return bitmap;
+            }
+        });
+        animationView.setAnimationFromJson(ReadAssetsJsonUtil.getJson("data.json",ZhiBoActivity.this),"dddd");
+
+        MyApplication.myApplication.getYongHuListBeanBox().removeAll();
         EventBus.getDefault().register(this);
         DisplayMetrics outMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
@@ -247,18 +299,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         //设置布局管理器
         gz_recyclerView.setLayoutManager(layoutManager);
         //设置Adapter
-        GuanZhongBean bean = new GuanZhongBean();
-        bean.setXingguang(31321 + "");
-        bean.setHeadImage(baoCunBean.getHeadImage());
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
         guanZhongAdapter = new GuanZhongAdapter(guanZhuBeanList);
         gz_recyclerView.setAdapter(guanZhongAdapter);
 
@@ -362,20 +402,20 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     @Override
     public void onAudienceEnter(AudienceInfo audienceInfo) {
         //观众进房
-        Log.d("ZhiBoActivity", audienceInfo.toString());
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                LiaoTianBean bean = new LiaoTianBean();
-                bean.setNickname(audienceInfo.userName);
-                bean.setType(2);
-                bean.setUserInfo(audienceInfo.userInfo);
-                bean.setHeadImage(audienceInfo.userAvatar);
-                bean.setUserid(Long.parseLong(audienceInfo.userID));
-                lingshiList.add(0, bean);
-
-            }
-        });
+//        Log.d("ZhiBoActivity", audienceInfo.toString());
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                LiaoTianBean bean = new LiaoTianBean();
+//                bean.setNickname(audienceInfo.userName);
+//                bean.setType(2);
+//                bean.setUserInfo(audienceInfo.userInfo);
+//                bean.setHeadImage(audienceInfo.userAvatar);
+//                bean.setUserid(Long.parseLong(audienceInfo.userID));
+//                lingshiList.add(0, bean);
+//
+//            }
+//        });
 
     }
 
@@ -525,6 +565,11 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 }
 
                 break;
+            case "liwudonghua2": //收到大型礼物消息
+                LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message, LiWuBoFangBean.class);
+                playDongHua(parseUser.getLiwuID());
+
+                break;
             case "rufang": //收到观众入房消息
                 YongHuListBean yongHuListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().put(yongHuListBean);
@@ -540,14 +585,26 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         lingshiList.add(0, bean);
                     }
                 });
+                List<YongHuListBean> listBeans= yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(0,8);
+                guanZhuBeanList.clear();
+                guanZhuBeanList.addAll(listBeans);
+                guanZhongAdapter.notifyDataSetChanged();
+                numberGZ+=1;
+                guanzhongxiangqiang.setText(numberGZ+"");
+
                 break;
             case "tuifang": //收到观众tui房消息
                 YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
+                numberGZ-=1;
+                guanzhongxiangqiang.setText(numberGZ+"");
                 break;
         }
 
     }
+
+
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void wxMSG(MsgWarp msgWarp) {
@@ -772,17 +829,18 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     }
 
     @OnClick({R.id.guanzhongxiangqiang, R.id.paihangView, R.id.tuichu, R.id.fenxiang,
-            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian, R.id.video_player})
+            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian, R.id.video_player,R.id.touxiang})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.guanzhongxiangqiang:
                 YongHuListDialog yongHuListDialog = new YongHuListDialog();
+                yongHuListDialog.setzhu(true);
                 yongHuListDialog.show(getSupportFragmentManager(), "yuanogn");
 
                 break;
             case R.id.paihangView:
-                //mlvbLiveRoom.setEyeScaleLevel(9);
-               // mlvbLiveRoom.setFaceSlimLevel(9);
+                PaiHangListDialog paiHangListDialog = new PaiHangListDialog();
+                paiHangListDialog.show(getSupportFragmentManager(), "paihang");
 
                 break;
             case R.id.tuichu:
@@ -886,6 +944,10 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     }
                 }).start();
 
+                break;
+            case R.id.touxiang:
+                ZhuBoXinxiDialog zhuBoXinxiDialog=new ZhuBoXinxiDialog(baoCunBean.getUserid()+"");
+                zhuBoXinxiDialog.show(getSupportFragmentManager(),"zhuboxinxi");
                 break;
         }
     }
@@ -1008,4 +1070,50 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             super.interrupt();
         }
     }
+
+    private void playDongHua(String idid){
+        final String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        //提供一个代理接口从 SD 卡读取 images 下的图片
+        animationView.cancelAnimation();
+        animationView.removeAllAnimatorListeners();
+        animationView.setImageAssetDelegate(new ImageAssetDelegate() {
+            @Override
+            public Bitmap fetchBitmap(LottieImageAsset asset) {
+               // Log.d("BoFangActivity", asset.getFileName());
+                Bitmap bitmap = null;
+                FileInputStream fileInputStream = null;
+                try {
+                    fileInputStream = new FileInputStream(absolutePath + File.separator + "lanjing/"+idid+"/images/"+asset.getFileName());
+                    bitmap = BitmapFactory.decodeStream(fileInputStream);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    try {
+                        if (bitmap == null) {
+                            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+                        }
+                        if (fileInputStream != null) {
+                            fileInputStream.close();
+                        }
+                    } catch (IOException e) {
+                        Log.d(TAG, "e:" + e);
+                    }
+                }
+                return bitmap;
+            }
+        });
+
+        animationView.setAnimationFromJson(ReadAssetsJsonUtil.readJSON(idid));
+        animationView.addAnimatorListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Log.d("BoFangActivity", "结束了");
+                animationView.cancelAnimation();
+                super.onAnimationEnd(animation);
+            }
+        });
+        animationView.playAnimation();
+    }
+
+
 }

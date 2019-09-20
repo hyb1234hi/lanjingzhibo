@@ -1,10 +1,13 @@
 package com.shengma.lanjing.ui.zhibo;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -22,6 +25,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.ImageAssetDelegate;
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieImageAsset;
 import com.badoo.mobile.util.WeakHandler;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -34,20 +40,22 @@ import com.shengma.lanjing.adapters.GuanZhongAdapter;
 import com.shengma.lanjing.adapters.LiWuBoFangAdapter;
 import com.shengma.lanjing.adapters.LiaoTianAdapter;
 import com.shengma.lanjing.beans.BaoCunBean;
-import com.shengma.lanjing.beans.GuanZhongBean;
+import com.shengma.lanjing.beans.ChaXunGeRenXinXi;
 import com.shengma.lanjing.beans.LiWuBoFangBean;
 import com.shengma.lanjing.beans.LiaoTianBean;
-import com.shengma.lanjing.beans.LiwuPathBean;
-import com.shengma.lanjing.beans.LiwuPathBean_;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.QianBaoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.beans.YongHuListBean;
+import com.shengma.lanjing.beans.YongHuListBean_;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
 import com.shengma.lanjing.dialogs.LiWuDialog;
 import com.shengma.lanjing.dialogs.PKDialog;
+import com.shengma.lanjing.dialogs.PaiHangListDialog;
 import com.shengma.lanjing.dialogs.TuiChuDialog;
+import com.shengma.lanjing.dialogs.YongHuListDialog;
+import com.shengma.lanjing.dialogs.ZhuBoXinxiDialog;
 import com.shengma.lanjing.dialogs.ZhuanPanDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
@@ -58,6 +66,7 @@ import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.InputMethodUtils;
 import com.shengma.lanjing.utils.KeyboardStatusDetector;
+import com.shengma.lanjing.utils.ReadAssetsJsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
@@ -67,6 +76,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -78,8 +89,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.objectbox.query.LazyList;
-import kotlin.Lazy;
+import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -88,6 +98,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+import static android.content.ContentValues.TAG;
 
 
 public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomListener {
@@ -121,12 +133,14 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     RecyclerView liwuReView;
     @BindView(R.id.donghua)
     ImageView donghua;
+    @BindView(R.id.guanzhu)
+    ImageView guanzhu;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;    // 主播本地预览的 View
     private RecyclerView gz_recyclerView;
     private GuanZhongAdapter guanZhongAdapter;
-    private List<GuanZhongBean> guanZhuBeanList = new ArrayList<>();
+    private List<YongHuListBean> guanZhuBeanList = new ArrayList<>();
     private Timer timer = new Timer();
     private TimerTask task;
     private WeakHandler mHandler;
@@ -145,6 +159,11 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     private LiWuBoFangAdapter liWuBoFangAdapter;
     private LinkedBlockingQueue<Integer> linkedBlockingQueue;
     private TanChuangThread tanChuangThread;
+    private LottieAnimationView animationView;
+    private Box<YongHuListBean> yongHuListBeanBox = MyApplication.myApplication.getYongHuListBeanBox();
+    private boolean isGuanzhu=false;
+    private long numberGZ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,9 +171,11 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         setContentView(R.layout.activity_bo_fang);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
+        animationView = findViewById(R.id.animation_view);
         MyApplication.myApplication.getYongHuListBeanBox().removeAll();
         playPath = getIntent().getStringExtra("playPath");
         idid = getIntent().getIntExtra("idid", 0);
+        link_isguanzhu(idid + "");
         linkedBlockingQueue = new LinkedBlockingQueue<>();
         DisplayMetrics outMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
@@ -218,18 +239,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         //设置布局管理器
         gz_recyclerView.setLayoutManager(layoutManager);
         //设置Adapter
-        GuanZhongBean bean = new GuanZhongBean();
-        bean.setXingguang(31321 + "");
-        bean.setHeadImage(baoCunBean.getHeadImage());
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
-        guanZhuBeanList.add(bean);
         guanZhongAdapter = new GuanZhongAdapter(guanZhuBeanList);
         gz_recyclerView.setAdapter(guanZhongAdapter);
 
@@ -427,12 +436,25 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 }
                 break;
             case "liwudonghua2": //收到大型礼物消息
+                LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message, LiWuBoFangBean.class);
 
+                playDongHua(parseUser.getLiwuID());
 
                 break;
             case "rufang": //收到观众入房消息
                 YongHuListBean yongHuListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().put(yongHuListBean);
+                List<YongHuListBean> listBeans = yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(0, 8);
+                guanZhuBeanList.addAll(listBeans);
+                guanZhongAdapter.notifyDataSetChanged();
+                numberGZ+=1;
+                guanzhongxiangqiang.setText(numberGZ+"");
+                break;
+            case "tuifang": //收到观众tui房消息
+                YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
+                MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
+                numberGZ-=1;
+                guanzhongxiangqiang.setText(numberGZ+"");
                 break;
 
         }
@@ -494,6 +516,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     ToastUtils.showError(BoFangActivity.this, "未找到本地礼物");
                     return;
                 }
+                liWuBoFangBean.setLiwuID(msgWarp.getMsg());
                 liWuBoFangBean.setLiwuName(nliwuname.getGiftName());
                 liWuBoFangBean.setLiwuPath(nliwuname.getGiftUrl());
                 String jsonString = com.alibaba.fastjson.JSONObject.toJSONString(liWuBoFangBean);
@@ -526,6 +549,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     ToastUtils.showError(BoFangActivity.this, "未找到本地礼物");
                     return;
                 }
+                liWuBoFangBean.setLiwuID(msgWarp.getMsg());
                 liWuBoFangBean.setLiwuName(nliwuname.getGiftName());
                 liWuBoFangBean.setLiwuPath(nliwuname.getGiftUrl());
                 String jsonString = com.alibaba.fastjson.JSONObject.toJSONString(liWuBoFangBean);
@@ -534,60 +558,99 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     public void onError(int errCode, String errInfo) {
                         Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
                         ToastUtils.showError(BoFangActivity.this, "发送礼物消息失败");
+                        playDongHua(msgWarp.getMsg());
                     }
 
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送礼物自定义消息成功2");
                         //播放.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build()
+                        playDongHua(msgWarp.getMsg());
 
-                        LazyList<LiwuPathBean> list=MyApplication.myApplication.getLiwuPathBeanBox().query().equal(LiwuPathBean_.sid,nliwuname.getId())
-                                .build().findLazy();
-                        if (list.size()==0){
-                            ToastUtils.showError(BoFangActivity.this, "未找到礼物资源,请等待后台下载完成");
-                        }
-                        AnimationDrawable animationDrawable = new AnimationDrawable();
-                        animationDrawable.setOneShot(true);//播放一次
-                        int duration = 0;
-                        for (LiwuPathBean bean:list) {
-                            Drawable drawable = Drawable.createFromPath(bean.getPath());
-                            if (drawable!=null){
-                                duration+=200;
-                                animationDrawable.addFrame(drawable, 200);
-                                Log.d("BoFangActivity", "drawable");
-                            }
-                        }
-                        donghua.setBackground(animationDrawable);
-                        animationDrawable.start();
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            public void run() {//动画结束
-                                donghua.setBackground(null);
-                            }
-                        }, duration);
+
+//                        LazyList<LiwuPathBean> list=MyApplication.myApplication.getLiwuPathBeanBox().query().equal(LiwuPathBean_.sid,nliwuname.getId())
+//                                .build().findLazy();
+//                        if (list.size()==0){
+//                            ToastUtils.showError(BoFangActivity.this, "未找到礼物资源,请等待后台下载完成");
+//                        }
+//                        AnimationDrawable animationDrawable = new AnimationDrawable();
+//                        animationDrawable.setOneShot(true);//播放一次
+//                        int duration = 0;
+//                        for (LiwuPathBean bean:list) {
+//                            Drawable drawable = Drawable.createFromPath(bean.getPath());
+//                            if (drawable!=null){
+//                                duration+=300;
+//                                animationDrawable.addFrame(drawable, 300);
+//                                Log.d("BoFangActivity", "drawable");
+//                            }
+//                        }
+//                        donghua.setBackground(animationDrawable);
+//                        animationDrawable.start();
+//                        Handler handler = new Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            public void run() {//动画结束
+//                                donghua.setBackground(null);
+//                            }
+//                        }, duration);
 
                     }
                 });
             }
-
         }
 
+    }
+
+    private void playDongHua(String idid) {
+        final String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        //提供一个代理接口从 SD 卡读取 images 下的图片
+        animationView.cancelAnimation();
+        animationView.removeAllAnimatorListeners();
+        animationView.setImageAssetDelegate(new ImageAssetDelegate() {
+            @Override
+            public Bitmap fetchBitmap(LottieImageAsset asset) {
+                // Log.d("BoFangActivity", asset.getFileName());
+                Bitmap bitmap = null;
+                FileInputStream fileInputStream = null;
+                try {
+                    fileInputStream = new FileInputStream(absolutePath + File.separator + "lanjing/" + idid + "/images/" + asset.getFileName());
+                    bitmap = BitmapFactory.decodeStream(fileInputStream);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (bitmap == null) {
+                            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+                        }
+                        if (fileInputStream != null) {
+                            fileInputStream.close();
+                        }
+                    } catch (IOException e) {
+                        Log.d(TAG, "e:" + e);
+                    }
+                }
+                return bitmap;
+            }
+        });
+
+        animationView.setAnimationFromJson(ReadAssetsJsonUtil.readJSON(idid));
+        animationView.addAnimatorListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Log.d("BoFangActivity", "结束了");
+                animationView.cancelAnimation();
+                super.onAnimationEnd(animation);
+            }
+        });
+        animationView.playAnimation();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
-        if (baoCunBean != null) {
-            xingguang.setText("0");
-            name.setText(baoCunBean.getNickname());
-            Glide.with(BoFangActivity.this)
-                    .load(baoCunBean.getHeadImage())
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(touxiang);
-        }
 
+        //查询主播信息
+        link_userinfo(idid+"");
 
     }
 
@@ -654,15 +717,17 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         //  super.onBackPressed();
     }
 
-    @OnClick({R.id.guanzhongxiangqiang, R.id.paihangView, R.id.tuichu, R.id.fenxiang,
-            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian, R.id.video_player})
+    @OnClick({R.id.guanzhongxiangqiang, R.id.paihangView, R.id.tuichu, R.id.fenxiang,R.id.touxiang,
+            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian, R.id.video_player,R.id.guanzhu})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.guanzhongxiangqiang:
-
+                YongHuListDialog yongHuListDialog = new YongHuListDialog();
+                yongHuListDialog.show(getSupportFragmentManager(), "ddddd");
                 break;
             case R.id.paihangView:
-
+                PaiHangListDialog paiHangListDialog = new PaiHangListDialog();
+                paiHangListDialog.show(getSupportFragmentManager(), "paihang");
                 break;
             case R.id.tuichu:
                 TuiChuDialog tuiChuDialog = new TuiChuDialog(BoFangActivity.this);
@@ -702,8 +767,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 break;
             case R.id.meiyan:
                 //美颜是转盘
-                ZhuanPanDialog zhuanPanDialog=new ZhuanPanDialog();
-                zhuanPanDialog.show(getSupportFragmentManager(),"zhuanpan");
+                ZhuanPanDialog zhuanPanDialog = new ZhuanPanDialog();
+                zhuanPanDialog.show(getSupportFragmentManager(), "zhuanpan");
 
                 break;
             case R.id.pk:
@@ -740,6 +805,17 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         });
                     }
                 }).start();
+                break;
+            case R.id.guanzhu:
+                if (isGuanzhu){
+                    link_quxiaoguanzhu(idid+"");
+                }else {
+                    link_guanzhu(idid+"");
+                }
+                break;
+            case R.id.touxiang:
+                ZhuBoXinxiDialog zhuBoXinxiDialog=new ZhuBoXinxiDialog(idid+"");
+                zhuBoXinxiDialog.show(getSupportFragmentManager(),"zhuboxinxi");
                 break;
         }
     }
@@ -792,6 +868,195 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
 //                    Gson gson = new Gson();
 //                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            Glide.with(BoFangActivity.this)
+//                                    .load(path)
+//                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+//                                    .into(touxiang);
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
+    private void link_guanzhu(String id) {
+       // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("id", id)
+                .build();
+
+//        JSONObject object=new JSONObject();
+//        try {
+//            object.put("uname",uname);
+//            object.put("pwd",pwd);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        //RequestBody body = RequestBody.create(object.toString(),JSON);
+//        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
+//        RequestBody requestBody = new MultipartBody.Builder()
+//                .setType(MultipartBody.FORM)
+//                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
+//                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/user/subscribe/"+id);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "关注:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+//                    Gson gson = new Gson();
+//                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                         guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
+    private void link_quxiaoguanzhu(String id) {
+        // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("id", id)
+                .build();
+
+//        JSONObject object=new JSONObject();
+//        try {
+//            object.put("uname",uname);
+//            object.put("pwd",pwd);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        //RequestBody body = RequestBody.create(object.toString(),JSON);
+//        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
+//        RequestBody requestBody = new MultipartBody.Builder()
+//                .setType(MultipartBody.FORM)
+//                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
+//                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/user/unsubscribe/"+id);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "关注:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+//                    Gson gson = new Gson();
+//                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                           guanzhu.setBackgroundResource(R.drawable.guanzhu2);
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
+    private void link_isguanzhu(String id) {
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/user/focus/" + id);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "是否关注:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    if (jsonObject.get("code").getAsInt() == 1) {
+                        if (jsonObject.get("desc").getAsString().equals("已关注")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
+                                    isGuanzhu=true;
+                                }
+                            });
+                        }else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    guanzhu.setBackgroundResource(R.drawable.guanzhu2);
+                                    isGuanzhu=false;
+                                }
+                            });
+                        }
+                    }
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -925,6 +1190,55 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             // Log.d("RecognizeThread", "中断了弹窗线程");
             super.interrupt();
         }
+    }
+
+
+    private void link_userinfo(String id) {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/anchor/info/"+id);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "查询个人信息:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    ChaXunGeRenXinXi logingBe = gson.fromJson(jsonObject, ChaXunGeRenXinXi.class);
+                    if (logingBe.getCode()==2000) {
+                           runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    name.setText(logingBe.getResult().getNickname());
+                                    xingguang.setText(logingBe.getResult().getStarLight()+"");
+                                    Glide.with(BoFangActivity.this)
+                                            .load(logingBe.getResult().getHeadImage())
+                                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                            .into(touxiang);
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
     }
 
 }

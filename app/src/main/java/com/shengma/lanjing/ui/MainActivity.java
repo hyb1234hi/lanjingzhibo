@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -119,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     public static final int PAGE_FOUR = 3;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         //添加翻页监听事件
         viewpage.addOnPageChangeListener(this);
         viewpage.setOffscreenPageLimit(4);
+
 
 
         tanChuangThread = new TanChuangThread();
@@ -300,7 +304,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                         if (subject==null){
                             A+=1;
                             if (A==10){
-
                                 Log.d("MainActivity", "结束大循环");
                                 new Thread(new Runnable() {
                                     @Override
@@ -310,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                                 }).start();
                                 isRing=true;
                             }
-                            SystemClock.sleep(2000);
+                            SystemClock.sleep(1200);
                             isX=true;
                         }else {
                             if (!subject.getSpecialUrl().equals("")){
@@ -341,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                                                 isX=true;
                                                 subject.setD(true);
                                                 MyApplication.myApplication.getXiaZaiLiWuBeanBox().put(subject);
+                                                Log.d("MainActivity", "下载完成:"+task.getUrl());
                                             }
                                             @Override
                                             protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
@@ -395,29 +399,29 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                         Log.d("ggg", "file.mkdirs():" + file.mkdirs());
                     }
 
-                    List<LiwuPathBean> lll = new ArrayList<>();
-                    for (int i = 0; i < fileHeaderList.size(); i++) {
-                        FileHeader fileHeader = (FileHeader) fileHeaderList.get(i);
-                        //	FileHeader fileHeader2 = (FileHeader) fileHeaderList.get(0);
-                        //Log.d(TAG, fileHeader2.getFileName());
-                      //  zipFile.extractFile(fileHeader.getFileName(), path222);
-                        //重命名
-                        fileHeader.setFileName(fileHeader.getFileName().replaceAll("img_",""));
-                        LiwuPathBean pathBean=new LiwuPathBean();
-                        pathBean.setId(System.currentTimeMillis());
-                        pathBean.setPath(path222+File.separator+fileHeader.getFileName());
-                      // Log.d("MainActivity", fileHeader.getFileName().replaceAll(".png",""));
-                        int ss = Integer.parseInt(fileHeader.getFileName().replaceAll(".png",""));
-                        pathBean.setUid(ss);
-                        pathBean.setSid(xiaZaiLiWuBean.getId());
-                        lll.add(pathBean);
-                    }
-
-                    Collections.sort(lll);
-                    for (LiwuPathBean liwuPathBean:lll){
-                        MyApplication.myApplication.getLiwuPathBeanBox().put(liwuPathBean);
-                    }
-                    lll.clear();
+//                    List<LiwuPathBean> lll = new ArrayList<>();
+//                    for (int i = 0; i < fileHeaderList.size(); i++) {
+//                        FileHeader fileHeader = (FileHeader) fileHeaderList.get(i);
+//                        //	FileHeader fileHeader2 = (FileHeader) fileHeaderList.get(0);
+//                        //Log.d(TAG, fileHeader2.getFileName());
+//                      //  zipFile.extractFile(fileHeader.getFileName(), path222);
+//                        //重命名
+//                        fileHeader.setFileName(fileHeader.getFileName().replaceAll("img_",""));
+//                        LiwuPathBean pathBean=new LiwuPathBean();
+//                        pathBean.setId(System.currentTimeMillis());
+//                        pathBean.setPath(path222+File.separator+fileHeader.getFileName());
+//                      // Log.d("MainActivity", fileHeader.getFileName().replaceAll(".png",""));
+//                        int ss = Integer.parseInt(fileHeader.getFileName().replaceAll(".png",""));
+//                        pathBean.setUid(ss);
+//                        pathBean.setSid(xiaZaiLiWuBean.getId());
+//                        lll.add(pathBean);
+//                    }
+//
+//                    Collections.sort(lll);
+//                    for (LiwuPathBean liwuPathBean:lll){
+//                        MyApplication.myApplication.getLiwuPathBeanBox().put(liwuPathBean);
+//                    }
+//                    lll.clear();
                     //重命名之后解压
                     zipFile.setRunInThread(true); // true 在子线程中进行解压 false主线程中解压
                     zipFile.extractAll(path222); // 将压缩文件解压到filePath中..

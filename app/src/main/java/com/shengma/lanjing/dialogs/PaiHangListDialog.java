@@ -22,8 +22,9 @@ import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.PaiHangListAdapter;
-import com.shengma.lanjing.beans.LogingBe;
-import com.shengma.lanjing.beans.YongHuListBean;
+
+import com.shengma.lanjing.beans.PaiHangListBean;
+
 
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
@@ -33,7 +34,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
 
@@ -49,8 +49,7 @@ public class PaiHangListDialog extends DialogFragment {
     private RefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private PaiHangListAdapter paiHangListAdapter;
-    private List<YongHuListBean> yongHuListBeanList=new ArrayList<>();
-    private Box<YongHuListBean> yongHuListBeanBox= MyApplication.myApplication.getYongHuListBeanBox();
+    private List<PaiHangListBean.ResultBean> yongHuListBeanList=new ArrayList<>();
     private int page=1;
 
     @Nullable
@@ -65,6 +64,7 @@ public class PaiHangListDialog extends DialogFragment {
         LinearLayoutManager manager=new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(manager);
         paiHangListAdapter=new PaiHangListAdapter(yongHuListBeanList);
+        recyclerView.setAdapter(paiHangListAdapter);
        // refreshLayout.setRefreshHeader(new ClassicsHeader(this));
         refreshLayout.setRefreshFooter(new ClassicsFooter(getActivity()));
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -125,7 +125,19 @@ public class PaiHangListDialog extends DialogFragment {
                     Log.d("AllConnects", "获取主播排行" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
-                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
+                    PaiHangListBean logingBe = gson.fromJson(jsonObject, PaiHangListBean.class);
+                    if (getActivity()!=null){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (PaiHangListBean.ResultBean resultBean:logingBe.getResult()){
+                                    yongHuListBeanList.add(resultBean);
+                                }
+                                paiHangListAdapter.notifyDataSetChanged();
+                                refreshLayout.finishLoadMore(400/*,false*/);//传入false表示加载失败
+                            }
+                        });
+                    }
 
 
                 } catch (Exception e) {

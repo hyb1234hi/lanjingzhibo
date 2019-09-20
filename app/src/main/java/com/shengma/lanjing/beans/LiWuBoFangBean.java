@@ -4,10 +4,19 @@ public class LiWuBoFangBean {
 
     private String name;
     private String liwuName;
+    private String liwuID;
     private String headImage;
     private int num;
     private Long id;
     private String liwuPath;
+
+    public String getLiwuID() {
+        return liwuID;
+    }
+
+    public void setLiwuID(String liwuID) {
+        this.liwuID = liwuID;
+    }
 
     public String getLiwuPath() {
         return liwuPath;

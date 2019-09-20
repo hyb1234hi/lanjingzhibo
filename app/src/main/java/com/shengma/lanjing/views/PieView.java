@@ -48,7 +48,7 @@ import java.util.concurrent.ExecutionException;
 public class PieView extends View {
 
     private static final String TAG = "PieView";
-    private int mCount;
+    private int mCount=0;
     private List<String> mStrings=new ArrayList<>();
     private List<Bitmap> mBitmaps=new ArrayList<>();
     private Activity activity;
@@ -77,7 +77,6 @@ public class PieView extends View {
                         Log.d(TAG, "mBitmaps.size()3:" + mBitmaps.size());
                     }
                 }
-
                 mCount = mStrings.size();
                 angles = new int[mCount];
                 activity.runOnUiThread(new Runnable() {
@@ -240,7 +239,7 @@ public class PieView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
        // Log.d(TAG, "mBitmaps.size():" + mBitmaps.size());
-        if (mBitmaps.size()!=0) {
+        if (mCount!=0) {
 
             //1.绘制背景
            // canvas.drawCircle(mCenter, mCenter, mCenter - getPaddingLeft() / 2, mBgPaint);
