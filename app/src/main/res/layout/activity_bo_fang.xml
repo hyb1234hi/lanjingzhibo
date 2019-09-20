@@ -138,6 +138,7 @@
         android:textSize="13sp"
         android:gravity="center"
         android:text="总排名:0"
+        android:id="@+id/paiming"
         app:layout_constraintLeft_toLeftOf="@+id/jkjkgg"
         app:layout_constraintTop_toTopOf="@+id/paihangView"
         app:layout_constraintBottom_toBottomOf="@+id/paihangView"

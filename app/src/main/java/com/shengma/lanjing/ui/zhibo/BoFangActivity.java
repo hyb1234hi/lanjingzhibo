@@ -135,6 +135,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     ImageView donghua;
     @BindView(R.id.guanzhu)
     ImageView guanzhu;
+    @BindView(R.id.paiming)
+    TextView paiming;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;    // 主播本地预览的 View
@@ -161,7 +163,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     private TanChuangThread tanChuangThread;
     private LottieAnimationView animationView;
     private Box<YongHuListBean> yongHuListBeanBox = MyApplication.myApplication.getYongHuListBeanBox();
-    private boolean isGuanzhu=false;
+    private boolean isGuanzhu = false;
     private long numberGZ;
 
 
@@ -447,14 +449,14 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 List<YongHuListBean> listBeans = yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(0, 8);
                 guanZhuBeanList.addAll(listBeans);
                 guanZhongAdapter.notifyDataSetChanged();
-                numberGZ+=1;
-                guanzhongxiangqiang.setText(numberGZ+"");
+                numberGZ += 1;
+                guanzhongxiangqiang.setText(numberGZ + "");
                 break;
             case "tuifang": //收到观众tui房消息
                 YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
-                numberGZ-=1;
-                guanzhongxiangqiang.setText(numberGZ+"");
+                numberGZ -= 1;
+                guanzhongxiangqiang.setText(numberGZ + "");
                 break;
 
         }
@@ -650,7 +652,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         super.onResume();
 
         //查询主播信息
-        link_userinfo(idid+"");
+        link_userinfo(idid + "");
 
     }
 
@@ -717,8 +719,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         //  super.onBackPressed();
     }
 
-    @OnClick({R.id.guanzhongxiangqiang, R.id.paihangView, R.id.tuichu, R.id.fenxiang,R.id.touxiang,
-            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian, R.id.video_player,R.id.guanzhu})
+    @OnClick({R.id.guanzhongxiangqiang, R.id.paihangView, R.id.tuichu, R.id.fenxiang, R.id.touxiang,
+            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian, R.id.video_player, R.id.guanzhu})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.guanzhongxiangqiang:
@@ -807,15 +809,15 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 }).start();
                 break;
             case R.id.guanzhu:
-                if (isGuanzhu){
-                    link_quxiaoguanzhu(idid+"");
-                }else {
-                    link_guanzhu(idid+"");
+                if (isGuanzhu) {
+                    link_quxiaoguanzhu(idid + "");
+                } else {
+                    link_guanzhu(idid + "");
                 }
                 break;
             case R.id.touxiang:
-                ZhuBoXinxiDialog zhuBoXinxiDialog=new ZhuBoXinxiDialog(idid+"");
-                zhuBoXinxiDialog.show(getSupportFragmentManager(),"zhuboxinxi");
+                ZhuBoXinxiDialog zhuBoXinxiDialog = new ZhuBoXinxiDialog(idid + "");
+                zhuBoXinxiDialog.show(getSupportFragmentManager(), "zhuboxinxi");
                 break;
         }
     }
@@ -888,7 +890,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     }
 
     private void link_guanzhu(String id) {
-       // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = null;
         body = new FormBody.Builder()
                 .add("id", id)
@@ -911,7 +913,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/user/subscribe/"+id);
+                .url(Consts.URL + "/user/subscribe/" + id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -937,7 +939,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                         guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
+                            guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
                         }
                     });
                 } catch (Exception e) {
@@ -973,7 +975,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/user/unsubscribe/"+id);
+                .url(Consts.URL + "/user/unsubscribe/" + id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -999,7 +1001,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                           guanzhu.setBackgroundResource(R.drawable.guanzhu2);
+                            guanzhu.setBackgroundResource(R.drawable.guanzhu2);
                         }
                     });
                 } catch (Exception e) {
@@ -1044,15 +1046,15 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 @Override
                                 public void run() {
                                     guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
-                                    isGuanzhu=true;
+                                    isGuanzhu = true;
                                 }
                             });
-                        }else {
+                        } else {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     guanzhu.setBackgroundResource(R.drawable.guanzhu2);
-                                    isGuanzhu=false;
+                                    isGuanzhu = false;
                                 }
                             });
                         }
@@ -1198,7 +1200,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL + "/anchor/info/"+id);
+                .url(Consts.URL + "/anchor/info/" + id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -1208,6 +1210,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -1219,18 +1222,19 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     ChaXunGeRenXinXi logingBe = gson.fromJson(jsonObject, ChaXunGeRenXinXi.class);
-                    if (logingBe.getCode()==2000) {
-                           runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    name.setText(logingBe.getResult().getNickname());
-                                    xingguang.setText(logingBe.getResult().getStarLight()+"");
-                                    Glide.with(BoFangActivity.this)
-                                            .load(logingBe.getResult().getHeadImage())
-                                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                                            .into(touxiang);
-                                }
-                            });
+                    if (logingBe.getCode() == 2000) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                paiming.setText("总排名:"+logingBe.getResult().getRank());
+                                name.setText(logingBe.getResult().getNickname());
+                                xingguang.setText(logingBe.getResult().getStarLight() + "");
+                                Glide.with(BoFangActivity.this)
+                                        .load(logingBe.getResult().getHeadImage())
+                                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                        .into(touxiang);
+                            }
+                        });
                     }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");

@@ -67,7 +67,9 @@ public class YongHuListDialog extends DialogFragment {
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
                 if (isZB){//是主播才能点击
-
+                    YongHuXinxiDialog yongHuXinxiDialog=new YongHuXinxiDialog(yongHuListBeanList.get(position).getId()+"");
+                    yongHuXinxiDialog.show(getFragmentManager(),"yonghuxnxi");
+                    dismiss();
                 }
             }
         });

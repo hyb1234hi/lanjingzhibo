@@ -69,6 +69,15 @@ public class ChaXunGeRenXinXi {
         private int fans;
         private int idols;
         private double starLight;
+        private long rank;
+
+        public long getRank() {
+            return rank;
+        }
+
+        public void setRank(long rank) {
+            this.rank = rank;
+        }
 
         public String getHeadImage() {
             return headImage;

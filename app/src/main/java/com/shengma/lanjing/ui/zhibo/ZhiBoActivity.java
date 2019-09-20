@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -44,7 +43,7 @@ import com.shengma.lanjing.adapters.GuanZhongAdapter;
 import com.shengma.lanjing.adapters.LiWuBoFangAdapter;
 import com.shengma.lanjing.adapters.LiaoTianAdapter;
 import com.shengma.lanjing.beans.BaoCunBean;
-import com.shengma.lanjing.beans.GuanZhongBean;
+import com.shengma.lanjing.beans.ChaXunGeRenXinXi;
 import com.shengma.lanjing.beans.LiWuBoFangBean;
 import com.shengma.lanjing.beans.LiaoTianBean;
 import com.shengma.lanjing.beans.LogingBe;
@@ -165,6 +164,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     TextView chengfa;
     @BindView(R.id.donghua)
     ImageView donghua;
+    @BindView(R.id.paiming)
+    TextView paiming;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;      // 主播本地预览的 View
@@ -192,7 +193,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private boolean isPK = false;
     private LinkedBlockingQueue<Integer> linkedBlockingQueue;
     private TanChuangThread tanChuangThread;
-    private Box<YongHuListBean> yongHuListBeanBox= MyApplication.myApplication.getYongHuListBeanBox();
+    private Box<YongHuListBean> yongHuListBeanBox = MyApplication.myApplication.getYongHuListBeanBox();
     private LottieAnimationView animationView;
     private long numberGZ;
 
@@ -202,37 +203,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         setContentView(R.layout.activity_zhi_bo);
         ButterKnife.bind(this);
 
-        animationView=findViewById(R.id.animation_view);
-
-        final String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        //提供一个代理接口从 SD 卡读取 images 下的图片
-        animationView.setImageAssetDelegate(new ImageAssetDelegate() {
-            @Override
-            public Bitmap fetchBitmap(LottieImageAsset asset) {
-                Log.d("ZhiBoActivity", asset.getFileName());
-                Bitmap bitmap = null;
-                FileInputStream fileInputStream = null;
-                try {
-                    fileInputStream = new FileInputStream(absolutePath + File.separator + "lanjing/39/"+asset.getFileName());
-                    bitmap = BitmapFactory.decodeStream(fileInputStream);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }finally {
-                    try {
-                        if (bitmap == null) {
-                            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
-                        }
-                        if (fileInputStream != null) {
-                            fileInputStream.close();
-                        }
-                    } catch (IOException e) {
-                        Log.d(TAG, "e:" + e);
-                    }
-                }
-                return bitmap;
-            }
-        });
-        animationView.setAnimationFromJson(ReadAssetsJsonUtil.getJson("data.json",ZhiBoActivity.this),"dddd");
+        animationView = findViewById(R.id.animation_view);
 
         MyApplication.myApplication.getYongHuListBeanBox().removeAll();
         EventBus.getDefault().register(this);
@@ -263,7 +234,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                 }
                             }
                         }
-                        liaoTianBeanList.addAll(0,lingshiList);
+                        liaoTianBeanList.addAll(0, lingshiList);
                         lingshiList.clear();
                         liaoTianAdapter.notifyDataSetChanged();
 
@@ -576,7 +547,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("ZhiBoActivity", "收到观众入房"+yongHuListBean.getName());
+                        Log.d("ZhiBoActivity", "收到观众入房" + yongHuListBean.getName());
                         LiaoTianBean bean = new LiaoTianBean();
                         bean.setNickname(yongHuListBean.getName());
                         bean.setType(2);
@@ -585,25 +556,23 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         lingshiList.add(0, bean);
                     }
                 });
-                List<YongHuListBean> listBeans= yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(0,8);
+                List<YongHuListBean> listBeans = yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(0, 8);
                 guanZhuBeanList.clear();
                 guanZhuBeanList.addAll(listBeans);
                 guanZhongAdapter.notifyDataSetChanged();
-                numberGZ+=1;
-                guanzhongxiangqiang.setText(numberGZ+"");
+                numberGZ += 1;
+                guanzhongxiangqiang.setText(numberGZ + "");
 
                 break;
             case "tuifang": //收到观众tui房消息
                 YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
-                numberGZ-=1;
-                guanzhongxiangqiang.setText(numberGZ+"");
+                numberGZ -= 1;
+                guanzhongxiangqiang.setText(numberGZ + "");
                 break;
         }
 
     }
-
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -763,15 +732,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     @Override
     protected void onResume() {
         super.onResume();
-        BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
-        if (baoCunBean != null) {
-            xingguang.setText("0");
-            name.setText(baoCunBean.getNickname());
-            Glide.with(ZhiBoActivity.this)
-                    .load(baoCunBean.getHeadImage())
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(touxiang);
-        }
+        //查询主播信息
+        link_userinfo(baoCunBean.getUserid() + "");
 
     }
 
@@ -788,7 +750,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             timer1.cancel();
         if (timer2 != null)
             timer2.cancel();
-        if (tanChuangThread!=null)
+        if (tanChuangThread != null)
             tanChuangThread.interrupt();
         super.onDestroy();
 
@@ -829,7 +791,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     }
 
     @OnClick({R.id.guanzhongxiangqiang, R.id.paihangView, R.id.tuichu, R.id.fenxiang,
-            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian, R.id.video_player,R.id.touxiang})
+            R.id.fanzhuang, R.id.meiyan, R.id.pk, R.id.shuodian, R.id.video_player, R.id.touxiang})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.guanzhongxiangqiang:
@@ -946,8 +908,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
                 break;
             case R.id.touxiang:
-                ZhuBoXinxiDialog zhuBoXinxiDialog=new ZhuBoXinxiDialog(baoCunBean.getUserid()+"");
-                zhuBoXinxiDialog.show(getSupportFragmentManager(),"zhuboxinxi");
+                ZhuBoXinxiDialog zhuBoXinxiDialog = new ZhuBoXinxiDialog(baoCunBean.getUserid() + "");
+                zhuBoXinxiDialog.show(getSupportFragmentManager(), "zhuboxinxi");
                 break;
         }
     }
@@ -1050,8 +1012,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            synchronized (ZhiBoActivity.this){
-                                boFangBeanList.remove(boFangBeanList.size()-1);
+                            synchronized (ZhiBoActivity.this) {
+                                boFangBeanList.remove(boFangBeanList.size() - 1);
                                 liWuBoFangAdapter.notifyDataSetChanged();
                             }
                         }
@@ -1071,7 +1033,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         }
     }
 
-    private void playDongHua(String idid){
+    private void playDongHua(String idid) {
         final String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
         //提供一个代理接口从 SD 卡读取 images 下的图片
         animationView.cancelAnimation();
@@ -1079,15 +1041,15 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         animationView.setImageAssetDelegate(new ImageAssetDelegate() {
             @Override
             public Bitmap fetchBitmap(LottieImageAsset asset) {
-               // Log.d("BoFangActivity", asset.getFileName());
+                // Log.d("BoFangActivity", asset.getFileName());
                 Bitmap bitmap = null;
                 FileInputStream fileInputStream = null;
                 try {
-                    fileInputStream = new FileInputStream(absolutePath + File.separator + "lanjing/"+idid+"/images/"+asset.getFileName());
+                    fileInputStream = new FileInputStream(absolutePath + File.separator + "lanjing/" + idid + "/images/" + asset.getFileName());
                     bitmap = BitmapFactory.decodeStream(fileInputStream);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
-                }finally {
+                } finally {
                     try {
                         if (bitmap == null) {
                             bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
@@ -1115,5 +1077,55 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         animationView.playAnimation();
     }
 
+
+    private void link_userinfo(String id) {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/anchor/info/" + id);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "查询个人信息:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    ChaXunGeRenXinXi logingBe = gson.fromJson(jsonObject, ChaXunGeRenXinXi.class);
+                    if (logingBe.getCode() == 2000) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                paiming.setText("总排名:" + logingBe.getResult().getRank());
+                                name.setText(logingBe.getResult().getNickname());
+                                xingguang.setText(logingBe.getResult().getStarLight() + "");
+                                Glide.with(ZhiBoActivity.this)
+                                        .load(logingBe.getResult().getHeadImage())
+                                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                        .into(touxiang);
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
 
 }
