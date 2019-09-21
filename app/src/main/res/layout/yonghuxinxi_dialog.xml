@@ -206,7 +206,7 @@
             <TextView
                 android:textColor="#999999"
                 android:textSize="12sp"
-                android:text="星光"
+                android:text="贡献鲸币"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

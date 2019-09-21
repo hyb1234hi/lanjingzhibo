@@ -25,6 +25,7 @@ import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.FuJinAdapter;
 import com.shengma.lanjing.beans.FuJinBean;
 import com.shengma.lanjing.cookies.CookiesManager;
+import com.shengma.lanjing.ui.SouSuoActivity;
 import com.shengma.lanjing.ui.zhibo.BoFangActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.DisplayUtils;
@@ -61,7 +62,7 @@ public class Fragment2 extends Fragment {
     private float jd=0,wd=0;
     private List<FuJinBean.ResultBean> beanList=new ArrayList<>();
     private FuJinAdapter adapter;
-    private EditText sousuo;
+    private TextView sousuo;
     private TextView rrr;
 
     public Fragment2() {
@@ -87,7 +88,12 @@ public class Fragment2 extends Fragment {
 
             }
         });
-
+        sousuo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), SouSuoActivity.class));
+            }
+        });
 
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),2, LinearLayoutManager.VERTICAL,false);
         //设置布局管理器

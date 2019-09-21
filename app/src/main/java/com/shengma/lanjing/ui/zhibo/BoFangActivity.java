@@ -18,13 +18,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.airbnb.lottie.ImageAssetDelegate;
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieImageAsset;
@@ -44,7 +42,7 @@ import com.shengma.lanjing.beans.ChaXunGeRenXinXi;
 import com.shengma.lanjing.beans.LiWuBoFangBean;
 import com.shengma.lanjing.beans.LiaoTianBean;
 import com.shengma.lanjing.beans.MsgWarp;
-import com.shengma.lanjing.beans.QianBaoBean;
+import com.shengma.lanjing.beans.PuTongInfio;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.beans.YongHuListBean;
 import com.shengma.lanjing.beans.YongHuListBean_;
@@ -466,15 +464,22 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void wxMSG(MsgWarp msgWarp) {
         if (msgWarp.getType() == 1005) {//收到输入的消息广播
+            //ToastUtils.showInfo(BoFangActivity.this,"收到关闭键盘通知");
             if (!msgWarp.getMsg().equals("")) {
                 try {
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                                    InputMethodManager.HIDE_NOT_ALWAYS);
+//                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+//                            .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+//                                    InputMethodManager.HIDE_NOT_ALWAYS);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null &&  txCloudVideoView!= null) {
+                        // imm.hideSoftInputFromWindow(txCloudVideoView.getWindowToken(), 0);
+                        imm.showSoftInput(txCloudVideoView, InputMethodManager.SHOW_IMPLICIT);
+                    }
                     if (popupwindow != null)
                         popupwindow.dismiss();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    ToastUtils.showInfo(BoFangActivity.this,"收到关闭键盘通知"+e.getMessage());
                 }
                 //发送消息
                 Log.d("BoFangActivity", msgWarp.getMsg());
@@ -603,6 +608,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     }
 
     private void playDongHua(String idid) {
+        animationView.setVisibility(View.VISIBLE);
         final String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
         //提供一个代理接口从 SD 卡读取 images 下的图片
         animationView.cancelAnimation();
@@ -640,6 +646,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             public void onAnimationEnd(Animator animation) {
                 Log.d("BoFangActivity", "结束了");
                 animationView.cancelAnimation();
+                animationView.setVisibility(View.GONE);
                 super.onAnimationEnd(animation);
             }
         });
@@ -724,7 +731,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.guanzhongxiangqiang:
-                YongHuListDialog yongHuListDialog = new YongHuListDialog();
+                YongHuListDialog yongHuListDialog = new YongHuListDialog("0");
                 yongHuListDialog.show(getSupportFragmentManager(), "ddddd");
                 break;
             case R.id.paihangView:
@@ -1081,10 +1088,10 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
     private void link_qianbao() {
         //  MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = null;
-        body = new FormBody.Builder()
-                .add("", "")
-                .build();
+//        RequestBody body = null;
+//        body = new FormBody.Builder()
+//                .add("", "")
+//                .build();
 //        JSONObject object=new JSONObject();
 //        try {
 //            object.put("uname",uname);
@@ -1101,8 +1108,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
-                .post(body)
-                .url(Consts.URL + "/user/wallet");
+                .get()
+                .url(Consts.URL + "/user/info/"+idid+"/"+baoCunBean.getUserid());
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -1120,17 +1127,17 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("AllConnects", "钱包:" + ss);
+                    Log.d("AllConnects", "花了多少钱:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
-                    QianBaoBean logingBe = gson.fromJson(jsonObject, QianBaoBean.class);
+                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
                     if (logingBe.getCode() == 2000) {
                         YongHuListBean yongHuListBean = new YongHuListBean();
                         yongHuListBean.setName(baoCunBean.getNickname());
                         yongHuListBean.setDengji(baoCunBean.getAnchorLevel());
                         yongHuListBean.setHeadImage(baoCunBean.getHeadImage());
                         yongHuListBean.setId(baoCunBean.getUserid());
-                        yongHuListBean.setJingbi(logingBe.getResult().getConsumption());
+                        yongHuListBean.setJingbi(logingBe.getResult().getTotal());
                         yongHuListBean.setSex(baoCunBean.getSex());
                         yongHuListBean.setType(0);
                         String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
@@ -1228,6 +1235,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             public void run() {
                                 paiming.setText("总排名:"+logingBe.getResult().getRank());
                                 name.setText(logingBe.getResult().getNickname());
+                                fangjianhao.setText("LANJING "+logingBe.getResult().getId());
                                 xingguang.setText(logingBe.getResult().getStarLight() + "");
                                 Glide.with(BoFangActivity.this)
                                         .load(logingBe.getResult().getHeadImage())

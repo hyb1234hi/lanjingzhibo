@@ -34,12 +34,13 @@
         android:layout_width="15dp"
         android:layout_height="4dp"/>
 
-        <EditText
+        <TextView
             app:layout_constraintTop_toBottomOf="@+id/im11"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:paddingLeft="33dp"
             android:textSize="13sp"
+            android:gravity="center_vertical"
             android:id="@+id/sousuo"
             android:layout_marginTop="16dp"
             android:textColor="#333333"

@@ -2,6 +2,7 @@ package com.shengma.lanjing.ui.fargments;
 
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -18,23 +19,41 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.beans.UserInfoBean;
+import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
+import com.shengma.lanjing.liveroom.MLVBLiveRoom;
+import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
 import com.shengma.lanjing.ui.GeXinSheZhiActivity;
 import com.shengma.lanjing.ui.KaiBoActivity;
+import com.shengma.lanjing.ui.LogingActivity;
+import com.shengma.lanjing.ui.MainActivity;
 import com.shengma.lanjing.ui.QianBaoActivity;
 import com.shengma.lanjing.ui.WoDeFenSiActivity;
 import com.shengma.lanjing.ui.WoDeGuanZhuActivity;
 import com.shengma.lanjing.ui.WoDeZhiBoActivity;
 import com.shengma.lanjing.ui.WoDeZiLiaoActivity;
+import com.shengma.lanjing.utils.Consts;
+import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.views.MyTopView;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.objectbox.Box;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -126,7 +145,90 @@ public class Fragment4 extends Fragment {
             guanzhu.setText(baoCunBean.getIdols() + "");
         }
 
+
+        link_userinfo();
     }
+
+    private void link_userinfo() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL+"/user/info");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                if (getActivity()!=null)
+                ToastUtils.showError(getActivity(),"获取数据失败,请检查网络");
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                JsonObject jsonObject = null;
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("LogingActivity", "用户信息"+ss);
+                    jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    UserInfoBean userInfoBean = gson.fromJson(jsonObject, UserInfoBean.class);
+                    Box<BaoCunBean> baoCunBeanBox = MyApplication.myApplication.getBaoCunBeanBox();
+                    BaoCunBean bean = baoCunBeanBox.get(123456);
+                    bean.setAnchorLevel(userInfoBean.getResult().getAnchorLevel());
+                    bean.setAuth(userInfoBean.getResult().getAuth());
+                    bean.setDuration(userInfoBean.getResult().getDuration());
+                    bean.setFans(userInfoBean.getResult().getFans());
+                    bean.setHeadImage(userInfoBean.getResult().getHeadImage());
+                    bean.setIdNumber(userInfoBean.getResult().getIdNumber());
+                    bean.setIdols(userInfoBean.getResult().getIdols());
+                    bean.setNickname(userInfoBean.getResult().getNickname());
+                    bean.setRealName(userInfoBean.getResult().getRealName());
+                    bean.setSex(userInfoBean.getResult().getSex());
+                    bean.setUserCode(userInfoBean.getResult().getUserCode());
+                    bean.setUserid(userInfoBean.getResult().getId());
+                    bean.setUserLevel(userInfoBean.getResult().getUserLevel());
+                    baoCunBeanBox.put(bean);
+
+                    LoginInfo loginInfo=new LoginInfo(Integer.parseInt(bean.getSdkAppId()),bean.getUserid()+"",bean.getNickname(),bean.getHeadImage(),bean.getImUserSig());
+                    MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setCameraMuteImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
+                    //登录IM
+                    MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
+                        @Override
+                        public void onError(int errCode, String errInfo) {
+                            Log.d("ZhiBoActivity", "errCode:" + errCode);
+                            Log.d("ZhiBoActivity", errInfo);
+                        }
+                        @Override
+                        public void onSuccess() {
+                            Log.d("ZhiBoActivity", "IM登录成功");
+
+
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                   // ToastUtils.showError(MainActivity.this,"获取数据失败");
+                    try {
+                        if (jsonObject!=null)
+                            if (jsonObject.get("code").getAsInt()==4401){
+                                if (getActivity()!=null)
+                             ToastUtils.showInfo(getActivity(),"登录已过期,请重新登录");
+                            }
+                    }catch (Exception e1){
+                        e1.printStackTrace();
+                    }
+
+                }
+            }
+        });
+    }
+
 
     @Override
     public void onDestroyView() {

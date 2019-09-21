@@ -1,6 +1,7 @@
 package com.shengma.lanjing.ui.fargments;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -10,13 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
-
 import com.shengma.lanjing.R;
+import com.shengma.lanjing.ui.SouSuoActivity;
 import com.shengma.lanjing.views.GZFragmentPagerAdapter;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -139,8 +138,7 @@ public class Fragment1 extends Fragment implements ViewPager.OnPageChangeListene
 
     @OnClick(R.id.sousuo)
     public void onViewClicked() {
-
-
+        startActivity(new Intent(getActivity(), SouSuoActivity.class));
     }
 
     @OnClick({R.id.rl1, R.id.rl2, R.id.rl3})

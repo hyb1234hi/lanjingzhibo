@@ -103,7 +103,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         super.onCreate();
         myApplication = this;
         BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
-        Bugly.init(getApplicationContext(), "dbdf648da8", false);
+        Bugly.init(getApplicationContext(), "f4afeb35e1", true);
 
       //全局dialog
         this.registerActivityLifecycleCallbacks(this);//注册

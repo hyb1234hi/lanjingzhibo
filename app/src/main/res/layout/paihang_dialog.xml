@@ -22,7 +22,7 @@
             android:layout_height="28dp"/>
 
         <TextView
-            android:text="在线用户"
+            android:text="总排行"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintTop_toTopOf="@+id/fanhui"
@@ -62,7 +62,7 @@
             android:id="@+id/ggg3"
             android:textColor="#AAAAAA"
             android:textSize="12sp"
-            android:text="用户信息"
+            android:text="鲸币"
             android:layout_marginStart="170dp"
             app:layout_constraintLeft_toRightOf="@+id/ggg2"
             app:layout_constraintTop_toTopOf="@+id/ggg2"

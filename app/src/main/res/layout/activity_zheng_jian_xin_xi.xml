@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.ZhengJianXinXiActivity">
+
+    <ImageView
+        android:id="@+id/fanhui"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="16dp"
+        android:padding="3dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/fanhui_hei"
+        android:layout_width="15dp"
+        android:layout_height="20dp"/>
+
+
+    <TextView
+        app:layout_constraintTop_toTopOf="@+id/fanhui"
+        app:layout_constraintBottom_toBottomOf="@+id/fanhui"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:text="实名认证"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:id="@+id/ggg"
+        app:layout_constraintTop_toBottomOf="@+id/fanhui"
+        android:layout_marginTop="15dp"
+        android:background="#E5E5E5"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <TextView
+        android:textSize="12sp"
+        android:padding="16dp"
+        android:id="@+id/ggg2"
+        app:layout_constraintTop_toBottomOf="@+id/ggg"
+        android:textColor="#AAAAAA"
+        android:background="#F5F5F5"
+        android:text="证件信息设置后不能修改,请填写本人真实信息,如非本人信息将无法提现,账户丢失也无法找回账号."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <TextView
+        android:layout_marginTop="18dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="18dp"
+        app:layout_constraintTop_toBottomOf="@+id/ggg2"
+        android:textColor="#181818"
+        android:textSize="16sp"
+        android:text="真实姓名"
+        android:id="@+id/jk1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        app:layout_constraintTop_toBottomOf="@+id/ggg2"
+        app:layout_constraintLeft_toRightOf="@+id/jk1"
+        app:layout_constraintRight_toRightOf="parent"
+        android:hint="请填写你的真实姓名"
+        android:id="@+id/name"
+        android:layout_marginLeft="16dp"
+        android:layout_width="0dp"
+        android:layout_height="52dp"/>
+
+    <TextView
+        android:layout_marginTop="18dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="18dp"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        android:textColor="#181818"
+        android:textSize="16sp"
+        android:text="身份证号"
+        android:id="@+id/jk2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/haoma"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintLeft_toRightOf="@+id/jk2"
+        app:layout_constraintRight_toRightOf="parent"
+        android:hint="请填写你的身份证号"
+        android:layout_marginLeft="16dp"
+        android:layout_width="0dp"
+        android:layout_height="52dp"/>
+    <View
+        android:id="@+id/kj"
+        app:layout_constraintTop_toBottomOf="@+id/haoma"
+        android:background="#F5F5F5"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+
+    <ImageView
+        android:id="@+id/f1"
+        android:scaleType="fitXY"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/kj"
+        android:src="@drawable/yuanxian_bai"
+        android:layout_width="164dp"
+        android:layout_height="120dp"/>
+
+    <TextView
+        android:textSize="13sp"
+        android:textColor="#333333"
+        android:text="上传身份证正面"
+        android:id="@+id/kkk1"
+        app:layout_constraintTop_toTopOf="@+id/f1"
+        app:layout_constraintLeft_toLeftOf="@+id/f1"
+        app:layout_constraintRight_toRightOf="@+id/f1"
+        android:layout_marginTop="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:id="@+id/shangchuan1"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/f1"
+        app:layout_constraintRight_toRightOf="@+id/f1"
+        app:layout_constraintTop_toBottomOf="@+id/kkk1"
+        android:background="@drawable/shangchuansfz"
+        android:layout_width="109dp"
+        android:layout_height="32dp"/>
+
+    <ImageView
+        android:id="@+id/f2"
+        android:layout_marginTop="24dp"
+        android:scaleType="fitXY"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/kj"
+        android:src="@drawable/yuanxian_bai"
+        android:layout_width="164dp"
+        android:layout_height="120dp"/>
+
+    <TextView
+        android:textSize="13sp"
+        android:textColor="#333333"
+        android:text="上传身份证反面"
+        android:id="@+id/kkk2"
+        app:layout_constraintTop_toTopOf="@+id/f2"
+        app:layout_constraintLeft_toLeftOf="@+id/f2"
+        app:layout_constraintRight_toRightOf="@+id/f2"
+        android:layout_marginTop="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:id="@+id/shangchuan2"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/f2"
+        app:layout_constraintRight_toRightOf="@+id/f2"
+        app:layout_constraintTop_toBottomOf="@+id/kkk2"
+        android:background="@drawable/shangchuansfz"
+        android:layout_width="109dp"
+        android:layout_height="32dp"/>
+
+    <Button
+        android:id="@+id/wancheng"
+        android:text="进行身份证信息检测"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/f1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/wanchengbg"
+        android:layout_width="315dp"
+        android:layout_height="44dp"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

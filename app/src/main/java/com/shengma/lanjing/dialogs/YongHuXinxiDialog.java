@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
-import com.shengma.lanjing.beans.ChaXunGeRenXinXi;
+import com.shengma.lanjing.beans.PuTongInfio;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 
@@ -69,9 +69,11 @@ public class YongHuXinxiDialog extends DialogFragment {
     private Window window;
     private Unbinder unbinder;
     private String id;
+    private String zhuboid;
 
-    public YongHuXinxiDialog(String id) {
+    public YongHuXinxiDialog(String zhuboid,String id) {
         this.id = id;
+        this.zhuboid=zhuboid;
     }
 
     @Nullable
@@ -88,7 +90,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 dismiss();
             }
         });
-        link_userinfo(id);
+        link_userinfo(zhuboid,id);
         return view;
     }
 
@@ -119,12 +121,12 @@ public class YongHuXinxiDialog extends DialogFragment {
     }
 
 
-    private void link_userinfo(String id) {
+    private void link_userinfo(String id1,String id) {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL + "/anchor/info/" + id);
+                .url(Consts.URL + "/user/info/"+id1+"/"+id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -145,7 +147,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                     Log.d("AllConnects", "查询个人信息:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
-                    ChaXunGeRenXinXi logingBe = gson.fromJson(jsonObject, ChaXunGeRenXinXi.class);
+                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
                     if (logingBe.getCode() == 2000) {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
@@ -161,7 +163,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                                     }
                                     fensi.setText(logingBe.getResult().getFans() + "");
                                     guanzhu.setText(logingBe.getResult().getIdols() + "");
-                                    xingguang.setText(logingBe.getResult().getStarLight() + "");
+                                    xingguang.setText(logingBe.getResult().getTotal() + "");
                                     Glide.with(getActivity())
                                             .load(logingBe.getResult().getHeadImage())
                                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))

@@ -15,9 +15,9 @@
         android:padding="2dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/fanhui_hei"
-        android:layout_width="12dp"
-        android:layout_height="20dp"/>
+        android:src="@drawable/fanhui_hei"
+        android:layout_width="15dp"
+        android:layout_height="23dp"/>
 
 
     <TextView

@@ -41,6 +41,11 @@ public class YongHuListDialog extends DialogFragment {
     private Box<YongHuListBean> yongHuListBeanBox= MyApplication.myApplication.getYongHuListBeanBox();
     private int size=20,page=0;
     private boolean isZB=false;
+    private String zhuboid;
+
+    public YongHuListDialog(String zhuboid) {
+        this.zhuboid=zhuboid;
+    }
 
     @Nullable
     @Override
@@ -67,7 +72,7 @@ public class YongHuListDialog extends DialogFragment {
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
                 if (isZB){//是主播才能点击
-                    YongHuXinxiDialog yongHuXinxiDialog=new YongHuXinxiDialog(yongHuListBeanList.get(position).getId()+"");
+                    YongHuXinxiDialog yongHuXinxiDialog=new YongHuXinxiDialog(zhuboid,yongHuListBeanList.get(position).getId()+"");
                     yongHuXinxiDialog.show(getFragmentManager(),"yonghuxnxi");
                     dismiss();
                 }

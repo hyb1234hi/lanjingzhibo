@@ -23,7 +23,7 @@ public class BaoCunBean {
     private int duration;
     private int idols;
     private int fans;
-    private int auth;
+    private int auth;   //1是待审核  2是通过 。3是未通过
     private String realName;
     private String idNumber;
     private long roomId;
@@ -34,6 +34,7 @@ public class BaoCunBean {
     private String jiaxiang;
     private String session;
     private int meiyan,meibai,hongrun;
+
 
     public int getMeiyan() {
         return meiyan;

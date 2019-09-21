@@ -19,7 +19,7 @@ import com.shengma.lanjing.beans.MsgWarp;
 import org.greenrobot.eventbus.EventBus;
 
 public class InputPopupwindow extends PopupWindow {
-    private Activity context;
+  //  private Activity context;
     private EditText editText;
     private Button button;
 
@@ -36,7 +36,7 @@ public class InputPopupwindow extends PopupWindow {
     private void init(Activity context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.widget_popupwindow, null);//alt+ctrl+f
-        this.context = context;
+       // this.context = context;
         editText=view.findViewById(R.id.shuru);
         button=view.findViewById(R.id.fasong);
         button.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +59,7 @@ public class InputPopupwindow extends PopupWindow {
         this.setOutsideTouchable(true);
         //设置弹出窗体的背景
         this.setBackgroundDrawable(dw);
-       // backgroundAlpha(context, 0.6f);//0.0-1.0
+        // backgroundAlpha(context, 0.6f);//0.0-1.0
     }
 
     public EditText getEditText(){

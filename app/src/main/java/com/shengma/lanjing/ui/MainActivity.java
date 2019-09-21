@@ -155,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 //            MyApplication.myApplication.getYongHuListBeanBox().put(bean);
 //        }≤≥lololoõ8i9
 
+
+
     }
 
 
@@ -276,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                            }
                            Intent intent=new Intent(MainActivity.this,LogingActivity.class);
                            intent.putExtra("aaa","aaa");
+                           ToastUtils.showInfo(MainActivity.this,"登录已过期,请重新登录");
                            startActivity(intent);
                            finish();
                        }
