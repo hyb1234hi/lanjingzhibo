@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -24,6 +25,7 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.FuJinAdapter;
 import com.shengma.lanjing.beans.FuJinBean;
+import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.ui.SouSuoActivity;
 import com.shengma.lanjing.ui.zhibo.BoFangActivity;
@@ -32,6 +34,10 @@ import com.shengma.lanjing.utils.DisplayUtils;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.views.GridDividerItemDecoration;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,11 +65,12 @@ public class Fragment2 extends Fragment {
             //        .retryOnConnectionFailure(true)
             .build();
     private int pag=1;
-    private float jd=0,wd=0;
+    private String jd="",wd="";
     private List<FuJinBean.ResultBean> beanList=new ArrayList<>();
     private FuJinAdapter adapter;
     private TextView sousuo;
     private TextView rrr;
+    private LinearLayout shuju;
 
     public Fragment2() {
         // Required empty public constructor
@@ -76,7 +83,9 @@ public class Fragment2 extends Fragment {
        View view=inflater.inflate(R.layout.fragment_fragment2, container, false);
        rrr=view.findViewById(R.id.rtrr);
        sousuo=view.findViewById(R.id.sousuo);
+       EventBus.getDefault().register(this);
         swipeRefreshLayout=view.findViewById(R.id.refreshLayout);
+        shuju=view.findViewById(R.id.shuju);
         recyclerView=view.findViewById(R.id.recyclerview);
         //设置进度View的组合颜色，在手指上下滑时使用第一个颜色，在刷新中，会一个个颜色进行切换
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#3EE1F7"), Color.GREEN, Color.RED, Color.YELLOW, Color.BLUE);
@@ -85,7 +94,6 @@ public class Fragment2 extends Fragment {
             public void onRefresh() {
                 pag+=1;
                 link_list();
-
             }
         });
         sousuo.setOnClickListener(new View.OnClickListener() {
@@ -120,9 +128,18 @@ public class Fragment2 extends Fragment {
                 startActivity(intent);
             }
         });
-
-        link_list();
         return view;
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void wxMSG(MsgWarp msgWarp){
+        if (msgWarp.getType()==6666) {//
+            jd=msgWarp.getMsg();
+            wd=msgWarp.getTemp();
+            pag=1;
+            link_list();
+        }
     }
 
     @Override
@@ -183,6 +200,11 @@ public class Fragment2 extends Fragment {
                                 public void run() {
                                     beanList.addAll(bean.getResult());
                                     adapter.notifyDataSetChanged();
+                                    if (beanList.size()>0){
+                                        shuju.setVisibility(View.GONE);
+                                    }else {
+                                        shuju.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             });
                     }
@@ -202,4 +224,9 @@ public class Fragment2 extends Fragment {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
 }

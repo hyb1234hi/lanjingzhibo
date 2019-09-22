@@ -62,6 +62,42 @@ public class GuanZhuBean {
         private String nickname;
         private int sex;
         private String headImage;
+        private int anchorLevel;
+        private long total;
+        private String pushUrl;
+        private String playUrl;
+
+        public int getAnchorLevel() {
+            return anchorLevel;
+        }
+
+        public void setAnchorLevel(int anchorLevel) {
+            this.anchorLevel = anchorLevel;
+        }
+
+        public long getTotal() {
+            return total;
+        }
+
+        public void setTotal(long total) {
+            this.total = total;
+        }
+
+        public String getPushUrl() {
+            return pushUrl;
+        }
+
+        public void setPushUrl(String pushUrl) {
+            this.pushUrl = pushUrl;
+        }
+
+        public String getPlayUrl() {
+            return playUrl;
+        }
+
+        public void setPlayUrl(String playUrl) {
+            this.playUrl = playUrl;
+        }
 
         public int getId() {
             return id;

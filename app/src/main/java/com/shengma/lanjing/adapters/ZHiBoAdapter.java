@@ -22,7 +22,8 @@ public class ZHiBoAdapter extends BaseQuickAdapter<ZhiBoBean.ResultBean,BaseView
     @Override
     protected void convert(BaseViewHolder helper, ZhiBoBean.ResultBean item) {
         helper.setText(R.id.title, item.getTitle());
-        helper.setText(R.id.dengji, "Lv.11");
+        helper.setText(R.id.dengji, "Lv."+item.getAnchorLevel());
+        helper.setText(R.id.renshu, item.getOnlineNums()+"");
         Glide.with(mContext)
                 .load(item.getCoverImg())
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners( 10)))

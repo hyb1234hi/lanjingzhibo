@@ -15,12 +15,14 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.ImageAssetDelegate;
@@ -135,6 +137,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     ImageView guanzhu;
     @BindView(R.id.paiming)
     TextView paiming;
+    @BindView(R.id.group)
+    Group group;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;    // 主播本地预览的 View
@@ -168,6 +172,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_bo_fang);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
@@ -259,8 +264,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             public void onError(int errCode, String errInfo) {
                 Log.d("BoFangActivity", "errCode:" + errCode);
                 Log.d("BoFangActivity", "errInfo:" + errInfo);
+                ToastUtils.showInfo(BoFangActivity.this,"进房失败,主播已经下线了");
             }
-
             @Override
             public void onSuccess() {
                 link_qianbao();//发送进房自定义消息
@@ -667,19 +672,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     @Override
     protected void onDestroy() {
         timer.cancel();
-        //退出时发送退房自定义通知
-        YongHuListBean yongHuListBean = new YongHuListBean();
-        yongHuListBean.setId(baoCunBean.getUserid());
-        String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
-        mlvbLiveRoom.sendRoomCustomMsg("tuifang", js, new SendRoomCustomMsgCallback() {
-            @Override
-            public void onError(int errCode, String errInfo) {
-            }
-
-            @Override
-            public void onSuccess() {
-            }
-        });
 
         if (task != null)
             task.cancel();
@@ -697,20 +689,50 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     public void onBackPressed() {
 
         TuiChuDialog tuiChuDialog = new TuiChuDialog(BoFangActivity.this);
+        tuiChuDialog.setTextView("确定要退出直播间?");
         tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                //退出时发送退房自定义通知
+                YongHuListBean yongHuListBean = new YongHuListBean();
+                yongHuListBean.setId(baoCunBean.getUserid());
+                String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
+                mlvbLiveRoom.sendRoomCustomMsg("tuifang", js, new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
-                        tuiChuDialog.dismiss();
-                        BoFangActivity.this.finish();
-                    }
+                        mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                            @Override
+                            public void onError(int errCode, String errInfo) {
+                                mlvbLiveRoom.setListener(null);
+                                tuiChuDialog.dismiss();
+                                BoFangActivity.this.finish();
+                            }
 
+                            @Override
+                            public void onSuccess() {
+                                mlvbLiveRoom.setListener(null);
+                                tuiChuDialog.dismiss();
+                                BoFangActivity.this.finish();
+                            }
+                        });
+                    }
                     @Override
                     public void onSuccess() {
-                        tuiChuDialog.dismiss();
-                        BoFangActivity.this.finish();
+                        mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                            @Override
+                            public void onError(int errCode, String errInfo) {
+                                mlvbLiveRoom.setListener(null);
+                                tuiChuDialog.dismiss();
+                                BoFangActivity.this.finish();
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                mlvbLiveRoom.setListener(null);
+                                tuiChuDialog.dismiss();
+                                BoFangActivity.this.finish();
+                            }
+                        });
                     }
                 });
             }
@@ -740,20 +762,50 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 break;
             case R.id.tuichu:
                 TuiChuDialog tuiChuDialog = new TuiChuDialog(BoFangActivity.this);
+                tuiChuDialog.setTextView("确定要退出直播间?");
                 tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                        //退出时发送退房自定义通知
+                        YongHuListBean yongHuListBean = new YongHuListBean();
+                        yongHuListBean.setId(baoCunBean.getUserid());
+                        String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
+                        mlvbLiveRoom.sendRoomCustomMsg("tuifang", js, new SendRoomCustomMsgCallback() {
                             @Override
                             public void onError(int errCode, String errInfo) {
-                                tuiChuDialog.dismiss();
-                                BoFangActivity.this.finish();
-                            }
+                                mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                                    @Override
+                                    public void onError(int errCode, String errInfo) {
+                                        mlvbLiveRoom.setListener(null);
+                                        tuiChuDialog.dismiss();
+                                        BoFangActivity.this.finish();
+                                    }
 
+                                    @Override
+                                    public void onSuccess() {
+                                        mlvbLiveRoom.setListener(null);
+                                        tuiChuDialog.dismiss();
+                                        BoFangActivity.this.finish();
+                                    }
+                                });
+                            }
                             @Override
                             public void onSuccess() {
-                                tuiChuDialog.dismiss();
-                                BoFangActivity.this.finish();
+                                mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                                    @Override
+                                    public void onError(int errCode, String errInfo) {
+                                        mlvbLiveRoom.setListener(null);
+                                        tuiChuDialog.dismiss();
+                                        BoFangActivity.this.finish();
+                                    }
+
+                                    @Override
+                                    public void onSuccess() {
+                                        mlvbLiveRoom.setListener(null);
+                                        tuiChuDialog.dismiss();
+                                        BoFangActivity.this.finish();
+                                    }
+                                });
                             }
                         });
                     }
@@ -946,6 +998,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            isGuanzhu=true;
                             guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
                         }
                     });
@@ -957,6 +1010,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             }
         });
     }
+
+
 
     private void link_quxiaoguanzhu(String id) {
         // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -1008,7 +1063,9 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            isGuanzhu=false;
                             guanzhu.setBackgroundResource(R.drawable.guanzhu2);
+
                         }
                     });
                 } catch (Exception e) {
@@ -1046,8 +1103,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     String ss = body.string().trim();
                     Log.d("AllConnects", "是否关注:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    Gson gson = new Gson();
-                    if (jsonObject.get("code").getAsInt() == 1) {
+                   // Gson gson = new Gson();
+
                         if (jsonObject.get("desc").getAsString().equals("已关注")) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -1065,7 +1122,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 }
                             });
                         }
-                    }
+
 
                     runOnUiThread(new Runnable() {
                         @Override

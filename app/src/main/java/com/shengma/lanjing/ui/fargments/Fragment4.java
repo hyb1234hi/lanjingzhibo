@@ -137,8 +137,8 @@ public class Fragment4 extends Fragment {
             //RequestOptions.bitmapTransform(new CircleCrop())//圆形
             //RequestOptions.bitmapTransform(new RoundedCorners( 5))//圆角
             name.setText(baoCunBean.getNickname() + "");
-            dengji.setText("Lv." + baoCunBean.getAnchorLevel());
-            dengji2.setText("Lv." + baoCunBean.getUserLevel());
+            dengji.setText("Lv." + baoCunBean.getUserLevel());
+            dengji2.setText("Lv." + baoCunBean.getAnchorLevel());
             myid.setText("ID:" + baoCunBean.getUserid());
             shichang.setText(baoCunBean.getDuration() + "");
             fensi.setText(baoCunBean.getFans() + "");

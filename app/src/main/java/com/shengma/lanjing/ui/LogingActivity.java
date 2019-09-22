@@ -46,6 +46,7 @@ import butterknife.OnClick;
 import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -170,7 +171,42 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
         }
     }
 
+    private void link_logout() {
+        // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("uname", "")
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL+"/logout");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+            }
 
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    // JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Log.d("AllConnects", "退出:" + ss);
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+
+                }
+            }
+        });
+    }
 
     private void link_loging(String uname,String pwd) {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -239,7 +275,6 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                         bean.setIsBind(logingBe.getResult().getIsBind());
                         bean.setSession(logingBe.getResult().getSession());
                         baoCunBeanBox.put(bean);
-
                         startActivity(new Intent(LogingActivity.this, MainActivity.class));
                         finish();
                     }else {
@@ -478,7 +513,7 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
         String[] perms = {Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.RECEIVE_BOOT_COMPLETED, Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.WAKE_LOCK,
                 Manifest.permission.ACCESS_WIFI_STATE,Manifest.permission.INTERNET};
 
         if (EasyPermissions.hasPermissions(this, perms)) {

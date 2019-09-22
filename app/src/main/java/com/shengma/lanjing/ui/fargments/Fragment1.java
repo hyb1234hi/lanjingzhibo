@@ -66,13 +66,14 @@ public class Fragment1 extends Fragment implements ViewPager.OnPageChangeListene
         GZFragmentPagerAdapter myFragmentPagerAdapter = new GZFragmentPagerAdapter(getChildFragmentManager());
         viewpage.setAdapter(myFragmentPagerAdapter);
         //设置当前页的ID
-        viewpage.setCurrentItem(0);
+        viewpage.setCurrentItem(1);
         //添加翻页监听事件
         viewpage.addOnPageChangeListener(this);
         viewpage.setOffscreenPageLimit(3);
 
         return view;
     }
+
 
     //重写ViewPager页面切换的处理方法
     @Override

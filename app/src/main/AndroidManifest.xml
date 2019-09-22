@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ZhengJian2Activity"></activity>
+        <activity android:name=".ui.LogingActivity"/>
+        <activity android:name=".ui.ZhengJian2Activity" />
         <activity android:name=".ui.ZhengJianXinXiActivity" />
         <activity android:name=".ui.XiuGaiMiMaActivity" />
         <activity android:name=".ui.SouSuoActivity" />
@@ -51,7 +52,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".ui.LogingActivity"
+            android:name=".ui.QiDongActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -85,6 +86,13 @@
         <meta-data
             android:name="design_width_in_dp"
             android:value="375" />
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="uTTmEt0NeHSsgAKsXGLAMC8mvg6zPNLm" >
+        </meta-data>
+        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote"/>
+
     </application>
     <uses-feature android:name="android.hardware.Camera" />
 
@@ -98,7 +106,14 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 这个权限用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+
+
 
 </manifest>

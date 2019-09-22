@@ -1,22 +1,38 @@
 package com.shengma.lanjing.ui;
 
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+
 import android.graphics.Color;
 
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import com.airbnb.lottie.LottieAnimationView;
+
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -26,19 +42,13 @@ import com.liulishuo.filedownloader.FileDownloader;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
-import com.shengma.lanjing.beans.LiwuPathBean;
+
 
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 
 
-import com.shengma.lanjing.beans.YongHuListBean;
-import com.shengma.lanjing.beans.YongHuListBean_;
-import com.shengma.lanjing.cookies.CookiesManager;
-import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
-import com.shengma.lanjing.liveroom.MLVBLiveRoom;
-import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -48,7 +58,7 @@ import com.shengma.lanjing.views.MyFragmentPagerAdapter;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.FileHeader;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -56,12 +66,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+
+
 import java.util.List;
-import java.util.Random;
+
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -69,13 +79,13 @@ import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
 
-import okhttp3.OkHttpClient;
+
 import okhttp3.Request;
 
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
@@ -105,13 +115,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     TextView tv4;
     private LinkedBlockingQueue<XiaZaiLiWuBean> linkedBlockingQueue=new LinkedBlockingQueue<>(200);
 
-    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .writeTimeout(18000, TimeUnit.MILLISECONDS)
-            .connectTimeout(18000, TimeUnit.MILLISECONDS)
-            .readTimeout(18000, TimeUnit.MILLISECONDS)
-            .cookieJar(new CookiesManager())
-            //        .retryOnConnectionFailure(true)
-            .build();
     private TanChuangThread tanChuangThread;
     private ControlScrollViewPager viewpage;
     //几个代表页面的常量
@@ -119,7 +122,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     public static final int PAGE_TWO = 1;
     public static final int PAGE_THREE = 2;
     public static final int PAGE_FOUR = 3;
-
+    private String jd="",wd="";
+    private LocationClient locationClient;
+    private int count=0;
 
 
     @Override
@@ -155,7 +160,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 //            MyApplication.myApplication.getYongHuListBeanBox().put(bean);
 //        }≤≥lololoõ8i9
 
-
+        //(A-B)÷Bx100%
+     //  float ss= (float) ((1-100000)/100000.0);
+      // Log.d("MainActivity", "ss:" + ss);
 
     }
 
@@ -183,6 +190,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 tv2.setTextColor(Color.parseColor("#F36D87"));
                 im2.setBackgroundResource(R.drawable.fujin1);
                 viewpage.setCurrentItem(PAGE_TWO);
+                count=0;
+                initLocationOption();
                 break;
             case R.id.ll3:
                 resetSelected();
@@ -199,6 +208,117 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PRIVATE_CODE) {
+           Log.d("MainActivity", "resultCode:" + resultCode);
+            if (resultCode!=0){
+                ToastUtils.showInfo(MainActivity.this,"打开GPS失败");
+            }else {
+                showGPSContacts();
+            }
+        }
+    }
+
+    /**
+     * 获取到当前位置的经纬度
+     * @param location
+     */
+    private void updateLocation(Location location) {
+        if (location != null) {
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            Log.e("MainActivity","维度：" + latitude + "\n经度" + longitude);
+            EventBus.getDefault().post(new MsgWarp(6666,latitude+"",longitude+""));
+        } else {
+            ToastUtils.showInfo(MainActivity.this,"无法获取到位置信息");
+            Log.e("MainActivity","无法获取到位置信息");
+        }
+    }
+
+
+
+    static final String[] LOCATIONGPS = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_PHONE_STATE};
+    private static final int BAIDU_READ_PHONE_STATE = 100;//定位权限请求
+    private static final int PRIVATE_CODE = 1315;//开启GPS权限
+
+    /**
+     * 检测GPS、位置权限是否开启
+     */
+    public void showGPSContacts() {
+        LocationManager lm = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        boolean ok = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (ok) {//开了定位服务
+            if (Build.VERSION.SDK_INT >= 23) { //判断是否为android6.0系统版本，如果是，需要动态添加权限
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PERMISSION_GRANTED) {// 没有权限，申请权限。
+                    ActivityCompat.requestPermissions(this, LOCATIONGPS,
+                            BAIDU_READ_PHONE_STATE);
+                } else {
+                    getLocation();//getLocation为定位方法
+                }
+            } else {
+                getLocation();//getLocation为定位方法
+            }
+        } else {
+            Toast.makeText(this, "系统检测到未开启GPS定位服务,请开启", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, PRIVATE_CODE);
+        }
+    }
+
+    /**
+     * Android6.0申请权限的回调方法
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // requestCode即所声明的权限获取码，在checkSelfPermission时传入
+        if (requestCode == BAIDU_READ_PHONE_STATE) {//如果用户取消，permissions可能为null.
+            if (grantResults[0] == PERMISSION_GRANTED) {  //有权限
+                // 获取到权限，作相应处理
+                getLocation();
+            } else {
+                showGPSContacts();
+            }
+        }
+    }
+
+    /**
+     * 获取具体位置的经纬度
+     */
+    private void getLocation() {
+        // 获取位置管理服务
+        LocationManager locationManager;
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        // 查找到服务信息
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE); // 高精度
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setPowerRequirement(Criteria.POWER_LOW); // 低功耗
+        String provider = locationManager.getBestProvider(criteria, true); // 获取GPS信息
+        /**这段代码不需要深究，是locationManager.getLastKnownLocation(provider)自动生成的，不加会出错**/
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        if (provider!=null){
+            Location location = locationManager.getLastKnownLocation(provider); // 通过GPS获取位置
+            updateLocation(location);
+        }
+    }
+
+
     private void link_userinfo() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
@@ -206,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 .get()
                 .url(Consts.URL+"/user/info");
         // step 3：创建 Call 对象
-        Call call = okHttpClient.newCall(requestBuilder.build());
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
         call.enqueue(new Callback() {
             @Override
@@ -243,26 +363,22 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     bean.setUserLevel(userInfoBean.getResult().getUserLevel());
                     baoCunBeanBox.put(bean);
 
-                    LoginInfo loginInfo=new LoginInfo(Integer.parseInt(bean.getSdkAppId()),bean.getUserid()+"",bean.getNickname(),bean.getHeadImage(),bean.getImUserSig());
-                    MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setCameraMuteImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
-                    //登录IM
-                    MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
-                        @Override
-                        public void onError(int errCode, String errInfo) {
-                            Log.d("ZhiBoActivity", "errCode:" + errCode);
-                            Log.d("ZhiBoActivity", errInfo);
-                        }
-                        @Override
-                        public void onSuccess() {
-                            Log.d("ZhiBoActivity", "IM登录成功");
-
-
-                        }
-                    });
-
+//                    LoginInfo loginInfo=new LoginInfo(Integer.parseInt(bean.getSdkAppId()),bean.getUserid()+"",bean.getNickname(),bean.getHeadImage(),bean.getImUserSig());
+//                    MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setCameraMuteImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
+//                    //登录IM
+//                    MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
+//                        @Override
+//                        public void onError(int errCode, String errInfo) {
+//                            Log.d("ZhiBoActivity", "errCode:" + errCode);
+//                            Log.d("ZhiBoActivity", errInfo);
+//                        }
+//                        @Override
+//                        public void onSuccess() {
+//                            Log.d("ZhiBoActivity", "IM登录成功");
+//                        }
+//                    });
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
-                    ToastUtils.showError(MainActivity.this,"获取数据失败");
                     try {
                         if (jsonObject!=null)
                        if (jsonObject.get("code").getAsInt()==4401){
@@ -281,9 +397,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                            ToastUtils.showInfo(MainActivity.this,"登录已过期,请重新登录");
                            startActivity(intent);
                            finish();
-                       }
+                       }else {
+                            ToastUtils.showError(MainActivity.this,e.getMessage()+"");
+                        }
                     }catch (Exception e1){
                         e1.printStackTrace();
+                        ToastUtils.showError(MainActivity.this,e1.getMessage()+"");
                     }
 
                 }
@@ -567,5 +686,90 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    /**
+     * 初始化定位参数配置
+     */
+
+
+    private void initLocationOption() {
+        //定位服务的客户端。宿主程序在客户端声明此类，并调用，目前只支持在主线程中启动
+         locationClient = new LocationClient(getApplicationContext());
+        //声明LocationClient类实例并配置定位参数
+        LocationClientOption locationOption = new LocationClientOption();
+        MyLocationListener myLocationListener = new MyLocationListener();
+        //注册监听函数
+        locationClient.registerLocationListener(myLocationListener);
+        //可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
+        locationOption.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        //可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
+        locationOption.setCoorType("gcj02");
+        //可选，默认0，即仅定位一次，设置发起连续定位请求的间隔需要大于等于1000ms才是有效的
+       // locationOption.setScanSpan(0);
+        //可选，设置是否需要地址信息，默认不需要
+        locationOption.setIsNeedAddress(true);
+        //可选，设置是否需要地址描述
+        locationOption.setIsNeedLocationDescribe(true);
+        //可选，设置是否需要设备方向结果
+        locationOption.setNeedDeviceDirect(false);
+        //可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
+        locationOption.setLocationNotify(false);
+        //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
+        locationOption.setIgnoreKillProcess(false);
+        //可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
+        locationOption.setIsNeedLocationDescribe(true);
+        //可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
+        locationOption.setIsNeedLocationPoiList(true);
+        //可选，默认false，设置是否收集CRASH信息，默认收集
+        locationOption.SetIgnoreCacheException(false);
+        //可选，默认false，设置是否开启Gps定位
+        locationOption.setOpenGps(true);
+        //可选，默认false，设置定位时是否需要海拔信息，默认不需要，除基础定位版本都可用
+        locationOption.setIsNeedAltitude(false);
+        //设置打开自动回调位置模式，该开关打开后，期间只要定位SDK检测到位置变化就会主动回调给开发者，该模式下开发者无需再关心定位间隔是多少，定位SDK本身发现位置变化就会及时回调给开发者
+       // locationOption.setOpenAutoNotifyMode();
+        //设置打开自动回调位置模式，该开关打开后，期间只要定位SDK检测到位置变化就会主动回调给开发者
+       // locationOption.setOpenAutoNotifyMode(3000,1, LocationClientOption.LOC_SENSITIVITY_HIGHT);
+        //需将配置好的LocationClientOption对象，通过setLocOption方法传递给LocationClient对象使用
+        locationClient.setLocOption(locationOption);
+        //开始定位
+        locationClient.start();
+
+    }
+
+
+    private class MyLocationListener extends BDAbstractLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation location){
+            //此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
+            //以下只列举部分获取经纬度相关（常用）的结果信息
+            //更多结果信息获取说明，请参照类参考中BDLocation类中的说明
+            //获取纬度信息
+            double latitude = location.getLatitude();
+            //获取经度信息
+            double longitude = location.getLongitude();
+            int errorCode = location.getLocType();
+             Log.d("MyLocationListener", "errorCode:" + errorCode);
+             Log.d("MyLocationListener", "latitude:" + latitude);
+             Log.d("MyLocationListener", "longitude:" + longitude);
+
+            if (errorCode==161 || errorCode==61){
+                EventBus.getDefault().post(new MsgWarp(6666,longitude+"",latitude+""));
+                locationClient.stop();
+            }else {
+                count++;
+                locationClient.restart();
+                if (count>=20){
+                    locationClient.stop();
+                }
+                return;
+            }
+            //获取定位精度，默认值为0.0f
+            float radius = location.getRadius();
+            //获取经纬度坐标类型，以LocationClientOption中设置过的坐标类型为准
+            String coorType = location.getCoorType();
+            //获取定位类型、定位错误返回码，具体信息可参照类参考中BDLocation类中的说明
+        }
     }
 }

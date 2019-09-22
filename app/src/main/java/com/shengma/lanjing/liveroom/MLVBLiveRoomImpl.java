@@ -528,7 +528,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                         if (mixedPlayUrl != null && mixedPlayUrl.length() > 0) {
                             int playType = getPlayType(mixedPlayUrl);
                             mTXLivePlayer.setPlayerView(view);
-                          int tt=  mTXLivePlayer.startPlay(mixedPlayUrl, playType);
+                           int tt=  mTXLivePlayer.startPlay(mixedPlayUrl, playType);
                             Log.d("BoFangActivity", "播放状态:" + tt+" 播放地址"+playPath);
                             if (mHttpRequest != null) {
                                 String userInfo = "";
@@ -3211,12 +3211,10 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                 while (objClass != null) {
                     Method[] methods = objClass.getDeclaredMethods();
                     for (Method method : methods) {
-                        if (method.getName() == methodName) {
+                        if (method.getName().equals(methodName)) {
                             try {
                                 method.invoke(object, args);
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            } catch (InvocationTargetException e) {
+                            } catch (IllegalAccessException | InvocationTargetException e) {
                                 e.printStackTrace();
                             }
                             return;

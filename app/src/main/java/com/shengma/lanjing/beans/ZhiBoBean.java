@@ -78,6 +78,7 @@ public class ZhiBoBean {
         private String headImage;
         private int rank;
 
+
         public String getTitle() {
             return title;
         }

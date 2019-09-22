@@ -87,7 +87,7 @@ public class SouSuoActivity extends AppCompatActivity {
                 Log.d(TAG, "position:" + position);
                 if (resultBeans.get(position).getStatus()==1){//进入直播间
                     Intent intent=new Intent(SouSuoActivity.this, BoFangActivity.class);
-                    intent.putExtra("idid",resultBeans.get(position).getUserCode());
+                    intent.putExtra("idid",resultBeans.get(position).getId());
                     intent.putExtra("playPath",resultBeans.get(position).getPlayUrl());
                     startActivity(intent);
                     finish();

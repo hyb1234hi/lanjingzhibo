@@ -18,7 +18,7 @@
 
         <TextView
             android:textSize="13sp"
-            android:textColor="#ee333333"
+            android:textColor="#ffffff"
             android:id="@+id/title"
             android:maxLines="1"
             android:maxLength="8"

@@ -12,7 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import com.shengma.lanjing.R;
+import com.shengma.lanjing.beans.MsgWarp;
 
+import org.greenrobot.eventbus.EventBus;
 
 
 public class JuLiDialog extends DialogFragment implements View.OnClickListener {
@@ -60,13 +62,13 @@ public class JuLiDialog extends DialogFragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.xianshi:
-
-
+                EventBus.getDefault().post(new MsgWarp(6668,"kai"));
+                dismiss();
                 break;
             case R.id.yingcang:
-
+                EventBus.getDefault().post(new MsgWarp(6668,"guan"));
+                dismiss();
                 break;
-
        }
     }
 

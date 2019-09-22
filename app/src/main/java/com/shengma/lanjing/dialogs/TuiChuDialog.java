@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 import com.shengma.lanjing.R;
@@ -20,7 +21,7 @@ import com.shengma.lanjing.R;
 public class TuiChuDialog extends Dialog {
 
     private Button button1,button2;
-
+    private TextView textView;
 
     public TuiChuDialog(Context context) {
         super(context, R.style.dialog_style2);
@@ -31,9 +32,14 @@ public class TuiChuDialog extends Dialog {
         View mView = LayoutInflater.from(getContext()).inflate(R.layout.tuichu_dialog, null);
         button1=mView.findViewById(R.id.queding);
         button2=mView.findViewById(R.id.quxiao);
+        textView=mView.findViewById(R.id.hhh);
         super.setContentView(mView);
     }
 
+
+    public void setTextView(String s) {
+        textView.setText(s);
+    }
 
     @Override
     public void setContentView(int layoutResID) {
