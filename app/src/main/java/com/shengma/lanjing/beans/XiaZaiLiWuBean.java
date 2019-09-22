@@ -15,10 +15,19 @@ public class XiaZaiLiWuBean {
         private String giftMoney;
         private String giftUrl;
         private String specialUrl;
+        private int num;
         private int type;
         private boolean isD;
         private boolean isJY;
         private boolean isA;
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
 
     public boolean isA() {
         return isA;

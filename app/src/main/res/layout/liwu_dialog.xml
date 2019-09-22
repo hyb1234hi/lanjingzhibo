@@ -62,6 +62,14 @@
             android:layout_width="match_parent"
             android:layout_height="252dp"/>
 
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpage2"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/jingdian"
+            android:layout_marginTop="13dp"
+            android:layout_width="match_parent"
+            android:layout_height="252dp"/>
+
         <TextView
             android:id="@+id/yue"
             android:textSize="16sp"
