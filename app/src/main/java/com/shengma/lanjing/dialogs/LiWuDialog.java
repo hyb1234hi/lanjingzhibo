@@ -227,7 +227,7 @@ public class LiWuDialog extends DialogFragment {
 
 
     private void link_fasong(String id2) {
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+       // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = null;
         body = new FormBody.Builder()
                 .add("anchorId", id)
@@ -246,6 +246,8 @@ public class LiWuDialog extends DialogFragment {
 //                .setType(MultipartBody.FORM)
 //                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
 //                .build();
+       // Log.d("LiWuDialog", "anchorId"+id);
+       // Log.d("LiWuDialog", "giftId"+id2);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())

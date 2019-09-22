@@ -34,7 +34,15 @@ public class BaoCunBean {
     private String jiaxiang;
     private String session;
     private int meiyan,meibai,hongrun;
+    private boolean liwuISOK;
 
+    public boolean isLiwuISOK() {
+        return liwuISOK;
+    }
+
+    public void setLiwuISOK(boolean liwuISOK) {
+        this.liwuISOK = liwuISOK;
+    }
 
     public int getMeiyan() {
         return meiyan;

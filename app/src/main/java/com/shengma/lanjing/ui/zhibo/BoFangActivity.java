@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -19,12 +20,14 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.airbnb.lottie.ImageAssetDelegate;
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieImageAsset;
@@ -68,8 +71,8 @@ import com.shengma.lanjing.utils.InputMethodUtils;
 import com.shengma.lanjing.utils.KeyboardStatusDetector;
 import com.shengma.lanjing.utils.ReadAssetsJsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
+import com.shengma.lanjing.utils.Utils;
 import com.tencent.rtmp.ui.TXCloudVideoView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -139,6 +142,20 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     TextView paiming;
     @BindView(R.id.group)
     Group group;
+    @BindView(R.id.daojishi)
+    TextView daojishi;
+    @BindView(R.id.pkview1)
+    View pkview1;
+    @BindView(R.id.pkview2)
+    View pkview2;
+    @BindView(R.id.pktv1)
+    TextView pktv1;
+    @BindView(R.id.pktv2)
+    TextView pktv2;
+    @BindView(R.id.chengfa)
+    TextView chengfa;
+    @BindView(R.id.toptop)
+    View toptop;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;    // 主播本地预览的 View
@@ -167,6 +184,11 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     private Box<YongHuListBean> yongHuListBeanBox = MyApplication.myApplication.getYongHuListBeanBox();
     private boolean isGuanzhu = false;
     private long numberGZ;
+    private int heightPixels, widthPixels;
+    private CountDownTimer timer1;//pk
+    private CountDownTimer timer2;//惩罚
+    private float pktWidth;
+    private boolean isON = true;
 
 
     @Override
@@ -181,6 +203,10 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         playPath = getIntent().getStringExtra("playPath");
         idid = getIntent().getIntExtra("idid", 0);
         link_isguanzhu(idid + "");
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        heightPixels = displayMetrics.heightPixels;
+        widthPixels = displayMetrics.widthPixels;
         linkedBlockingQueue = new LinkedBlockingQueue<>();
         DisplayMetrics outMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
@@ -264,8 +290,9 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             public void onError(int errCode, String errInfo) {
                 Log.d("BoFangActivity", "errCode:" + errCode);
                 Log.d("BoFangActivity", "errInfo:" + errInfo);
-                ToastUtils.showInfo(BoFangActivity.this,"进房失败,主播已经下线了");
+                ToastUtils.showInfo(BoFangActivity.this, "进房失败,主播已经下线了");
             }
+
             @Override
             public void onSuccess() {
                 link_qianbao();//发送进房自定义消息
@@ -298,6 +325,12 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         params2.height = (int) (hight * 0.33);
         liwuReView.setLayoutParams(params2);
         liwuReView.invalidate();
+
+        ConstraintLayout.LayoutParams params3 = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+        params3.height = heightPixels;
+        txCloudVideoView.setLayoutParams(params3);
+        txCloudVideoView.invalidate();
+
 
         tanChuangThread = new TanChuangThread();
         tanChuangThread.start();
@@ -461,6 +494,17 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 numberGZ -= 1;
                 guanzhongxiangqiang.setText(numberGZ + "");
                 break;
+            case "updatapkall": //主播更新pk
+                String[] sss = message.split(",");
+                gengxingPK(sss[0], sss[1]);
+                break;
+            case "startpkall": //主播开始pk
+                startPK();
+                break;
+            case "zhongtupkall": //中途加入pk
+                String[] zzz = message.split(",");
+                zhongtuPK(Long.parseLong(zzz[1]), zzz[0]);
+                break;
 
         }
 
@@ -476,7 +520,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 //                            .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
 //                                    InputMethodManager.HIDE_NOT_ALWAYS);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null &&  txCloudVideoView!= null) {
+                    if (imm != null && txCloudVideoView != null) {
                         // imm.hideSoftInputFromWindow(txCloudVideoView.getWindowToken(), 0);
                         imm.showSoftInput(txCloudVideoView, InputMethodManager.SHOW_IMPLICIT);
                     }
@@ -484,7 +528,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         popupwindow.dismiss();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    ToastUtils.showInfo(BoFangActivity.this,"收到关闭键盘通知"+e.getMessage());
+                    ToastUtils.showInfo(BoFangActivity.this, "收到关闭键盘通知" + e.getMessage());
                 }
                 //发送消息
                 Log.d("BoFangActivity", msgWarp.getMsg());
@@ -672,7 +716,10 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     @Override
     protected void onDestroy() {
         timer.cancel();
-
+        if (timer1 != null)
+            timer1.cancel();
+        if (timer2 != null)
+            timer2.cancel();
         if (task != null)
             task.cancel();
         if (tanChuangThread != null)
@@ -716,6 +763,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             }
                         });
                     }
+
                     @Override
                     public void onSuccess() {
                         mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
@@ -789,6 +837,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                     }
                                 });
                             }
+
                             @Override
                             public void onSuccess() {
                                 mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
@@ -834,8 +883,12 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 break;
             case R.id.pk:
                 //pk是礼物
-                LiWuDialog liWuDialog = new LiWuDialog(idid + "");
-                liWuDialog.show(getSupportFragmentManager(), "liWuDialog");
+                if (baoCunBean.isLiwuISOK()){
+                    LiWuDialog liWuDialog = new LiWuDialog(idid + "");
+                    liWuDialog.show(getSupportFragmentManager(), "liWuDialog");
+                }else {
+                    ToastUtils.showInfo(BoFangActivity.this,"抱歉,请先等待礼物资源下载完成.");
+                }
 
                 break;
             case R.id.video_player:
@@ -998,7 +1051,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            isGuanzhu=true;
+                            isGuanzhu = true;
                             guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
                         }
                     });
@@ -1010,7 +1063,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             }
         });
     }
-
 
 
     private void link_quxiaoguanzhu(String id) {
@@ -1063,7 +1115,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            isGuanzhu=false;
+                            isGuanzhu = false;
                             guanzhu.setBackgroundResource(R.drawable.guanzhu2);
 
                         }
@@ -1103,25 +1155,25 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     String ss = body.string().trim();
                     Log.d("AllConnects", "是否关注:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                   // Gson gson = new Gson();
+                    // Gson gson = new Gson();
 
-                        if (jsonObject.get("desc").getAsString().equals("已关注")) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
-                                    isGuanzhu = true;
-                                }
-                            });
-                        } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    guanzhu.setBackgroundResource(R.drawable.guanzhu2);
-                                    isGuanzhu = false;
-                                }
-                            });
-                        }
+                    if (jsonObject.get("desc").getAsString().equals("已关注")) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                guanzhu.setBackgroundResource(R.drawable.yiguanzhu);
+                                isGuanzhu = true;
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                guanzhu.setBackgroundResource(R.drawable.guanzhu2);
+                                isGuanzhu = false;
+                            }
+                        });
+                    }
 
 
                     runOnUiThread(new Runnable() {
@@ -1166,7 +1218,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL + "/user/info/"+idid+"/"+baoCunBean.getUserid());
+                .url(Consts.URL + "/user/info/" + idid + "/" + baoCunBean.getUserid());
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -1229,7 +1281,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         public void run() {
             while (!isRing) {
                 try {
-
                     //有动画 ，延迟到一秒一次
                     Integer subject = linkedBlockingQueue.take();
                     SystemClock.sleep(4000);
@@ -1240,7 +1291,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 boFangBeanList.remove(boFangBeanList.size() - 1);
                                 liWuBoFangAdapter.notifyDataSetChanged();
                             }
-
                         }
                     });
 
@@ -1290,9 +1340,9 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                paiming.setText("总排名:"+logingBe.getResult().getRank());
+                                paiming.setText("总排名:" + logingBe.getResult().getRank());
                                 name.setText(logingBe.getResult().getNickname());
-                                fangjianhao.setText("LANJING "+logingBe.getResult().getId());
+                                fangjianhao.setText("LANJING " + logingBe.getResult().getId());
                                 xingguang.setText(logingBe.getResult().getStarLight() + "");
                                 Glide.with(BoFangActivity.this)
                                         .load(logingBe.getResult().getHeadImage())
@@ -1308,6 +1358,169 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 }
             }
         });
+    }
+
+
+    private void startPK() {
+        pktv1.setText("0");
+        pktv2.setText("0");
+        group.setVisibility(View.VISIBLE);
+        //改变视频大小
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+        params.height = (int) (hight * 0.38);
+        txCloudVideoView.setLayoutParams(params);
+        txCloudVideoView.invalidate();
+        toptop.setVisibility(View.VISIBLE);
+        timer1 = new CountDownTimer(600000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                String st = Utils.timeParse((millisUntilFinished));
+                daojishi.setText(st);
+            }
+            @Override
+            public void onFinish() {
+                //第一次倒计时结束
+                chengfa.setVisibility(View.VISIBLE);
+                timer2 = new CountDownTimer(100000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        String st = Utils.timeParse((millisUntilFinished));
+                        daojishi.setText(st);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        //惩罚倒计时结束
+                        chengfa.setVisibility(View.GONE);
+                        group.setVisibility(View.GONE);
+                        //全屏播放
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+                        params.height = heightPixels;
+                        txCloudVideoView.setLayoutParams(params);
+                        txCloudVideoView.invalidate();
+                        toptop.setVisibility(View.GONE);
+                    }
+                };
+                timer2.start();
+
+            }
+        };
+        timer1.start();
+    }
+
+    private void zhongtuPK(long time1, String type) {
+        pktv1.setText("0");
+        pktv2.setText("0");
+        group.setVisibility(View.VISIBLE);
+        toptop.setVisibility(View.VISIBLE);
+        //改变视频大小
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+        params.height = (int) (hight * 0.38);
+        txCloudVideoView.setLayoutParams(params);
+        txCloudVideoView.invalidate();
+        if (type.equals("1")) {//第一阶段
+            timer1 = new CountDownTimer(time1, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    String st = Utils.timeParse((millisUntilFinished));
+                    daojishi.setText(st);
+                }
+
+                @Override
+                public void onFinish() {
+                    //第一次倒计时结束
+                    chengfa.setVisibility(View.VISIBLE);
+                    timer2 = new CountDownTimer(100000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            String st = Utils.timeParse((millisUntilFinished));
+                            daojishi.setText(st);
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            //惩罚倒计时结束
+                            chengfa.setVisibility(View.GONE);
+                            group.setVisibility(View.GONE);
+                            //全屏播放
+                            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+                            params.height = heightPixels;
+                            txCloudVideoView.setLayoutParams(params);
+                            txCloudVideoView.invalidate();
+                            toptop.setVisibility(View.GONE);
+                        }
+                    };
+                    timer2.start();
+
+                }
+            };
+            timer1.start();
+        } else {
+
+            chengfa.setVisibility(View.VISIBLE);
+            timer2 = new CountDownTimer(time1, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    String st = Utils.timeParse((millisUntilFinished));
+                    daojishi.setText(st);
+                }
+
+                @Override
+                public void onFinish() {
+                    //惩罚倒计时结束
+                    chengfa.setVisibility(View.GONE);
+                    group.setVisibility(View.GONE);
+                    //全屏播放
+                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+                    params.height = heightPixels;
+                    txCloudVideoView.setLayoutParams(params);
+                    txCloudVideoView.invalidate();
+                    toptop.setVisibility(View.GONE);
+                }
+            };
+            timer2.start();
+        }
+    }
+
+    private void gengxingPK(String me1, String to1) {
+        int pkv1 = pkview1.getWidth();
+        int pkv2 = pkview2.getWidth();
+        //(A-B)÷Bx100%
+
+        float me = Float.parseFloat(me1);
+        float to = Float.parseFloat(to1);
+        if (me == 0 && to == 0) {
+            return;
+        }
+        pktv1.setText(((int) me) + "");
+        pktv2.setText(((int) to) + "");
+        if (pkv1 == 0 || pkv2 == 0) {
+            return;
+        } else {
+            if (isON) {
+                isON = false;
+                pktWidth = pkv1;
+            }
+            if (me > to) {
+                float f1 = (float) Math.abs(((to - me) / me) * (pktWidth / 2.0));
+                pkxuetiao((int) (pktWidth + f1), pkview1);
+                pkxuetiao((int) (pktWidth - f1), pkview2);
+
+            } else if (me < to) {
+                float f2 = (float) Math.abs((((me - to) / to) * (pktWidth / 2.0)));
+                pkxuetiao((int) (pktWidth - f2), pkview1);
+                pkxuetiao((int) (pktWidth + f2), pkview2);
+
+            }
+        }
+        Log.d("ZhiBoActivity", "dddd");
+    }
+
+    private void pkxuetiao(int width1, View view) {
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
+        params.width = width1;
+        view.setLayoutParams(params);
+        view.invalidate();
     }
 
 }

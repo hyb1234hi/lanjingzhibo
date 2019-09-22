@@ -201,10 +201,11 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private TanChuangThread tanChuangThread;
     private Box<YongHuListBean> yongHuListBeanBox = MyApplication.myApplication.getYongHuListBeanBox();
     private LottieAnimationView animationView;
-    private long numberGZ, pkMoney;
+    private long numberGZ=0, pkMoney;
     private String dangqianPKId = "";
     private float pktWidth;
     private boolean isON=true;
+    private long pKtime1,pKtime2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +213,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_zhi_bo);
         ButterKnife.bind(this);
-
         animationView = findViewById(R.id.animation_view);
         MyApplication.myApplication.getYongHuListBeanBox().removeAll();
         EventBus.getDefault().register(this);
@@ -449,17 +449,17 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         public void onBegin() {
                             link_kaishihunliu(anchorInfo.userID, baoCunBean.getUserid() + "");
                             Log.d("ZhiBoActivity", "onBegin");
-
-
+                            pktv1.setText("0");
+                            pktv2.setText("0");
                             txCloudVideoView.setVisibility(View.GONE);
                             group.setVisibility(View.VISIBLE);
+                            startPKMessageToAll();
                             timer1 = new CountDownTimer(600000, 1000) {
 
                                 @Override
                                 public void onTick(long millisUntilFinished) {
+                                    pKtime1=millisUntilFinished;//传送给进直播间的观众
                                     String st = Utils.timeParse((millisUntilFinished));
-                                    daojishi.setFocusable(false);
-                                    daojishi.setEnabled(false);
                                     daojishi.setText(st);
                                 }
 
@@ -471,9 +471,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
                                         @Override
                                         public void onTick(long millisUntilFinished) {
+                                            pKtime2=millisUntilFinished;//传送给进直播间的观众
                                             String st = Utils.timeParse((millisUntilFinished));
-                                            daojishi.setFocusable(false);
-                                            daojishi.setEnabled(false);
                                             daojishi.setText(st);
                                             dangqianPKId = "";
                                         }
@@ -534,6 +533,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         txCloudVideoView.setVisibility(View.VISIBLE);
         pkMoney = 0;
         isPK = false;
+
     }
 
     @Override
@@ -568,6 +568,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
                 break;
             case "rufang": //收到观众入房消息
+                numberGZ += 1;
+                guanzhongxiangqiang.setText(numberGZ + "");
                 YongHuListBean yongHuListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().put(yongHuListBean);
                 runOnUiThread(new Runnable() {
@@ -586,15 +588,22 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 guanZhuBeanList.clear();
                 guanZhuBeanList.addAll(listBeans);
                 guanZhongAdapter.notifyDataSetChanged();
-                numberGZ += 1;
-                guanzhongxiangqiang.setText(numberGZ + "");
+
+                if (isPK){
+                    if (pKtime1!=600000){
+                        zhongtuPKMessageToAll("1",pKtime1+"");
+                    }else {
+                        zhongtuPKMessageToAll("2",pKtime2+"");
+                    }
+                }
 
                 break;
             case "tuifang": //收到观众tui房消息
-                YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
-                MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
                 numberGZ -= 1;
                 guanzhongxiangqiang.setText(numberGZ + "");
+                YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
+                MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
+
                 break;
         }
 
@@ -675,18 +684,18 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         @Override
                         public void onBegin() {
                             link_kaishihunliu(anchorInfo.userID, baoCunBean.getUserid() + "");
-                            Log.d("ZhiBoActivity", "onBegin");
                             txCloudVideoView.setVisibility(View.GONE);
+                            pktv1.setText("0");
+                            pktv2.setText("0");
                             group.setVisibility(View.VISIBLE);
+                            startPKMessageToAll();
                             timer1 = new CountDownTimer(600000, 1000) {
                                 @Override
                                 public void onTick(long millisUntilFinished) {
+                                    pKtime1=millisUntilFinished;//传送给进直播间的观众
                                     String st = Utils.timeParse((millisUntilFinished));
-                                    daojishi.setFocusable(false);
-                                    daojishi.setEnabled(false);
                                     daojishi.setText(st);
                                 }
-
                                 @Override
                                 public void onFinish() {
                                     //第一次倒计时结束
@@ -694,9 +703,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                     timer2 = new CountDownTimer(100000, 1000) {
                                         @Override
                                         public void onTick(long millisUntilFinished) {
+                                            pKtime2=millisUntilFinished;//传送给进直播间的观众
                                             String st = Utils.timeParse((millisUntilFinished));
-                                            daojishi.setFocusable(false);
-                                            daojishi.setEnabled(false);
                                             daojishi.setText(st);
                                             dangqianPKId = "";
                                         }
@@ -1228,6 +1236,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             e.printStackTrace();
         }
         RequestBody body = RequestBody.create(object.toString(), JSON);
+        Log.d("ZhiBoActivity", "礼物参数"+object.toString());
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
@@ -1264,7 +1273,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                             int pkv1=pkview1.getWidth();
                             int pkv2=pkview2.getWidth();
                             //(A-B)÷Bx100%
-
                             if (userInfoBean != null && userInfoBean.getResult() != null
                                     && userInfoBean.getResult().getOwnGift() != null && userInfoBean.getResult().getOtherGift() != null) {
 
@@ -1286,10 +1294,12 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                       float f1= (float)Math.abs(((to-me)/me)*(pktWidth/2.0));
                                         pkxuetiao((int) (pktWidth+f1), pkview1);
                                         pkxuetiao((int) (pktWidth-f1), pkview2);
+                                        updataPKMessageToAll(me+"",to+"");
                                     }else if (me<to){
                                         float f2=(float) Math.abs((((me-to)/to)*(pktWidth/2.0)));
                                         pkxuetiao((int) (pktWidth-f2), pkview1);
                                         pkxuetiao((int) (pktWidth+f2), pkview2);
+                                        updataPKMessageToAll(me+"",to+"");
                                     }
                                 }
                                 Log.d("ZhiBoActivity", "dddd");
@@ -1306,8 +1316,35 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         });
     }
 
-    private void sendPKMessageToAll(String me,String to){
-        mlvbLiveRoom.sendRoomCustomMsg("pkall", me + "," + to, new SendRoomCustomMsgCallback() {
+    private void updataPKMessageToAll(String me,String to){
+        mlvbLiveRoom.sendRoomCustomMsg("updatapkall", me + "," + to, new SendRoomCustomMsgCallback() {
+            @Override
+            public void onError(int errCode, String errInfo) {
+
+            }
+            @Override
+            public void onSuccess() {
+
+            }
+        });
+    }
+
+    private void startPKMessageToAll(){
+        mlvbLiveRoom.sendRoomCustomMsg("startpkall", "", new SendRoomCustomMsgCallback() {
+            @Override
+            public void onError(int errCode, String errInfo) {
+
+            }
+            @Override
+            public void onSuccess() {
+
+            }
+        });
+    }
+
+
+    private void zhongtuPKMessageToAll(String type,String time){
+        mlvbLiveRoom.sendRoomCustomMsg("zhongtupkall", type+","+time, new SendRoomCustomMsgCallback() {
             @Override
             public void onError(int errCode, String errInfo) {
 
@@ -1320,6 +1357,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     }
 
     private void pkxuetiao(int width1, View view) {
+
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
         params.width=width1;
         view.setLayoutParams(params);

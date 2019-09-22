@@ -136,18 +136,18 @@ public class KaiBoActivity extends AppCompatActivity {
                 break;
             }
             case R.id.kaibo:
-//                if (fengmianPath==null || fengmianPath.equals("")){
-//                    ToastUtils.showInfo(KaiBoActivity.this,"请先上传封面");
-//                    return;
-//                }
-//                if (zhuti.getText().toString().trim().equals("")){
-//                    ToastUtils.showInfo(KaiBoActivity.this,"请先填写主题");
-//                    return;
-//                }
-//                if (liveType==-1){
-//                    ToastUtils.showInfo(KaiBoActivity.this,"请先选择直播类型");
-//                    return;
-//                }
+                if (fengmianPath==null || fengmianPath.equals("")){
+                    ToastUtils.showInfo(KaiBoActivity.this,"请先上传封面");
+                    return;
+                }
+                if (zhuti.getText().toString().trim().equals("")){
+                    ToastUtils.showInfo(KaiBoActivity.this,"请先填写主题");
+                    return;
+                }
+                if (liveType==-1){
+                    ToastUtils.showInfo(KaiBoActivity.this,"请先选择直播类型");
+                    return;
+                }
 
                 dialog = new ZLoadingDialog(KaiBoActivity.this);
                 dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
@@ -408,24 +408,24 @@ public class KaiBoActivity extends AppCompatActivity {
     private void link_kaibo() {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject object=new JSONObject();
-//        try {
-//            object.put("coverImg",fengmianPath);
-//            object.put("latitude",wd);
-//            object.put("longitude",jd);
-//            object.put("title",zhuti.getText().toString().trim());
-//            object.put("type",liveType);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         try {
-            object.put("coverImg","h");
-            object.put("latitude",0);
-            object.put("longitude",0);
-            object.put("title","测试");
-            object.put("type","1");
+            object.put("coverImg",fengmianPath);
+            object.put("latitude",wd);
+            object.put("longitude",jd);
+            object.put("title",zhuti.getText().toString().trim());
+            object.put("type",liveType);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+//        try {
+//            object.put("coverImg","h");
+//            object.put("latitude",0);
+//            object.put("longitude",0);
+//            object.put("title","测试");
+//            object.put("type","1");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         Log.d("KaiBoActivity", "liveType:" + object.toString());
         RequestBody body = RequestBody.create(object.toString(),JSON);
         Request.Builder requestBuilder = new Request.Builder()
@@ -627,8 +627,9 @@ public class KaiBoActivity extends AppCompatActivity {
             }else {
                 count++;
                 locationClient.restart();
-                if (count>=20){
+                if (count>=6){
                     locationClient.stop();
+                    ToastUtils.showInfo(KaiBoActivity.this,"定位失败");
                 }
                 return;
             }

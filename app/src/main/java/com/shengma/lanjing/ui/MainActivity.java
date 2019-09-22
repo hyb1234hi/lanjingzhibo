@@ -501,6 +501,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     private void jieya(){
+        boolean isA=true;
         List<XiaZaiLiWuBean> xiaZaiLiWuBeanList=MyApplication.myApplication.getXiaZaiLiWuBeanBox().getAll();
         for (XiaZaiLiWuBean xiaZaiLiWuBean:xiaZaiLiWuBeanList){
             if (!xiaZaiLiWuBean.isJY() && xiaZaiLiWuBean.isD()){//没有解压
@@ -552,9 +553,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 } catch (final ZipException e) {
                     e.printStackTrace();
+                    isA=false;
                     Log.d("MainActivity", e.getMessage()+"解压异常");
                 }
             }
+        }
+        BaoCunBean baoCunBean=MyApplication.myApplication.getBaoCunBean();
+        if (isA){
+            baoCunBean.setLiwuISOK(true);
+            MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
         }
     }
 
@@ -760,8 +767,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             }else {
                 count++;
                 locationClient.restart();
-                if (count>=20){
+                if (count>=6){
                     locationClient.stop();
+                    ToastUtils.showInfo(MainActivity.this,"定位失败");
                 }
                 return;
             }
