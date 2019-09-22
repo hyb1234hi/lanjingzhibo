@@ -1283,11 +1283,11 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                         pktWidth=pkv1;
                                     }
                                     if (me>to){
-                                      float f1= (float) (((to-me)/me)*(pktWidth/2.0));
+                                      float f1= (float)Math.abs(((to-me)/me)*(pktWidth/2.0));
                                         pkxuetiao((int) (pktWidth+f1), pkview1);
                                         pkxuetiao((int) (pktWidth-f1), pkview2);
                                     }else if (me<to){
-                                        float f2= (float) (((me-to)/to)*(pktWidth/2.0));
+                                        float f2=(float) Math.abs((((me-to)/to)*(pktWidth/2.0)));
                                         pkxuetiao((int) (pktWidth-f2), pkview1);
                                         pkxuetiao((int) (pktWidth+f2), pkview2);
                                     }
