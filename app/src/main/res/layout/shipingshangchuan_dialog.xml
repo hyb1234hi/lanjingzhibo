@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/yuanjiao_top_hei"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:text="编辑信息"
+            android:id="@+id/fff"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    <ImageView
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fff"
+        app:layout_constraintBottom_toBottomOf="@+id/fff"
+        android:layout_marginStart="16dp"
+        android:padding="5dp"
+        android:src="@drawable/fanhui_bai"
+        android:id="@+id/fanhui"
+        android:layout_width="32dp"
+        android:layout_height="32dp"/>
+
+        <ImageView
+            android:id="@+id/fengmian"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="fitXY"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/morenbg"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fanhui" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:background="@drawable/yuanxian_heise"
+            android:gravity="center"
+            android:text="更换封面"
+            android:paddingLeft="6dp"
+            android:id="@+id/fgfgr"
+            android:paddingRight="6dp"
+            android:paddingTop="2dp"
+            android:layout_marginBottom="6dp"
+            android:paddingBottom="2dp"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@+id/fengmian"
+            app:layout_constraintLeft_toLeftOf="@+id/fengmian"
+            app:layout_constraintRight_toRightOf="@+id/fengmian" />
+
+        <EditText
+            app:layout_constraintLeft_toRightOf="@+id/fengmian"
+            app:layout_constraintTop_toTopOf="@+id/fengmian"
+            app:layout_constraintBottom_toBottomOf="@+id/fengmian"
+            android:gravity="center_vertical"
+            android:hint="请输入你的主题"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:id="@+id/zhuti"
+            android:background="@null"
+            android:textColorHint="@color/white"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="4dp"
+            android:layout_width="180dp"
+            android:layout_height="80dp"/>
+
+        <TextView
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginTop="30dp"
+            app:layout_constraintLeft_toLeftOf="@+id/fengmian"
+            app:layout_constraintTop_toBottomOf="@+id/fengmian"
+            android:text="请选择频道:"
+            android:id="@+id/ff2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            app:layout_constraintTop_toBottomOf="@+id/ff2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            app:layout_constraintTop_toBottomOf="@+id/recyclerview"
+            android:layout_below="@+id/recyclerview"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="上传"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center_horizontal"
+            android:background="@drawable/wanchengbg"
+            android:paddingTop="15dp"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:id="@+id/wancheng"
+            android:layout_width="327dp"
+            android:layout_height="56dp"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

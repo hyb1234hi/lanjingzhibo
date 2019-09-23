@@ -767,7 +767,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             }else {
                 count++;
                 locationClient.restart();
-                if (count>=6){
+                if (count>=3){
                     locationClient.stop();
                     ToastUtils.showInfo(MainActivity.this,"定位失败");
                 }

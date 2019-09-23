@@ -12,7 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.LogingActivity"/>
+        <activity android:name=".ui.PlayActivity"></activity>
+        <activity android:name=".ui.wuguanjingyao.ZhiBoJianSheZhiActivity" />
+        <activity android:name=".ui.wuguanjingyao.GuanYuWoMenActivity" />
+        <activity android:name=".ui.LogingActivity" />
         <activity android:name=".ui.ZhengJian2Activity" />
         <activity android:name=".ui.ZhengJianXinXiActivity" />
         <activity android:name=".ui.XiuGaiMiMaActivity" />
@@ -79,6 +82,9 @@
             android:launchMode="singleTask"
             android:taskAffinity="net.sourceforge.simcpux"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".mediarecorder.RecordActivity" />
+        <activity android:name=".mediarecorder.VideoViewActivity" />
+        <activity android:name=".mediarecorder.MainActivity" />
 
         <meta-data
             android:name="design_height_in_dp"
@@ -86,13 +92,14 @@
         <meta-data
             android:name="design_width_in_dp"
             android:value="375" />
-
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="uTTmEt0NeHSsgAKsXGLAMC8mvg6zPNLm" >
-        </meta-data>
-        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote"/>
+            android:value="uTTmEt0NeHSsgAKsXGLAMC8mvg6zPNLm" />
 
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
     </application>
     <uses-feature android:name="android.hardware.Camera" />
 
@@ -105,15 +112,12 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- 这个权限用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- 这个权限用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
 </manifest>

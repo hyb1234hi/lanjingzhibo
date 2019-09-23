@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="276dp"
+    android:layout_height="316dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -10,7 +10,7 @@
         android:layout_marginTop="40dp"
         android:background="@drawable/yuanjiao_top"
         android:layout_width="match_parent"
-        android:layout_height="236dp">
+        android:layout_height="276dp">
 
         <ImageView
             app:layout_constraintTop_toTopOf="parent"
@@ -33,6 +33,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/guanbi"
             app:layout_constraintRight_toRightOf="parent"
             android:text="..."
+            android:visibility="gone"
             android:padding="6dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -134,9 +135,62 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+        <TextView
+            android:textSize="16sp"
+            android:text="非管理员"
+            android:gravity="center"
+            android:id="@+id/guanliyuan"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="14sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/myid"
+            android:textColor="#333333"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swich1"
+            app:layout_constraintTop_toTopOf="@+id/guanliyuan"
+            app:layout_constraintBottom_toBottomOf="@+id/guanliyuan"
+            app:layout_constraintLeft_toRightOf="@+id/guanliyuan"
+            style="@style/TextAppearance.AppCompat.Widget.Switch"
+            android:layout_width="58dp"
+            android:layout_height="34dp"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swich2"
+            app:layout_constraintTop_toTopOf="@+id/swich1"
+            app:layout_constraintBottom_toBottomOf="@+id/swich1"
+            android:layout_marginTop="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="20dp"
+            style="@style/TextAppearance.AppCompat.Widget.Switch"
+            android:layout_width="58dp"
+            android:layout_height="34dp"/>
+
+        <TextView
+            app:layout_constraintRight_toLeftOf="@+id/swich2"
+            app:layout_constraintTop_toTopOf="@+id/swich2"
+            app:layout_constraintBottom_toBottomOf="@+id/swich2"
+            android:textSize="16sp"
+            android:text="未禁言"
+            android:id="@+id/jingyan"
+            android:textColor="#333333"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <View
+            android:id="@+id/hhhh"
+            app:layout_constraintTop_toBottomOf="@+id/jingyan"
+            android:layout_marginTop="8dp"
+            android:background="#F5F5F5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
         <LinearLayout
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/myid"
+            app:layout_constraintTop_toBottomOf="@+id/hhhh"
             android:id="@+id/textView1"
             android:layout_width="0dp"
             android:gravity="center"
@@ -162,9 +216,12 @@
 
         </LinearLayout>
 
+
+
+
         <LinearLayout
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/myid"
+            app:layout_constraintTop_toBottomOf="@+id/hhhh"
             android:id="@+id/textView2"
             android:layout_width="0dp"
             android:gravity="center"
@@ -193,7 +250,7 @@
 
         <LinearLayout
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/myid"
+            app:layout_constraintTop_toBottomOf="@+id/hhhh"
             android:id="@+id/textView3"
             android:layout_width="0dp"
             android:gravity="center"

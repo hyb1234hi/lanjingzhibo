@@ -28,15 +28,17 @@ import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
+import com.shengma.lanjing.mediarecorder.MainActivity;
+import com.shengma.lanjing.mediarecorder.RecordActivity;
 import com.shengma.lanjing.ui.GeXinSheZhiActivity;
 import com.shengma.lanjing.ui.KaiBoActivity;
 import com.shengma.lanjing.ui.LogingActivity;
-import com.shengma.lanjing.ui.MainActivity;
 import com.shengma.lanjing.ui.QianBaoActivity;
 import com.shengma.lanjing.ui.WoDeFenSiActivity;
 import com.shengma.lanjing.ui.WoDeGuanZhuActivity;
 import com.shengma.lanjing.ui.WoDeZhiBoActivity;
 import com.shengma.lanjing.ui.WoDeZiLiaoActivity;
+import com.shengma.lanjing.ui.wuguanjingyao.GuanYuWoMenActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -256,13 +258,13 @@ public class Fragment4 extends Fragment {
                 startActivity(new Intent(getActivity(), KaiBoActivity.class));
                 break;
             case R.id.rl3:
-
+                startActivity(new Intent(getActivity(), RecordActivity.class));
                 break;
             case R.id.rl4:
                 startActivity(new Intent(getActivity(), GeXinSheZhiActivity.class));
                 break;
             case R.id.rl5:
-
+                startActivity(new Intent(getActivity(), GuanYuWoMenActivity.class));
                 break;
             case R.id.bianji:
                 startActivity(new Intent(getActivity(), WoDeZiLiaoActivity.class));

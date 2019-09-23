@@ -475,9 +475,12 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 break;
             case "liwudonghua2": //收到大型礼物消息
                 LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message, LiWuBoFangBean.class);
-
                 playDongHua(parseUser.getLiwuID());
-
+                synchronized (BoFangActivity.this){
+                    boFangBeanList.add(0, parseUser);
+                    liWuBoFangAdapter.notifyDataSetChanged();
+                    linkedBlockingQueue.offer(1);
+                }
                 break;
             case "rufang": //收到观众入房消息
                 YongHuListBean yongHuListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
@@ -614,15 +617,18 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     public void onError(int errCode, String errInfo) {
                         Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
                         ToastUtils.showError(BoFangActivity.this, "发送礼物消息失败");
-                        playDongHua(msgWarp.getMsg());
+                      //  playDongHua(msgWarp.getMsg());
                     }
-
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送礼物自定义消息成功2");
                         //播放.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build()
                         playDongHua(msgWarp.getMsg());
-
+                        synchronized (BoFangActivity.this){
+                            boFangBeanList.add(0, liWuBoFangBean);
+                            liWuBoFangAdapter.notifyDataSetChanged();
+                            linkedBlockingQueue.offer(1);
+                        }
 
 //                        LazyList<LiwuPathBean> list=MyApplication.myApplication.getLiwuPathBeanBox().query().equal(LiwuPathBean_.sid,nliwuname.getId())
 //                                .build().findLazy();

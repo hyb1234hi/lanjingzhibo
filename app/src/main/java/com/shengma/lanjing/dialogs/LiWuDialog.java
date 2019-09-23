@@ -228,7 +228,15 @@ public class LiWuDialog extends DialogFragment {
 
                 break;
             case R.id.chongzhi:
-
+                for (XiaZaiLiWuBean bean:mDatas2){
+                    if (bean.isA()){
+                        //发送
+                        link_fasong2(bean.getId()+"");
+                        EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
+                        break;
+                    }
+                }
+                dismiss();
 
                 break;
             case R.id.fasong:
@@ -310,6 +318,63 @@ public class LiWuDialog extends DialogFragment {
         });
     }
 
+    private void link_fasong2(String id2) {
+        // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("anchorId", id)
+                .add("giftId", id2)
+                .build();
+//        JSONObject object=new JSONObject();
+//        try {
+//            object.put("uname",uname);
+//            object.put("pwd",pwd);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        //RequestBody body = RequestBody.create(object.toString(),JSON);
+//        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
+//        RequestBody requestBody = new MultipartBody.Builder()
+//                .setType(MultipartBody.FORM)
+//                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
+//                .build();
+        // Log.d("LiWuDialog", "anchorId"+id);
+        // Log.d("LiWuDialog", "giftId"+id2);
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/backpack/send");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "发送礼物2:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
+
     private void link_beibao() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
@@ -341,7 +406,7 @@ public class LiWuDialog extends DialogFragment {
                         for (BeiBaoBean.ResultBean bean:logingBe.getResult()){
                             XiaZaiLiWuBean xiaZaiLiWuBean = new XiaZaiLiWuBean();
                             xiaZaiLiWuBean.setId(bean.getId());
-                            //xiaZaiLiWuBean.setType();
+                            xiaZaiLiWuBean.setType(0);
                             xiaZaiLiWuBean.setGiftUrl(bean.getGiftUrl());
                             xiaZaiLiWuBean.setNum(bean.getNum());
                             xiaZaiLiWuBean.setGiftName(bean.getName());

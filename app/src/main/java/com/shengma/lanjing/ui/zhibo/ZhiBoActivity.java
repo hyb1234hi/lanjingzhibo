@@ -246,7 +246,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         liaoTianBeanList.addAll(lingshiList);
                         lingshiList.clear();
                         liaoTianAdapter.notifyDataSetChanged();
-                        link_jieshupk(dangqianPKId);
+                        if (isPK){
+                            link_jieshupk(dangqianPKId);
+                        }
                         Log.d("ZhiBoActivity", "更新聊天界面");
                         break;
                 }
@@ -565,10 +567,18 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             case "liwudonghua2": //收到大型礼物消息
                 LiWuBoFangBean parseUser = com.alibaba.fastjson.JSONObject.parseObject(message, LiWuBoFangBean.class);
                 playDongHua(parseUser.getLiwuID());
+                synchronized (ZhiBoActivity.this){
+                    boFangBeanList.add(0, parseUser);
+                    liWuBoFangAdapter.notifyDataSetChanged();
+                    linkedBlockingQueue.offer(1);
+                }
 
                 break;
             case "rufang": //收到观众入房消息
                 numberGZ += 1;
+                if (numberGZ<0){
+                    numberGZ=0;
+                }
                 guanzhongxiangqiang.setText(numberGZ + "");
                 YongHuListBean yongHuListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().put(yongHuListBean);
@@ -581,7 +591,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         bean.setType(2);
                         bean.setHeadImage(yongHuListBean.getHeadImage());
                         bean.setUserid((yongHuListBean.getId()));
-                        lingshiList.add(0, bean);
+                        lingshiList.add( bean);
                     }
                 });
                 List<YongHuListBean> listBeans = yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(0, 8);
@@ -600,6 +610,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 break;
             case "tuifang": //收到观众tui房消息
                 numberGZ -= 1;
+                if (numberGZ<0){
+                    numberGZ=0;
+                }
                 guanzhongxiangqiang.setText(numberGZ + "");
                 YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
@@ -799,6 +812,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         EventBus.getDefault().unregister(this);
         if (anchorInfo != null)
             link_jieshuhunliu(anchorInfo.userID, baoCunBean.getId() + "");
+
         if (timer1 != null)
             timer1.cancel();
         if (timer2 != null)
@@ -884,7 +898,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                             }
                         });
                         link_tuichuzhibo();
-
                     }
                 });
                 tuiChuDialog.setQuXiaoListener(new View.OnClickListener() {
@@ -921,7 +934,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                             }
                         });
                     }
-
                     @Override
                     public void onSuccess(ArrayList<RoomInfo> roomInfoList) {
                         pkList.clear();
@@ -932,10 +944,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         }
                         pkListDialog = new PKListDialog(pkList);
                         pkListDialog.show(getSupportFragmentManager(), "pklist");
-
                     }
                 });
-
                 break;
             case R.id.video_player:
                 try {
@@ -947,7 +957,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
                 break;
             case R.id.shuodian:
                 InputMethodUtils.showOrHide(this);
@@ -966,7 +975,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         });
                     }
                 }).start();
-
                 break;
             case R.id.touxiang:
                 ZhuBoXinxiDialog zhuBoXinxiDialog = new ZhuBoXinxiDialog(baoCunBean.getUserid() + "");
@@ -976,8 +984,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     }
 
     private void link_kaishihunliu(String id1, String id2) {
-        Log.d("ZhiBoActivity", "混流fromId:" + id1);
-        Log.d("ZhiBoActivity", "混流toId" + id2);
+       // Log.d("ZhiBoActivity", "混流fromId:" + id1);
+       // Log.d("ZhiBoActivity", "混流toId" + id2);
         RequestBody body = null;
         body = new FormBody.Builder()
                 .add("fromId", id1)

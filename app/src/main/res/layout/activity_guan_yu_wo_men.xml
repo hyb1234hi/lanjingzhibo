@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".ui.wuguanjingyao.GuanYuWoMenActivity">
+
+
+    <ImageView
+        android:id="@+id/fanhui"
+        android:layout_marginTop="16dp"
+        android:padding="2dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/fanhui_hei"
+        android:layout_width="15dp"
+        android:layout_height="20dp"/>
+
+
+    <TextView
+        app:layout_constraintTop_toTopOf="@+id/fanhui"
+        app:layout_constraintBottom_toBottomOf="@+id/fanhui"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:text="关于我们"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:id="@+id/ggg"
+        app:layout_constraintTop_toBottomOf="@+id/fanhui"
+        android:layout_marginTop="16dp"
+        android:background="#E5E5E5"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+
+        <LinearLayout
+            app:layout_constraintTop_toBottomOf="@+id/ggg"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/rl1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:text="当前版本号"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="15sp"
+                    android:textColor="#333333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_marginRight="18dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:textColor="#666666"
+                    android:textSize="16sp"
+                    android:text="1.0"
+                    android:id="@+id/banbenhao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <View
+                    android:layout_alignParentBottom="true"
+                    android:background="#F5F5F5"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:text="检查更新"
+                    android:layout_marginLeft="16dp"
+                    android:textSize="15sp"
+                    android:textColor="#333333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:layout_marginRight="18dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/you"
+                    android:layout_width="8dp"
+                    android:layout_height="12dp"/>
+
+                <View
+                    android:layout_alignParentBottom="true"
+                    android:background="#F5F5F5"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
+
+            </RelativeLayout>
+        </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

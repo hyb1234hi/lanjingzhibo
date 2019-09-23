@@ -8,14 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -26,9 +26,7 @@ import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.PuTongInfio;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
-
 import java.io.IOException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -66,20 +64,32 @@ public class YongHuXinxiDialog extends DialogFragment {
     TextView xingguang;
     @BindView(R.id.bianji)
     TextView bianji;
+    @BindView(R.id.guanliyuan)
+    TextView guanliyuan;
+    @BindView(R.id.swich1)
+    SwitchCompat swich1;
+    @BindView(R.id.swich2)
+    SwitchCompat swich2;
+    @BindView(R.id.jingyan)
+    TextView jingyan;
+    @BindView(R.id.textView1)
+    LinearLayout textView1;
+    @BindView(R.id.textView3)
+    LinearLayout textView3;
     private Window window;
     private Unbinder unbinder;
     private String id;
     private String zhuboid;
 
-    public YongHuXinxiDialog(String zhuboid,String id) {
+    public YongHuXinxiDialog(String zhuboid, String id) {
         this.id = id;
-        this.zhuboid=zhuboid;
+        this.zhuboid = zhuboid;
     }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         // 去掉默认的标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         View view = inflater.inflate(R.layout.yonghuxinxi_dialog, null);
@@ -90,7 +100,34 @@ public class YongHuXinxiDialog extends DialogFragment {
                 dismiss();
             }
         });
-        link_userinfo(zhuboid,id);
+
+        link_userinfo(zhuboid, id);
+        link_chaxunGLY(zhuboid, id);
+        link_chaxunJY(zhuboid, id);
+        swich1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    guanliyuan.setText("管理员");
+
+                }else {
+                    guanliyuan.setText("非管理员");
+
+                }
+            }
+        });
+        swich2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    jingyan.setText("禁言");
+
+                }else {
+                    jingyan.setText("未禁言");
+
+                }
+            }
+        });
         return view;
     }
 
@@ -121,12 +158,12 @@ public class YongHuXinxiDialog extends DialogFragment {
     }
 
 
-    private void link_userinfo(String id1,String id) {
+    private void link_userinfo(String id1, String id) {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL + "/user/info/"+id1+"/"+id);
+                .url(Consts.URL + "/user/info/" + id1 + "/" + id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -156,6 +193,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                                     name.setText(logingBe.getResult().getNickname());
                                     dengji.setText("Lv." + logingBe.getResult().getAnchorLevel());
                                     dengji2.setText("Lv." + logingBe.getResult().getUserLevel());
+                                    myid.setText("ID:" + logingBe.getResult().getId());
                                     if (logingBe.getResult().getSex() == 1) {
                                         xingbie.setBackgroundResource(R.drawable.nan);
                                     } else {
@@ -180,10 +218,103 @@ public class YongHuXinxiDialog extends DialogFragment {
         });
     }
 
+
+    private void link_chaxunGLY(String zhuboid, String id) {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/im/"+id+"?group="+zhuboid);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "查询是否管理员:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
+                    if (logingBe.getCode() == 2000) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
+    private void link_chaxunJY(String zhuboid, String id) {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/im/ban/"+id+"?group="+zhuboid);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "查询是否禁言:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
+                    if (logingBe.getCode() == 2000) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
     @OnClick(R.id.bianji)
     public void onViewClicked() {
-            SheZhiDialog dialog=new SheZhiDialog();
-            dialog.show(getFragmentManager(),"ddffgdfg");
-            dismiss();
+        SheZhiDialog dialog = new SheZhiDialog();
+        dialog.show(getFragmentManager(), "ddffgdfg");
+        dismiss();
     }
 }

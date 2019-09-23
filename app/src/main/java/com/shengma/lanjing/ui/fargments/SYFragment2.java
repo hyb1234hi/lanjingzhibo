@@ -54,13 +54,6 @@ import okhttp3.ResponseBody;
 public class SYFragment2 extends Fragment implements View.OnClickListener {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
-    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .writeTimeout(18000, TimeUnit.MILLISECONDS)
-            .connectTimeout(18000, TimeUnit.MILLISECONDS)
-            .readTimeout(18000, TimeUnit.MILLISECONDS)
-            .cookieJar(new CookiesManager())
-            //        .retryOnConnectionFailure(true)
-            .build();
     private int pag=1,type=0;
     private List<ZhiBoBean.ResultBean> beanList=new ArrayList<>();
     private ZHiBoAdapter adapter;

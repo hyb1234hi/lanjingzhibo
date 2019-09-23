@@ -25,9 +25,21 @@ public class LiaoTianAdapter extends BaseMultiItemQuickAdapter<LiaoTianBean,Base
     protected void convert(BaseViewHolder helper, LiaoTianBean item) {
         switch (helper.getItemViewType()) {
             case 1:
-                helper.setText(R.id.name1, item.getNickname());
-                helper.setText(R.id.neirong1, item.getNeirong());
-                helper.setText(R.id.dengjilt, "Lv."+item.getDengji());
+                if (item.getNeirong().length()>=8){
+                    String ss1 = item.getNeirong().substring(0,8);
+                    String ss2 = item.getNeirong().substring(8,item.getNeirong().length());
+                    helper.setGone(R.id.neirong2,true);
+                    helper.setText(R.id.name1, item.getNickname());
+                    helper.setText(R.id.neirong1, ss1);
+                    helper.setText(R.id.neirong2, ss2);
+                    helper.setText(R.id.dengjilt, "Lv."+item.getDengji());
+                }else {
+                    helper.setGone(R.id.neirong2,false);
+                    helper.setText(R.id.name1, item.getNickname());
+                    helper.setText(R.id.neirong1, item.getNeirong());
+                    helper.setText(R.id.dengjilt, "Lv."+item.getDengji());
+                }
+
                 break;
             case 2:
                 helper.setText(R.id.name, item.getNickname());

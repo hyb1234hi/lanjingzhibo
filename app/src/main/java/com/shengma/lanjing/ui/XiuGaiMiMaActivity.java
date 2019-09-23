@@ -88,7 +88,7 @@ public class XiuGaiMiMaActivity extends AppCompatActivity {
                 .header("Content-Type", "application/json")
                 .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/user/pwd/change?pwd="+uname+"&verifyPwd="+uname);
+                .url(Consts.URL + "/user/pwd/change");
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求

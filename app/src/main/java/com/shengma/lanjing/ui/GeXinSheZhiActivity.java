@@ -17,6 +17,7 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.LogingBe;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.dialogs.TuiChuDialog2;
+import com.shengma.lanjing.ui.wuguanjingyao.ZhiBoJianSheZhiActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -78,7 +79,7 @@ public class GeXinSheZhiActivity extends AppCompatActivity {
 
                 break;
             case R.id.rl3:
-
+                startActivity(new Intent(GeXinSheZhiActivity.this, ZhiBoJianSheZhiActivity.class));
                 break;
             case R.id.rl4:
 
