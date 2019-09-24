@@ -409,8 +409,8 @@ public class RecordActivity extends AppCompatActivity implements TextureView.Sur
                                 .input(path2)
                                 .output(path)
                                 //以下参数全部为可选
-                               // .outWidth(1080)
-                               // .outHeight(720)
+                                .outWidth(1080)
+                                .outHeight(640)
                                 // .startTimeMs(startTimeMs)//用于剪辑视频
                                 // .endTimeMs(endTimeMs)    //用于剪辑视频
                                 // .speed(speed)            //改变视频速率，用于快慢放
