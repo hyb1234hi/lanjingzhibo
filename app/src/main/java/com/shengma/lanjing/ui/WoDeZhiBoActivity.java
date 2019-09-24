@@ -55,6 +55,7 @@ public class WoDeZhiBoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_wo_de_zhi_bo);
         ButterKnife.bind(this);
 
+        link_logout();
 
     }
 

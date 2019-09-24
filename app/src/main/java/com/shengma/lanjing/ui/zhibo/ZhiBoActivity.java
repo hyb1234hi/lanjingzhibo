@@ -602,7 +602,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     }
                 }
                 //发送当前人数
-                mlvbLiveRoom.sendRoomCustomMsg("roomNum", (numberGZ + 1)+"", new SendRoomCustomMsgCallback() {
+                mlvbLiveRoom.sendRoomCustomMsg("roomNum", numberGZ+"", new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
                     }
@@ -617,7 +617,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 if (numberGZ<0){
                     numberGZ=0;
                 }
-                guanzhongxiangqiang.setText(numberGZ + "");
+                guanzhongxiangqiang.setText(numberGZ+"");
                 YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
 

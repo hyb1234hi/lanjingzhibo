@@ -26,7 +26,7 @@ public class ZHiBoAdapter extends BaseQuickAdapter<ZhiBoBean.ResultBean,BaseView
         helper.setText(R.id.renshu, item.getOnlineNums()+"");
         Glide.with(mContext)
                 .load(item.getCoverImg())
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners( 10)))
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners( 20)))
                 .into((ImageView) helper.getView(R.id.bgbg));
 
         //RequestOptions.bitmapTransform(new CircleCrop())//圆形

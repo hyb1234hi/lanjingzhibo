@@ -92,7 +92,7 @@ public class Fragment2 extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                pag+=1;
+
                 link_list();
             }
         });
@@ -198,6 +198,9 @@ public class Fragment2 extends Fragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if (bean.getResult().size()>0){
+                                        pag+=1;
+                                    }
                                     beanList.addAll(bean.getResult());
                                     adapter.notifyDataSetChanged();
                                     if (beanList.size()>0){

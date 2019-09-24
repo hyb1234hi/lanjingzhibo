@@ -110,11 +110,11 @@ public class YongHuXinxiDialog extends DialogFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    guanliyuan.setText("管理员");
                     link_shezhiGLY(zhuboid, id);
+
                 }else {
-                    guanliyuan.setText("非管理员");
-                    link_shezhiGLY(zhuboid, id);
+
+                  //  link_shezhiGLY(zhuboid, id);
                 }
             }
         });
@@ -122,11 +122,10 @@ public class YongHuXinxiDialog extends DialogFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    jingyan.setText("禁言");
                     link_shezhiJY(zhuboid, id);
                 }else {
-                    jingyan.setText("未禁言");
-                    link_shezhiJY(zhuboid, id);
+
+                   // link_shezhiJY(zhuboid, id);
                 }
             }
         });
@@ -246,15 +245,18 @@ public class YongHuXinxiDialog extends DialogFragment {
                     String ss = body.string().trim();
                     Log.d("AllConnects", "查询是否管理员:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    Gson gson = new Gson();
-                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
-                    if (logingBe.getCode() == 2000) {
+                  //  Gson gson = new Gson();//{"code":0,"desc":"不是管理员","total":0}
+                  //  PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
+                    if (jsonObject.get("code").getAsInt()== 0) {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-
-
+                                    if (jsonObject.get("desc").getAsString().equals("不是管理员")){
+                                        swich1.setChecked(false);
+                                    }else {
+                                        swich1.setChecked(true);
+                                    }
                                 }
                             });
                     }
@@ -276,7 +278,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/im/"+id+"?group="+zhuboid);
+                .url(Consts.URL + "/im/"+id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -303,8 +305,16 @@ public class YongHuXinxiDialog extends DialogFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-
-
+                                    guanliyuan.setText("管理员");
+                                    swich1.setChecked(true);
+                                }
+                            });
+                    }else {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swich1.setChecked(false);
                                 }
                             });
                     }
@@ -327,7 +337,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/im/ban/"+id+"?group="+zhuboid);
+                .url(Consts.URL + "/im/ban/"+id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -354,8 +364,16 @@ public class YongHuXinxiDialog extends DialogFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-
-
+                                    swich2.setChecked(true);
+                                    jingyan.setText("禁言");
+                                }
+                            });
+                    }else {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swich2.setChecked(false);
                                 }
                             });
                     }
@@ -393,15 +411,16 @@ public class YongHuXinxiDialog extends DialogFragment {
                     String ss = body.string().trim();
                     Log.d("AllConnects", "查询是否禁言:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    Gson gson = new Gson();
-                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
-                    if (logingBe.getCode() == 2000) {
+                    if (jsonObject.get("code").getAsInt()== 0) {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-
-
+                                    if (jsonObject.get("desc").getAsString().equals("未被禁言")){
+                                        swich2.setChecked(false);
+                                    }else {
+                                        swich2.setChecked(true);
+                                    }
                                 }
                             });
                     }

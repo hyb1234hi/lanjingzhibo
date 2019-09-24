@@ -2077,7 +2077,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
     protected void createIMGroup(final String groupId, final String groupName, final StandardCallback callback) {
         IMMessageMgr imMessageMgr = mIMMessageMgr;
         if (imMessageMgr != null) {
-            imMessageMgr.createGroup(groupId, "AVChatRoom", groupName, new IMMessageMgr.Callback() {
+            imMessageMgr.createGroup(groupId, "ChatRoom", groupName, new IMMessageMgr.Callback() {
                 @Override
                 public void onError(int code, String errInfo) {
                     String msg = "[IM] 创建群失败[" + errInfo + ":" + code + "]";

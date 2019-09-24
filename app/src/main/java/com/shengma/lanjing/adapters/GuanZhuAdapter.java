@@ -26,7 +26,7 @@ public class GuanZhuAdapter  extends BaseQuickAdapter<GuanZhuBean.ResultBean,Bas
         helper.setText(R.id.renshu, item.getTotal()+"");
         Glide.with(mContext)
                 .load(item.getHeadImage())
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners( 10)))
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners( 20)))
                 .into((ImageView) helper.getView(R.id.bgbg));
 
         //RequestOptions.bitmapTransform(new CircleCrop())//圆形

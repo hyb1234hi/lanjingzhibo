@@ -27,7 +27,7 @@ public class ShiPinAdapter extends BaseQuickAdapter<ShiPingBean.ResultBean,BaseV
         helper.setText(R.id.renshu, item.getNums()+"");
         Glide.with(mContext)
                 .load(item.getImg())
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners( 10)))
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners( 20)))
                 .into((ImageView) helper.getView(R.id.bgbg));
 
         //RequestOptions.bitmapTransform(new CircleCrop())//圆形
