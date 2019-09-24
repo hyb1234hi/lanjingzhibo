@@ -1,24 +1,20 @@
 package com.shengma.lanjing.ui.fargments;
 
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.gson.Gson;
@@ -26,28 +22,22 @@ import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.ShiPinAdapter;
-
 import com.shengma.lanjing.beans.LiveType;
 import com.shengma.lanjing.beans.ShiPingBean;
-import com.shengma.lanjing.beans.ZhiBoBean;
-
 import com.shengma.lanjing.ui.PlayActivity;
-import com.shengma.lanjing.ui.zhibo.BoFangActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.DisplayUtils;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.views.GridDividerItemDecoration;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-
 import okhttp3.Call;
 import okhttp3.Callback;
-
+import okhttp3.FormBody;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -109,6 +99,7 @@ public class SYFragment3 extends Fragment implements View.OnClickListener {
                 intent.putExtra("url",beanList.get(position).getUrl());
                // intent.putExtra("playPath",beanList.get(position).getPlayUrl());
                 startActivity(intent);
+                link_dianji(beanList.get(position).getId()+"");
             }
         });
 
@@ -187,6 +178,51 @@ public class SYFragment3 extends Fragment implements View.OnClickListener {
             }
         });
     }
+
+
+
+    private void link_dianji(String id1) {
+        // Log.d("ZhiBoActivity", "混流fromId:" + id1);
+        // Log.d("ZhiBoActivity", "混流toId" + id2);
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("id", id1)
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/video/"+id1);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+              //  ToastUtils.showError(ZhiBoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "点击视频" + ss);
+                  ///  JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                   // Gson gson = new Gson();
+                   // LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    //ToastUtils.showError(ZhiBoActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
 
 
     private void link_live_type() {

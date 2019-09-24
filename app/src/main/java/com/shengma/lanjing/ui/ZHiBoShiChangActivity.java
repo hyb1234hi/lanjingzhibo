@@ -18,9 +18,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
-import com.shengma.lanjing.adapters.GuanZhuAdapter;
+
 import com.shengma.lanjing.adapters.ZHiBoShiChangAdapter;
-import com.shengma.lanjing.beans.GuanZhuBean;
+
 import com.shengma.lanjing.beans.ZhiBoSHiChangBean;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;

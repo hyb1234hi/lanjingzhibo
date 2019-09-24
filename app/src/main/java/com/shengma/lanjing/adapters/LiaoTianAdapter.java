@@ -1,7 +1,7 @@
 package com.shengma.lanjing.adapters;
 
 
-import android.util.Log;
+
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 

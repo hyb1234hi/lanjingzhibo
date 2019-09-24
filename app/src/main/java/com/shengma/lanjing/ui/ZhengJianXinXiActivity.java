@@ -40,7 +40,7 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.objectbox.Box;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;

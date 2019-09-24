@@ -9,7 +9,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.FuJinBean;
-import com.shengma.lanjing.beans.GuanZhuBean;
+
 
 import java.util.List;
 

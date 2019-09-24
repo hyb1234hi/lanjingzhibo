@@ -18,12 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
@@ -48,16 +46,13 @@ import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.zyao89.view.zloading.ZLoadingDialog;
 import com.zyao89.view.zloading.Z_TYPE;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -106,7 +101,6 @@ public class KaiBoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
-
         initLocationOption();
     }
 
@@ -117,10 +111,8 @@ public class KaiBoActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.fengmian: {
-
                 photoDialog = new PhotoDialog();
                 photoDialog.show(getSupportFragmentManager(), "photodialog");
-
                 break;
             }
             case R.id.weizhi: {
@@ -152,7 +144,6 @@ public class KaiBoActivity extends AppCompatActivity {
                     ToastUtils.showInfo(KaiBoActivity.this,"请先选择直播类型");
                     return;
                 }
-
                 dialog = new ZLoadingDialog(KaiBoActivity.this);
                 dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
                         .setLoadingColor(Color.parseColor("#FF3EE1F7"))//颜色
