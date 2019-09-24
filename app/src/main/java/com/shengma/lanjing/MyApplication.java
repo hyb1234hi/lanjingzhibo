@@ -19,16 +19,16 @@ import com.liulishuo.filedownloader.FileDownloader;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshFooter;
-import com.scwang.smart.refresh.layout.api.RefreshHeader;
+
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.DefaultRefreshFooterCreator;
-import com.scwang.smart.refresh.layout.listener.DefaultRefreshHeaderCreator;
+
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.LiwuPathBean;
 import com.shengma.lanjing.beans.MyObjectBox;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.beans.YongHuListBean;
-import com.shengma.lanjing.cookies.CookiesManager;
+
 import com.shengma.lanjing.dialogall.CommonData;
 import com.shengma.lanjing.dialogall.CommonDialogService;
 import com.shengma.lanjing.dialogall.ToastUtils;
@@ -103,7 +103,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         super.onCreate();
         myApplication = this;
         BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
-        Bugly.init(getApplicationContext(), "f4afeb35e1", true);
+        Bugly.init(getApplicationContext(), "f4afeb35e1", false);
 
       //全局dialog
         this.registerActivityLifecycleCallbacks(this);//注册
@@ -114,7 +114,6 @@ public class MyApplication extends Application implements Application.ActivityLi
         CommonData.ScreenWidth = metric.widthPixels; // 屏幕宽度（像素）
         Intent dialogservice = new Intent(this, CommonDialogService.class);
         startService(dialogservice);
-
         // 必须：初始化 LiteAVSDK Licence。 用于直播推流鉴权。
         TXLiveBase.getInstance().setLicence(this, LICENCE_URL, LICENCE_KEY);
         // 必须：初始化 MLVB 组件

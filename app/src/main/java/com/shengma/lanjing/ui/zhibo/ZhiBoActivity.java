@@ -3,7 +3,6 @@ package com.shengma.lanjing.ui.zhibo;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,8 +18,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -71,7 +68,6 @@ import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.RoomInfo;
-import com.shengma.lanjing.ui.QianBaoActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.InputMethodUtils;
@@ -93,7 +89,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -243,13 +238,13 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                 }
                             }
                         }
-                        liaoTianBeanList.addAll(lingshiList);
+                        liaoTianBeanList.addAll(0,lingshiList);
                         lingshiList.clear();
                         liaoTianAdapter.notifyDataSetChanged();
                         if (isPK){
                             link_jieshupk(dangqianPKId);
                         }
-                        Log.d("ZhiBoActivity", "更新聊天界面");
+                      //  Log.d("ZhiBoActivity", "更新聊天界面");
                         break;
                 }
                 return false;
@@ -598,7 +593,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 guanZhuBeanList.clear();
                 guanZhuBeanList.addAll(listBeans);
                 guanZhongAdapter.notifyDataSetChanged();
-
+                //发送当前pk时间
                 if (isPK){
                     if (pKtime1!=600000){
                         zhongtuPKMessageToAll("1",pKtime1+"");
@@ -606,6 +601,15 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         zhongtuPKMessageToAll("2",pKtime2+"");
                     }
                 }
+                //发送当前人数
+                mlvbLiveRoom.sendRoomCustomMsg("roomNum", (numberGZ + 1)+"", new SendRoomCustomMsgCallback() {
+                    @Override
+                    public void onError(int errCode, String errInfo) {
+                    }
+                    @Override
+                    public void onSuccess() {
+                    }
+                });
 
                 break;
             case "tuifang": //收到观众tui房消息

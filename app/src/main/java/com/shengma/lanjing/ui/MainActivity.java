@@ -46,6 +46,8 @@ import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.views.ControlScrollViewPager;
 import com.shengma.lanjing.views.MyFragmentPagerAdapter;
+
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.greenrobot.eventbus.EventBus;
@@ -143,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         //(A-B)÷Bx100%
      //  float ss= (float) ((1-100000)/100000.0);
       // Log.d("MainActivity", "ss:" + ss);
+
+
 
     }
 

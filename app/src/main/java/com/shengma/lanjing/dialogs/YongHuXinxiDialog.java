@@ -33,7 +33,9 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -109,10 +111,10 @@ public class YongHuXinxiDialog extends DialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     guanliyuan.setText("管理员");
-
+                    link_shezhiGLY(zhuboid, id);
                 }else {
                     guanliyuan.setText("非管理员");
-
+                    link_shezhiGLY(zhuboid, id);
                 }
             }
         });
@@ -121,10 +123,10 @@ public class YongHuXinxiDialog extends DialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     jingyan.setText("禁言");
-
+                    link_shezhiJY(zhuboid, id);
                 }else {
                     jingyan.setText("未禁言");
-
+                    link_shezhiJY(zhuboid, id);
                 }
             }
         });
@@ -243,6 +245,107 @@ public class YongHuXinxiDialog extends DialogFragment {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
                     Log.d("AllConnects", "查询是否管理员:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
+                    if (logingBe.getCode() == 2000) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+    private void link_shezhiGLY(String zhuboid, String id) {
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("group", zhuboid)
+                .add("id", id)
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/im/"+id+"?group="+zhuboid);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "设置管理员:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
+                    if (logingBe.getCode() == 2000) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
+    private void link_shezhiJY(String zhuboid, String id) {
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("group", zhuboid)
+                .add("id", id)
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/im/ban/"+id+"?group="+zhuboid);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "设置禁言:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);

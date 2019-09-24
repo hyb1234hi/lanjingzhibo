@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
@@ -65,6 +66,8 @@ import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
+import com.shengma.lanjing.liveroom.roomutil.http.HttpRequests;
+import com.shengma.lanjing.liveroom.roomutil.http.HttpResponse;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.InputMethodUtils;
@@ -234,10 +237,9 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 }
                             }
                         }
-                        liaoTianBeanList.addAll(lingshiList);
+                        liaoTianBeanList.addAll(0,lingshiList);
                         lingshiList.clear();
                         liaoTianAdapter.notifyDataSetChanged();
-
                         // Log.d("BoFangActivity", "更新聊天界面");
                         break;
                 }
@@ -508,7 +510,10 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 String[] zzz = message.split(",");
                 zhongtuPK(Long.parseLong(zzz[1]), zzz[0]);
                 break;
-
+            case "roomNum": //当前房间人数
+                numberGZ=Long.parseLong(message);
+                guanzhongxiangqiang.setText(numberGZ + "");
+                break;
         }
 
     }
@@ -807,8 +812,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.guanzhongxiangqiang:
-                YongHuListDialog yongHuListDialog = new YongHuListDialog("0");
-                yongHuListDialog.show(getSupportFragmentManager(), "ddddd");
+              //  YongHuListDialog yongHuListDialog = new YongHuListDialog("0");
+             //   yongHuListDialog.show(getSupportFragmentManager(), "ddddd");
                 break;
             case R.id.paihangView:
                 PaiHangListDialog paiHangListDialog = new PaiHangListDialog();
@@ -834,7 +839,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                         tuiChuDialog.dismiss();
                                         BoFangActivity.this.finish();
                                     }
-
                                     @Override
                                     public void onSuccess() {
                                         mlvbLiveRoom.setListener(null);
@@ -843,7 +847,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                     }
                                 });
                             }
-
                             @Override
                             public void onSuccess() {
                                 mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
@@ -853,7 +856,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                         tuiChuDialog.dismiss();
                                         BoFangActivity.this.finish();
                                     }
-
                                     @Override
                                     public void onSuccess() {
                                         mlvbLiveRoom.setListener(null);
@@ -885,7 +887,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 //美颜是转盘
                 ZhuanPanDialog zhuanPanDialog = new ZhuanPanDialog();
                 zhuanPanDialog.show(getSupportFragmentManager(), "zhuanpan");
-
                 break;
             case R.id.pk:
                 //pk是礼物

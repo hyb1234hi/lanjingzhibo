@@ -7,6 +7,8 @@ import android.os.Handler;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.MLVBCommonDef;
+import com.shengma.lanjing.liveroom.roomutil.http.HttpRequests;
+import com.shengma.lanjing.liveroom.roomutil.http.HttpResponse;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePusher;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -140,7 +142,7 @@ public abstract class MLVBLiveRoom {
      * @param callback 获取观众列表的结果回调。
      */
     public abstract void getAudienceList(IMLVBLiveRoomListener.GetAudienceListCallback callback);
-
+    public abstract void getGuanZhong(String id,final HttpRequests.OnResponseCallback<HttpResponse.AudienceList> callback);
 	/**
      * 创建房间（主播调用）
 	 *

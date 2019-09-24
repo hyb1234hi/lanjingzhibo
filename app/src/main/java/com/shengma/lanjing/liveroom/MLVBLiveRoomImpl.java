@@ -2144,6 +2144,20 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
         }
     }
 
+    public void getGuanZhong(String id,final HttpRequests.OnResponseCallback<HttpResponse.AudienceList> callback){
+        mHttpRequest.getAudienceList(id, new HttpRequests.OnResponseCallback<HttpResponse.AudienceList>() {
+            @Override
+            public void onResponse(int retcode, @Nullable String retmsg, @Nullable HttpResponse.AudienceList data) {
+                if (retcode != HttpResponse.CODE_OK || data == null || data.audiences == null){
+                    callback.onResponse(0,"0",null);
+                }else {
+                //    final List<AudienceInfo> audienceInfos = new ArrayList<>(data.audiences);
+                    callback.onResponse(1,"1",data);
+                }
+            }
+        });
+    }
+
     protected void updateAnchors(final boolean excludeRoomCreator, final UpdateAnchorsCallback callback){
         mHttpRequest.getPushers(mCurrRoomID, new HttpRequests.OnResponseCallback<HttpResponse.PusherList>() {
             @Override

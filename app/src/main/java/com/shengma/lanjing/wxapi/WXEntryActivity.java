@@ -1,6 +1,7 @@
 package com.shengma.lanjing.wxapi;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -9,9 +10,11 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
+import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -100,9 +103,15 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                 EventBus.getDefault().post(new MsgWarp(-1001,"取消授权"));
                 finish();
                 break;
+
         }
 
-
+        if(baseResp.getType()== ConstantsAPI.COMMAND_PAY_BY_WX){
+            Log.d("ddddd","onPayFinish,errCode="+baseResp.errCode);
+          //  0	成功	展示成功页面
+           // -1	错误	可能的原因：签名错误、未注册APPID、项目设置APPID不正确、注册的APPID与设置的不匹配、其他异常等。
+          //  -2	用户取消	无需处理。发生场景：用户不支付了，点击取消，返回APP。
+        }
 
     }
 }
