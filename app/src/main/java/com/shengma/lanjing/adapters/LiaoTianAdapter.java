@@ -3,6 +3,8 @@ package com.shengma.lanjing.adapters;
 
 
 
+import android.graphics.Color;
+
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -42,8 +44,16 @@ public class LiaoTianAdapter extends BaseMultiItemQuickAdapter<LiaoTianBean,Base
 
                 break;
             case 2:
-                helper.setText(R.id.name, item.getNickname());
-                helper.setText(R.id.neirong, "加入直播间");
+                if (item.getNickname().equals("")){
+                    helper.setTextColor(R.id.neirong,Color.parseColor("#62B7FA"));
+                    helper.setText(R.id.name, item.getNickname());
+                    helper.setText(R.id.neirong, item.getNeirong());
+                }else {
+                    helper.setTextColor(R.id.neirong,Color.parseColor("#ffffff"));
+                    helper.setText(R.id.name, item.getNickname());
+                    helper.setText(R.id.neirong, item.getNeirong());
+                }
+
                 break;
         }
 

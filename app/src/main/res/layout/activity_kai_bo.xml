@@ -76,6 +76,8 @@
         app:layout_constraintLeft_toRightOf="@+id/jkjk"
         android:textColor="#FFFFFF"
         android:textSize="11sp"
+        android:maxLength="5"
+        android:id="@+id/xianshi"
         android:gravity="center"
         app:layout_constraintRight_toRightOf="@+id/weizhi"
         android:layout_width="0dp"

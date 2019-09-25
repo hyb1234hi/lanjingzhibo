@@ -1342,8 +1342,8 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
 //                                    mStreamMixturer.addSubVideoStream(anchorInfo.accelerateURL);
 //                                }
                         //    }
-                            Log.d("ZhiBoActivity", "onBegin111111111");
-                            callbackOnThread(callback, "onBegin");
+                          //  Log.d("ZhiBoActivity", "onBegin111111111");
+                          //  callbackOnThread(callback, "onBegin");
                         }
                         else if (event == TXLiveConstants.PLAY_EVT_PLAY_END || event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT){
                             callbackOnThread(callback, "onError", event, "[LivePlayer] 播放异常[" + param.getString(TXLiveConstants.EVT_DESCRIPTION) + "]");

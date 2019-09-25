@@ -18,10 +18,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
@@ -46,13 +48,16 @@ import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.zyao89.view.zloading.ZLoadingDialog;
 import com.zyao89.view.zloading.Z_TYPE;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -86,13 +91,15 @@ public class KaiBoActivity extends AppCompatActivity {
     EditText zhuti;
     @BindView(R.id.frrrd)
     TextView frrrd;
+    @BindView(R.id.xianshi)
+    TextView xianshi;
     private PhotoDialog photoDialog;
     ZLoadingDialog dialog;
     private int liveType = -1;
     private String fengmianPath;
     private LocationClient locationClient;
-    private int count=0;
-    private String jd="",wd="";
+    private int count = 0;
+    private String jd = "", wd = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,20 +135,21 @@ public class KaiBoActivity extends AppCompatActivity {
                 break;
             }
             case R.id.kaibo:
-                if (!MyApplication.myApplication.getBaoCunBean().isLiwuISOK()){
-                    ToastUtils.showInfo(KaiBoActivity.this,"抱歉,礼物资源未下载完成");
+                kaibo.setEnabled(false);
+                if (!MyApplication.myApplication.getBaoCunBean().isLiwuISOK()) {
+                    ToastUtils.showInfo(KaiBoActivity.this, "抱歉,礼物资源未下载完成");
                     return;
                 }
-                if (fengmianPath==null || fengmianPath.equals("")){
-                    ToastUtils.showInfo(KaiBoActivity.this,"请先上传封面");
+                if (fengmianPath == null || fengmianPath.equals("")) {
+                    ToastUtils.showInfo(KaiBoActivity.this, "请先上传封面");
                     return;
                 }
-                if (zhuti.getText().toString().trim().equals("")){
-                    ToastUtils.showInfo(KaiBoActivity.this,"请先填写主题");
+                if (zhuti.getText().toString().trim().equals("")) {
+                    ToastUtils.showInfo(KaiBoActivity.this, "请先填写主题");
                     return;
                 }
-                if (liveType==-1){
-                    ToastUtils.showInfo(KaiBoActivity.this,"请先选择直播类型");
+                if (liveType == -1) {
+                    ToastUtils.showInfo(KaiBoActivity.this, "请先选择直播类型");
                     return;
                 }
                 dialog = new ZLoadingDialog(KaiBoActivity.this);
@@ -165,7 +173,6 @@ public class KaiBoActivity extends AppCompatActivity {
     }
 
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void photo(MsgWarp msgWarp) {
         if (msgWarp.getType() == 1003) {
@@ -178,19 +185,19 @@ public class KaiBoActivity extends AppCompatActivity {
                     .setDurationTime(0.6) // 设置动画时间百分比 - 0.5倍
                     .setDialogBackgroundColor(Color.parseColor("#bb111111")) // 设置背景色，默认白色
                     .show();
-
             link_loging(msgWarp.getMsg());
             Log.d("KaiBoActivity", msgWarp.getMsg());
-        } else if (msgWarp.getType()==100){
+        } else if (msgWarp.getType() == 100) {
             liveType = Integer.parseInt(msgWarp.getTemp());
             frrrd.setText(msgWarp.getMsg());
-        }else if (msgWarp.getType()==6668){
-                if (msgWarp.getMsg().equals("kai")){
-                    initLocationOption();
-                }else {
-                    jd="";
-                    wd="";
-                }
+        } else if (msgWarp.getType() == 6668) {
+            if (msgWarp.getMsg().equals("kai")) {
+                initLocationOption();
+            } else {
+                jd = "";
+                wd = "";
+                xianshi.setText("不显示距离");
+            }
         }
     }
 
@@ -215,9 +222,9 @@ public class KaiBoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PRIVATE_CODE) {
             Log.d("MainActivity", "resultCode:" + resultCode);
-            if (resultCode!=0){
-                ToastUtils.showInfo(KaiBoActivity.this,"打开GPS失败");
-            }else {
+            if (resultCode != 0) {
+                ToastUtils.showInfo(KaiBoActivity.this, "打开GPS失败");
+            } else {
                 showGPSContacts();
             }
         }
@@ -225,21 +232,21 @@ public class KaiBoActivity extends AppCompatActivity {
 
     /**
      * 获取到当前位置的经纬度
+     *
      * @param location
      */
     private void updateLocation(Location location) {
         if (location != null) {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
-            Log.e("MainActivity","维度：" + latitude + "\n经度" + longitude);
-            jd=longitude+"";
-            wd=latitude+"";
+            Log.e("MainActivity", "维度：" + latitude + "\n经度" + longitude);
+            jd = longitude + "";
+            wd = latitude + "";
         } else {
-            ToastUtils.showInfo(KaiBoActivity.this,"无法获取到位置信息");
-            Log.e("MainActivity","无法获取到位置信息");
+            ToastUtils.showInfo(KaiBoActivity.this, "无法获取到位置信息");
+            Log.e("MainActivity", "无法获取到位置信息");
         }
     }
-
 
 
     static final String[] LOCATIONGPS = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -315,7 +322,7 @@ public class KaiBoActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        if (provider!=null){
+        if (provider != null) {
             Location location = locationManager.getLastKnownLocation(provider); // 通过GPS获取位置
             updateLocation(location);
         }
@@ -344,7 +351,7 @@ public class KaiBoActivity extends AppCompatActivity {
                 .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(requestBody)
                 .url(Consts.URL + "/user/upload/img");
         // step 3：创建 Call 对象
@@ -354,14 +361,14 @@ public class KaiBoActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (dialog != null)
-                                dialog.dismiss();
-                            ToastUtils.showError(KaiBoActivity.this,"获取数据失败,请检查网络");
-                        }
-                    });
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog != null)
+                            dialog.dismiss();
+                        ToastUtils.showError(KaiBoActivity.this, "获取数据失败,请检查网络");
+                    }
+                });
 
             }
 
@@ -383,7 +390,7 @@ public class KaiBoActivity extends AppCompatActivity {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
 //                    Gson gson = new Gson();
 //                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
-                    fengmianPath=jsonObject.get("result").getAsString();
+                    fengmianPath = jsonObject.get("result").getAsString();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -401,7 +408,7 @@ public class KaiBoActivity extends AppCompatActivity {
                         public void run() {
                             if (dialog != null)
                                 dialog.dismiss();
-                            ToastUtils.showError(KaiBoActivity.this,e.getMessage()+"");
+                            ToastUtils.showError(KaiBoActivity.this, e.getMessage() + "");
                         }
                     });
                 }
@@ -418,13 +425,13 @@ public class KaiBoActivity extends AppCompatActivity {
 
     private void link_kaibo() {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        JSONObject object=new JSONObject();
+        JSONObject object = new JSONObject();
         try {
-            object.put("coverImg",fengmianPath);
-            object.put("latitude",wd);
-            object.put("longitude",jd);
-            object.put("title",zhuti.getText().toString().trim());
-            object.put("type",liveType);
+            object.put("coverImg", fengmianPath);
+            object.put("latitude", wd);
+            object.put("longitude", jd);
+            object.put("title", zhuti.getText().toString().trim());
+            object.put("type", liveType);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -438,10 +445,10 @@ public class KaiBoActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
         Log.d("KaiBoActivity", "liveType:" + object.toString());
-        RequestBody body = RequestBody.create(object.toString(),JSON);
+        RequestBody body = RequestBody.create(object.toString(), JSON);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL + "/live/start");
         // step 3：创建 Call 对象
@@ -452,9 +459,15 @@ public class KaiBoActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(KaiBoActivity.this, "获取数据失败,请检查网络");
-                if (dialog != null)
-                    dialog.dismiss();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog != null)
+                            dialog.dismiss();
+                    }
+                });
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -466,48 +479,56 @@ public class KaiBoActivity extends AppCompatActivity {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     KaiBoBean bean = gson.fromJson(jsonObject, KaiBoBean.class);
-                    BaoCunBean baoCunBean= MyApplication.myApplication.getBaoCunBeanBox().get(123456);
-                  if (baoCunBean!=null){
-                      baoCunBean.setRoomId(bean.getResult().getRoomId());
-                      baoCunBean.setPushUrl(bean.getResult().getPushUrl());
-                      baoCunBean.setPlayUrl(bean.getResult().getPlayUrl());
-                      MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
-                      MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setmHasAddAnchor(true,baoCunBean.getUserid()+"",1);
-                      MLVBLiveRoom.sharedInstance(MyApplication.myApplication).exitRoom(new IMLVBLiveRoomListener.ExitRoomCallback() {
-                          @Override
-                          public void onError(int errCode, String errInfo) {
-                              if (dialog != null)
-                                  dialog.dismiss();
-                              LoginInfo loginInfo=new LoginInfo(Integer.parseInt(baoCunBean.getSdkAppId()),baoCunBean.getUserid()+"",baoCunBean.getNickname(),baoCunBean.getHeadImage(),baoCunBean.getImUserSig());
-                              MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
-                                  @Override
-                                  public void onError(int errCode, String errInfo) {
-                                      ToastUtils.showInfo(KaiBoActivity.this,"IM登录失败");
-                                  }
-                                  @Override
-                                  public void onSuccess() {
-                                      startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
-                                  }
-                              });
-                          }
-                          @Override
-                          public void onSuccess() {
-                              if (dialog != null)
-                                  dialog.dismiss();
-                              LoginInfo loginInfo=new LoginInfo(Integer.parseInt(baoCunBean.getSdkAppId()),baoCunBean.getUserid()+"",baoCunBean.getNickname(),baoCunBean.getHeadImage(),baoCunBean.getImUserSig());
-                              MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
-                                  @Override
-                                  public void onError(int errCode, String errInfo) {
-                                      ToastUtils.showInfo(KaiBoActivity.this,"IM登录失败");
-                                  }
-                                  @Override
-                                  public void onSuccess() {
-                                      startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
-                                  }
-                              });
-                          }
-                      });
-                  }
+                    if (bean.getCode() == 2000) {
+                    BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBeanBox().get(123456);
+                    if (baoCunBean != null) {
+                        baoCunBean.setRoomId(bean.getResult().getRoomId());
+                        baoCunBean.setPushUrl(bean.getResult().getPushUrl());
+                        baoCunBean.setPlayUrl(bean.getResult().getPlayUrl());
+                        MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
+                        MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setmHasAddAnchor(true, baoCunBean.getUserid() + "", 1);
+                        MLVBLiveRoom.sharedInstance(MyApplication.myApplication).exitRoom(new IMLVBLiveRoomListener.ExitRoomCallback() {
+                            @Override
+                            public void onError(int errCode, String errInfo) {
+                                if (dialog != null)
+                                    dialog.dismiss();
+                                LoginInfo loginInfo = new LoginInfo(Integer.parseInt(baoCunBean.getSdkAppId()), baoCunBean.getUserid() + "", baoCunBean.getNickname(), baoCunBean.getHeadImage(), baoCunBean.getImUserSig());
+                                MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
+                                    @Override
+                                    public void onError(int errCode, String errInfo) {
+                                        ToastUtils.showInfo(KaiBoActivity.this, "IM登录失败");
+                                    }
+
+                                    @Override
+                                    public void onSuccess() {
+                                        startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                if (dialog != null)
+                                    dialog.dismiss();
+                                LoginInfo loginInfo = new LoginInfo(Integer.parseInt(baoCunBean.getSdkAppId()), baoCunBean.getUserid() + "", baoCunBean.getNickname(), baoCunBean.getHeadImage(), baoCunBean.getImUserSig());
+                                MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
+                                    @Override
+                                    public void onError(int errCode, String errInfo) {
+                                        ToastUtils.showInfo(KaiBoActivity.this, "IM登录失败");
+                                    }
+
+                                    @Override
+                                    public void onSuccess() {
+                                        startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
+                                    }
+                                });
+                            }
+                        });
+                    }
+                  }else if (bean.getCode()==-2){
+                        ToastUtils.showError(KaiBoActivity.this, "你还未认证成主播,请先认证");
+                        startActivity(new Intent(KaiBoActivity.this,ZhengJianXinXiActivity.class));
+                    }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(KaiBoActivity.this, "获取数据失败");
@@ -520,16 +541,16 @@ public class KaiBoActivity extends AppCompatActivity {
 
     private void link_end() {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        JSONObject object=new JSONObject();
+        JSONObject object = new JSONObject();
         try {
-            object.put("","");
+            object.put("", "");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        RequestBody body = RequestBody.create(object.toString(),JSON);
+        RequestBody body = RequestBody.create(object.toString(), JSON);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL + "/live/end");
         // step 3：创建 Call 对象
@@ -539,13 +560,22 @@ public class KaiBoActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
-                ToastUtils.showError(KaiBoActivity.this, "获取数据失败,请检查网络");
-                if (dialog != null)
-                    dialog.dismiss();
+               // ToastUtils.showError(KaiBoActivity.this, "获取数据失败,请检查网络");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        kaibo.setEnabled(true);
+                    }
+                });
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        kaibo.setEnabled(true);
+                    }
+                });
                 Log.d("AllConnects", "请求成功" + call.request().toString());
                 //获得返回体
                 try {
@@ -555,14 +585,11 @@ public class KaiBoActivity extends AppCompatActivity {
                     link_kaibo();
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
-                    ToastUtils.showError(KaiBoActivity.this, "获取数据失败");
-                    if (dialog != null)
-                        dialog.dismiss();
+                   // ToastUtils.showError(KaiBoActivity.this, "获取数据失败");
                 }
             }
         });
     }
-
 
 
     /**
@@ -618,7 +645,7 @@ public class KaiBoActivity extends AppCompatActivity {
 
     private class MyLocationListener extends BDAbstractLocationListener {
         @Override
-        public void onReceiveLocation(BDLocation location){
+        public void onReceiveLocation(BDLocation location) {
             //此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
             //以下只列举部分获取经纬度相关（常用）的结果信息
             //更多结果信息获取说明，请参照类参考中BDLocation类中的说明
@@ -631,16 +658,28 @@ public class KaiBoActivity extends AppCompatActivity {
             Log.d("MyLocationListener", "latitude:" + latitude);
             Log.d("MyLocationListener", "longitude:" + longitude);
 
-            if (errorCode==161 || errorCode==61){
-                jd=longitude+"";
-                wd=latitude+"";
+            if (errorCode == 161 || errorCode == 61) {
+                jd = longitude + "";
+                wd = latitude + "";
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        xianshi.setText(location.getAddress().city);
+                    }
+                });
                 locationClient.stop();
-            }else {
+            } else {
                 count++;
                 locationClient.restart();
-                if (count>=3){
+                if (count >= 2) {
                     locationClient.stop();
-                    ToastUtils.showInfo(KaiBoActivity.this,"定位失败");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            xianshi.setText("定位失败");
+                        }
+                    });
+                    ToastUtils.showInfo(KaiBoActivity.this, "定位失败");
                 }
                 return;
             }

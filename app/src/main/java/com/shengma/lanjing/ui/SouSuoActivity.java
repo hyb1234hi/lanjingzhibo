@@ -85,7 +85,7 @@ public class SouSuoActivity extends AppCompatActivity {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
-                if (resultBeans.get(position).getStatus()==1){//进入直播间
+                if (resultBeans.get(position).getStatus()==1 && MyApplication.myApplication.getBaoCunBean().isLiwuISOK()){//进入直播间
                     Intent intent=new Intent(SouSuoActivity.this, BoFangActivity.class);
                     intent.putExtra("idid",resultBeans.get(position).getId());
                     intent.putExtra("playPath",resultBeans.get(position).getPlayUrl());

@@ -111,10 +111,8 @@ public class YongHuXinxiDialog extends DialogFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     link_shezhiGLY(zhuboid, id);
-
                 }else {
-
-                  //  link_shezhiGLY(zhuboid, id);
+                    link_quxiaGLY(zhuboid, id);
                 }
             }
         });
@@ -124,8 +122,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 if (isChecked){
                     link_shezhiJY(zhuboid, id);
                 }else {
-
-                   // link_shezhiJY(zhuboid, id);
+                    link_quxiaoJY(zhuboid, id);
                 }
             }
         });
@@ -268,6 +265,65 @@ public class YongHuXinxiDialog extends DialogFragment {
             }
         });
     }
+    private void link_quxiaGLY(String zhuboid, String id) {
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("group", zhuboid)
+                .add("id", id)
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/im/cancel"+id);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "取消管理员:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
+                    if (logingBe.getCode() == 2000) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    guanliyuan.setText("非管理员");
+                                    swich1.setChecked(false);
+                                }
+                            });
+                    }else {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swich1.setChecked(true);
+                                    guanliyuan.setText("管理员");
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
     private void link_shezhiGLY(String zhuboid, String id) {
         RequestBody body = null;
         body = new FormBody.Builder()
@@ -315,6 +371,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 @Override
                                 public void run() {
                                     swich1.setChecked(false);
+                                    guanliyuan.setText("非管理员");
                                 }
                             });
                     }
@@ -326,7 +383,6 @@ public class YongHuXinxiDialog extends DialogFragment {
             }
         });
     }
-
     private void link_shezhiJY(String zhuboid, String id) {
         RequestBody body = null;
         body = new FormBody.Builder()
@@ -374,6 +430,67 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 @Override
                                 public void run() {
                                     swich2.setChecked(false);
+                                    jingyan.setText("未禁言");
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
+    private void link_quxiaoJY(String zhuboid, String id) {
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("group", zhuboid)
+                .add("id", id)
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/im/ban/cancel/"+id);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "取消禁言:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
+                    if (logingBe.getCode() == 2000) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swich2.setChecked(false);
+                                    jingyan.setText("未禁言");
+                                }
+                            });
+                    }else {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swich2.setChecked(true);
+                                    jingyan.setText("禁言");
                                 }
                             });
                     }

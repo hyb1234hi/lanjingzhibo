@@ -101,10 +101,16 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
-                Intent intent=new Intent(getActivity(), BoFangActivity.class);
-                intent.putExtra("idid",beanList.get(position).getId());
-                intent.putExtra("playPath",beanList.get(position).getPlayUrl());
-                startActivity(intent);
+                if (MyApplication.myApplication.getBaoCunBean().isLiwuISOK()){
+                    Intent intent=new Intent(getActivity(), BoFangActivity.class);
+                    intent.putExtra("idid",beanList.get(position).getId());
+                    intent.putExtra("playPath",beanList.get(position).getPlayUrl());
+                    startActivity(intent);
+                }else {
+                    if (getActivity()!=null)
+                        ToastUtils.showInfo(getActivity(),"抱歉,礼物资源未下载完成");
+                }
+
             }
         });
 

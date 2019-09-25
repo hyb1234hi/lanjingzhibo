@@ -10,10 +10,11 @@
 
 
     <EditText
-        android:paddingStart="34dp"
-        android:textColor="#181818"
+        android:paddingStart="40dp"
+        android:textColor="#555555"
         android:textSize="14dp"
         android:layout_marginTop="30dp"
+        android:hint="输入主播姓名或ID"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="12dp"
         android:id="@+id/sousuo"
@@ -23,11 +24,12 @@
         android:layout_height="30dp"/>
 
     <ImageView
-        android:tint="#484A50"
+        android:tint="@color/white"
         app:layout_constraintTop_toTopOf="@+id/sousuo"
         app:layout_constraintBottom_toBottomOf="@+id/sousuo"
         app:layout_constraintLeft_toLeftOf="@+id/sousuo"
-        android:background="@drawable/sousuobg2"
+        android:src="@drawable/sousuobg2"
+        android:padding="2dp"
         android:layout_marginStart="12dp"
         android:layout_width="20dp"
         android:layout_height="20dp"/>

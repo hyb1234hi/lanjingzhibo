@@ -68,13 +68,13 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
 
     @Override
     public void onReq(BaseReq baseReq) {
-        Log.d("微信界面","baseReq:"+ JSON.toJSONString(baseReq));
+        Log.d("ChongZhiActivity","baseReq:"+ JSON.toJSONString(baseReq));
     }
 
     @Override
     public void onResp(BaseResp baseResp) {
-        Log.d("微信界面","baseResp:"+JSON.toJSONString(baseResp));
-       // Log.d("微信界面","baseResp:"+baseResp.errStr+","+baseResp.openId+","+baseResp.transaction+","+baseResp.errCode);
+        Log.d("ChongZhiActivity","baseResp:"+JSON.toJSONString(baseResp));
+        Log.d("ChongZhiActivity","baseResp:"+baseResp.errStr+","+baseResp.openId+","+baseResp.transaction+","+baseResp.errCode);
         String result = "";
         switch(baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
@@ -107,7 +107,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
         }
 
         if(baseResp.getType()== ConstantsAPI.COMMAND_PAY_BY_WX){
-            Log.d("ddddd","onPayFinish,errCode="+baseResp.errCode);
+            Log.d("ChongZhiActivity","onPayFinish,errCode="+baseResp.errCode);
           //  0	成功	展示成功页面
            // -1	错误	可能的原因：签名错误、未注册APPID、项目设置APPID不正确、注册的APPID与设置的不匹配、其他异常等。
           //  -2	用户取消	无需处理。发生场景：用户不支付了，点击取消，返回APP。

@@ -60,6 +60,15 @@ public class BeiBaoBean {
         private String name;
         private int num;
         private String giftUrl;
+        private int type;
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
 
         public int getId() {
             return id;

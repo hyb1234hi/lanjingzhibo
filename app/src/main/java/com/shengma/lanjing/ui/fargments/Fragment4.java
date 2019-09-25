@@ -28,11 +28,9 @@ import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
-import com.shengma.lanjing.mediarecorder.MainActivity;
 import com.shengma.lanjing.mediarecorder.RecordActivity;
 import com.shengma.lanjing.ui.GeXinSheZhiActivity;
 import com.shengma.lanjing.ui.KaiBoActivity;
-import com.shengma.lanjing.ui.LogingActivity;
 import com.shengma.lanjing.ui.QianBaoActivity;
 import com.shengma.lanjing.ui.WoDeFenSiActivity;
 import com.shengma.lanjing.ui.WoDeGuanZhuActivity;
@@ -97,6 +95,8 @@ public class Fragment4 extends Fragment {
     RelativeLayout rl5;
     @BindView(R.id.bianji)
     ImageView bianji;
+    @BindView(R.id.xingbie)
+    ImageView xingbie;
 
     private Unbinder unbinder;
     private Box<BaoCunBean> baoCunBeanBox = MyApplication.myApplication.getBaoCunBeanBox();
@@ -120,8 +120,6 @@ public class Fragment4 extends Fragment {
         int heightPixels = outMetrics.heightPixels;
         mytopview.setWH(widthPixels, heightPixels);
         Log.d("ZhiBoActivity", "heightPixels:" + heightPixels);
-
-
         return view;
     }
 
@@ -131,11 +129,11 @@ public class Fragment4 extends Fragment {
         super.onResume();
         baoCunBean = baoCunBeanBox.get(123456);
         if (baoCunBean != null) {
-            if (getActivity()!=null)
-            Glide.with(getActivity())
-                    .load(baoCunBean.getHeadImage())
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(touxiang);
+            if (getActivity() != null)
+                Glide.with(getActivity())
+                        .load(baoCunBean.getHeadImage())
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                        .into(touxiang);
             //RequestOptions.bitmapTransform(new CircleCrop())//圆形
             //RequestOptions.bitmapTransform(new RoundedCorners( 5))//圆角
             name.setText(baoCunBean.getNickname() + "");
@@ -145,6 +143,13 @@ public class Fragment4 extends Fragment {
             shichang.setText(baoCunBean.getDuration() + "");
             fensi.setText(baoCunBean.getFans() + "");
             guanzhu.setText(baoCunBean.getIdols() + "");
+            if (baoCunBean.getSex()==1){
+                xingbie.setBackgroundResource(R.drawable.nan);
+            }else if (baoCunBean.getSex()==2){
+                xingbie.setBackgroundResource(R.drawable.nv);
+            }else {
+                xingbie.setVisibility(View.INVISIBLE);
+            }
         }
 
 
@@ -154,9 +159,9 @@ public class Fragment4 extends Fragment {
     private void link_userinfo() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL+"/user/info");
+                .url(Consts.URL + "/user/info");
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -164,9 +169,10 @@ public class Fragment4 extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
-                if (getActivity()!=null)
-                ToastUtils.showError(getActivity(),"获取数据失败,请检查网络");
+                if (getActivity() != null)
+                    ToastUtils.showError(getActivity(), "获取数据失败,请检查网络");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 JsonObject jsonObject = null;
@@ -175,7 +181,7 @@ public class Fragment4 extends Fragment {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("LogingActivity", "用户信息"+ss);
+                    Log.d("LogingActivity", "用户信息" + ss);
                     jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     UserInfoBean userInfoBean = gson.fromJson(jsonObject, UserInfoBean.class);
@@ -196,7 +202,7 @@ public class Fragment4 extends Fragment {
                     bean.setUserLevel(userInfoBean.getResult().getUserLevel());
                     baoCunBeanBox.put(bean);
 
-                    LoginInfo loginInfo=new LoginInfo(Integer.parseInt(bean.getSdkAppId()),bean.getUserid()+"",bean.getNickname(),bean.getHeadImage(),bean.getImUserSig());
+                    LoginInfo loginInfo = new LoginInfo(Integer.parseInt(bean.getSdkAppId()), bean.getUserid() + "", bean.getNickname(), bean.getHeadImage(), bean.getImUserSig());
                     MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setCameraMuteImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
                     //登录IM
                     MLVBLiveRoom.sharedInstance(MyApplication.myApplication).login(loginInfo, new IMLVBLiveRoomListener.LoginCallback() {
@@ -205,6 +211,7 @@ public class Fragment4 extends Fragment {
                             Log.d("ZhiBoActivity", "errCode:" + errCode);
                             Log.d("ZhiBoActivity", errInfo);
                         }
+
                         @Override
                         public void onSuccess() {
                             Log.d("ZhiBoActivity", "IM登录成功");
@@ -215,14 +222,14 @@ public class Fragment4 extends Fragment {
 
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
-                   // ToastUtils.showError(MainActivity.this,"获取数据失败");
+                    // ToastUtils.showError(MainActivity.this,"获取数据失败");
                     try {
-                        if (jsonObject!=null)
-                            if (jsonObject.get("code").getAsInt()==4401){
-                                if (getActivity()!=null)
-                             ToastUtils.showInfo(getActivity(),"登录已过期,请重新登录");
+                        if (jsonObject != null)
+                            if (jsonObject.get("code").getAsInt() == 4401) {
+                                if (getActivity() != null)
+                                    ToastUtils.showInfo(getActivity(), "登录已过期,请重新登录");
                             }
-                    }catch (Exception e1){
+                    } catch (Exception e1) {
                         e1.printStackTrace();
                     }
 
@@ -239,7 +246,7 @@ public class Fragment4 extends Fragment {
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.textView1, R.id.textView2, R.id.textView3,R.id.bianji})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.textView1, R.id.textView2, R.id.textView3, R.id.bianji})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.textView1:
@@ -271,7 +278,6 @@ public class Fragment4 extends Fragment {
                 break;
         }
     }
-
 
 
 }

@@ -59,7 +59,7 @@ public class RecordActivity extends AppCompatActivity implements TextureView.Sur
     private int mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
     private int mRotationDegree;
     private  ZLoadingDialog dialog;
-
+    private ShangChuanShiPingDialog shangChuanShiPingDialog=null;
     //录制相关参数
     private MediaRecorder mMediaRecorder;
     private int mFps;//帧率
@@ -409,14 +409,14 @@ public class RecordActivity extends AppCompatActivity implements TextureView.Sur
                                 .input(path2)
                                 .output(path)
                                 //以下参数全部为可选
-                                .outWidth(1080)
-                                .outHeight(640)
+                                .outWidth(1280)
+                                .outHeight(720)
                                 // .startTimeMs(startTimeMs)//用于剪辑视频
                                 // .endTimeMs(endTimeMs)    //用于剪辑视频
                                 // .speed(speed)            //改变视频速率，用于快慢放
                                 // .changeAudioSpeed(changeAudioSpeed) //改变视频速率时，音频是否同步变化
-                                // .bitrate(bitrate)       //输出视频比特率
-                                //  .frameRate(frameRate)   //帧率
+                                 .bitrate(500 * 1024 * 8)       //输出视频比特率
+                                 .frameRate(mFps)   //帧率
                                 // .iFrameInterval(iFrameInterval)  //关键帧距，为0时可输出全关键帧视频（部分机器上需为-1）
                                 .progressListener(new VideoProgressListener() {
                                     @Override
@@ -424,17 +424,19 @@ public class RecordActivity extends AppCompatActivity implements TextureView.Sur
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                               if (progress>=1){
+                                               if (progress>=0.99){
                                                    dialog.dismiss();
                                                    //显示弹窗
-                                                   ShangChuanShiPingDialog shangChuanShiPingDialog = new ShangChuanShiPingDialog(path);
-                                                   shangChuanShiPingDialog.show(getSupportFragmentManager(), "dddffgryrty");
-
-                                               }
+                                                   if (shangChuanShiPingDialog==null){
+                                                       shangChuanShiPingDialog = new ShangChuanShiPingDialog(path);
+                                                       shangChuanShiPingDialog.show(getSupportFragmentManager(), "dddffgryrty");
+                                                   }
+                                                }
                                             }
                                         });
                                         Log.d(TAG, "progress:" + progress);
                                     }
+
                                 }).process();
                        } catch (Exception e) {
                     e.printStackTrace();

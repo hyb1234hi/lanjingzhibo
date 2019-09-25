@@ -153,6 +153,7 @@
 
     <TextView
         android:text="账号绑定"
+        android:visibility="gone"
         android:textSize="12sp"
         android:gravity="center_vertical"
         android:paddingLeft="16dp"
@@ -164,6 +165,7 @@
 
     <RelativeLayout
         android:id="@+id/rl3"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="48dp">
 
@@ -206,6 +208,7 @@
 
     <RelativeLayout
         android:id="@+id/rl4"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="48dp">
 

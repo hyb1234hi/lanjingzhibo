@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TabHost;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -95,9 +96,15 @@ public class SYFragment1 extends Fragment {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
-                Intent intent=new Intent(getActivity(), BoFangActivity.class);
-                intent.putExtra("idid",beanList.get(position).getId());
-                startActivity(intent);
+                if (MyApplication.myApplication.getBaoCunBean().isLiwuISOK()){
+                    Intent intent=new Intent(getActivity(), BoFangActivity.class);
+                    intent.putExtra("idid",beanList.get(position).getId());
+                    startActivity(intent);
+                }else {
+                    if (getActivity()!=null)
+                    ToastUtils.showInfo(getActivity(),"抱歉,礼物资源未下载完成");
+                }
+
             }
         });
 

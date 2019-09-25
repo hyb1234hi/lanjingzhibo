@@ -12,19 +12,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.PlayActivity"></activity>
-        <activity android:name=".ui.wuguanjingyao.ZhiBoJianSheZhiActivity" />
-        <activity android:name=".ui.wuguanjingyao.GuanYuWoMenActivity" />
-        <activity android:name=".ui.LogingActivity" />
-        <activity android:name=".ui.ZhengJian2Activity" />
-        <activity android:name=".ui.ZhengJianXinXiActivity" />
-        <activity android:name=".ui.XiuGaiMiMaActivity" />
-        <activity android:name=".ui.SouSuoActivity" />
-        <activity android:name=".ui.WoDeFenSiActivity" />
-        <activity android:name=".ui.WoDeGuanZhuActivity" />
-        <activity android:name=".ui.ZHiBoShiChangActivity" />
-        <activity android:name=".ui.WoDeZhiBoActivity" />
-        <activity android:name=".ui.XiTongXiaoXiActivity" />
+        <activity android:name=".ui.wuguanjingyao.ChangJianWenTiActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.wuguanjingyao.TongZhiActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.PlayActivity" />
+        <activity android:name=".ui.wuguanjingyao.ZhiBoJianSheZhiActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.wuguanjingyao.GuanYuWoMenActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.LogingActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.ZhengJian2Activity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.ZhengJianXinXiActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.XiuGaiMiMaActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.SouSuoActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.WoDeFenSiActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.WoDeGuanZhuActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.ZHiBoShiChangActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.WoDeZhiBoActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.XiTongXiaoXiActivity" android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.ZhangHaoAnQuanActivity"
             android:screenOrientation="portrait" />
@@ -33,7 +35,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.ChongZhiActivity"
-            android:screenOrientation="portrait" />
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         <activity
             android:name=".ui.QianBaoActivity"
             android:screenOrientation="portrait" />
@@ -82,8 +86,7 @@
             android:launchMode="singleTask"
             android:taskAffinity="net.sourceforge.simcpux"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name=".mediarecorder.RecordActivity" />
-        <activity android:name=".mediarecorder.VideoViewActivity" />
+        <activity android:name=".mediarecorder.RecordActivity" android:screenOrientation="portrait"/>
         <activity android:name=".mediarecorder.MainActivity" />
 
         <meta-data
@@ -110,10 +113,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- 这个权限用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- 这个权限用于进行网络定位 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
