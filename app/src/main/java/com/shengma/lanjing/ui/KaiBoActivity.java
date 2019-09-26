@@ -108,7 +108,7 @@ public class KaiBoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
-        initLocationOption();
+        showGPSContacts();
     }
 
     @OnClick({R.id.fanhui, R.id.fengmian, R.id.weizhi, R.id.pingdao, R.id.kaibo, R.id.fenxiang})
@@ -136,10 +136,7 @@ public class KaiBoActivity extends AppCompatActivity {
             }
             case R.id.kaibo:
                 kaibo.setEnabled(false);
-                if (!MyApplication.myApplication.getBaoCunBean().isLiwuISOK()) {
-                    ToastUtils.showInfo(KaiBoActivity.this, "抱歉,礼物资源未下载完成");
-                    return;
-                }
+
                 if (fengmianPath == null || fengmianPath.equals("")) {
                     ToastUtils.showInfo(KaiBoActivity.this, "请先上传封面");
                     return;
@@ -268,10 +265,12 @@ public class KaiBoActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(this, LOCATIONGPS,
                             BAIDU_READ_PHONE_STATE);
                 } else {
-                    getLocation();//getLocation为定位方法
+                   // getLocation();//getLocation为定位方法
+                    initLocationOption();
                 }
             } else {
-                getLocation();//getLocation为定位方法
+                initLocationOption();
+              //  getLocation();//getLocation为定位方法
             }
         } else {
             Toast.makeText(this, "系统检测到未开启GPS定位服务,请开启", Toast.LENGTH_SHORT).show();
@@ -291,7 +290,8 @@ public class KaiBoActivity extends AppCompatActivity {
         if (requestCode == BAIDU_READ_PHONE_STATE) {//如果用户取消，permissions可能为null.
             if (grantResults[0] == PERMISSION_GRANTED) {  //有权限
                 // 获取到权限，作相应处理
-                getLocation();
+              //  getLocation();
+                initLocationOption();
             } else {
                 showGPSContacts();
             }

@@ -9,23 +9,23 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.shengma.lanjing.R;
-import com.shengma.lanjing.beans.YongHuListBean;
+import com.shengma.lanjing.beans.YongHuPaiHang;
 
 import java.util.List;
 
-public class YongHuListAdapter extends BaseQuickAdapter<YongHuListBean,BaseViewHolder> {
+public class YongHuListAdapter extends BaseQuickAdapter<YongHuPaiHang.ResultBean,BaseViewHolder> {
 
-    public YongHuListAdapter(List<YongHuListBean> list) {
+    public YongHuListAdapter(List<YongHuPaiHang.ResultBean> list) {
         super(R.layout.yonghulist_item, list);
     }
 
 
     @Override
-    protected void convert(BaseViewHolder helper, YongHuListBean item) {
-        helper.setText(R.id.name, item.getName());
-        helper.setText(R.id.dengji, "Lv."+item.getDengji());
+    protected void convert(BaseViewHolder helper, YongHuPaiHang.ResultBean item) {
+        helper.setText(R.id.name, item.getNickname());
+        helper.setText(R.id.dengji, "Lv."+item.getUserLevel());
         helper.setText(R.id.paihang, (helper.getLayoutPosition()+1)+"");
-        helper.setText(R.id.jingbi,item.getJingbi()+"");
+        helper.setText(R.id.jingbi,item.getTotal()+"");
         if (helper.getLayoutPosition()==0 || helper.getLayoutPosition()==1 ||helper.getLayoutPosition()==2 ){
             helper.setTextColor(R.id.paihang, Color.parseColor("#F36D87"));
         }else {
@@ -36,16 +36,16 @@ public class YongHuListAdapter extends BaseQuickAdapter<YongHuListBean,BaseViewH
         }else {
             helper.setImageResource(R.id.xingbie,R.drawable.nv);
         }
-        if (item.getType()==1){
-            helper.setGone(R.id.guanliyuan,true);
-        }else {
-            helper.setGone(R.id.guanliyuan,false);
-        }
-        if (item.getType()==2){
-            helper.setGone(R.id.jingyan,true);
-        }else {
-            helper.setGone(R.id.jingyan,false);
-        }
+//        if (item.getType()==1){
+//            helper.setGone(R.id.guanliyuan,true);
+//        }else {
+//            helper.setGone(R.id.guanliyuan,false);
+//        }
+//        if (item.getType()==2){
+//            helper.setGone(R.id.jingyan,true);
+//        }else {
+//            helper.setGone(R.id.jingyan,false);
+//        }
         Glide.with(mContext)
                 .load(item.getHeadImage())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))

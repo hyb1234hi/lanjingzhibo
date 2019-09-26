@@ -15,20 +15,31 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemClickListener;
+
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.YongHuListAdapter;
-import com.shengma.lanjing.beans.YongHuListBean;
-import com.shengma.lanjing.beans.YongHuListBean_;
+
+
+import com.shengma.lanjing.beans.YongHuPaiHang;
+import com.shengma.lanjing.utils.Consts;
+import com.shengma.lanjing.utils.GsonUtil;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import io.objectbox.Box;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 public class YongHuListDialog extends DialogFragment {
@@ -37,8 +48,8 @@ public class YongHuListDialog extends DialogFragment {
     private RefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private YongHuListAdapter yongHuListAdapter;
-    private List<YongHuListBean> yongHuListBeanList=new ArrayList<>();
-    private Box<YongHuListBean> yongHuListBeanBox= MyApplication.myApplication.getYongHuListBeanBox();
+    private List<YongHuPaiHang.ResultBean> yongHuListBeanList=new ArrayList<>();
+   // private Box<YongHuListBean> yongHuListBeanBox= MyApplication.myApplication.getYongHuListBeanBox();
     private int size=20,page=0;
     private boolean isZB=false;
     private String zhuboid;
@@ -67,35 +78,27 @@ public class YongHuListDialog extends DialogFragment {
         recyclerView.setLayoutManager(manager);
         yongHuListAdapter=new YongHuListAdapter(yongHuListBeanList);
         recyclerView.setAdapter(yongHuListAdapter);
-        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
-            @Override
-            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.d(TAG, "position:" + position);
-                if (isZB){//是主播才能点击
-                    YongHuXinxiDialog yongHuXinxiDialog=new YongHuXinxiDialog(zhuboid,yongHuListBeanList.get(position).getId()+"");
-                    yongHuXinxiDialog.show(getFragmentManager(),"yonghuxnxi");
-                    dismiss();
-                }
-            }
-        });
+//        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
+//            @Override
+//            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                Log.d(TAG, "position:" + position);
+//                if (isZB){//是主播才能点击
+//                    YongHuXinxiDialog yongHuXinxiDialog=new YongHuXinxiDialog(zhuboid,yongHuListBeanList.get(position).getId()+"");
+//                    yongHuXinxiDialog.show(getFragmentManager(),"yonghuxnxi");
+//                    dismiss();
+//                }
+//            }
+//        });
        // refreshLayout.setRefreshHeader(new ClassicsHeader(this));
         refreshLayout.setRefreshFooter(new ClassicsFooter(getActivity()));
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
-                page+=1;
-                List<YongHuListBean> listBeans= yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(size*page,size);
-                yongHuListBeanList.addAll(listBeans);
-                yongHuListAdapter.notifyDataSetChanged();
-                refreshlayout.finishLoadMore(600/*,false*/);//传入false表示加载失败
+               // page+=1;
+               //link_chaxunGLY();
             }
         });
-
-      yongHuListBeanList.clear();
-      List<YongHuListBean> listBeans= yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(size*page,size);
-      yongHuListBeanList.addAll(listBeans);
-      yongHuListAdapter.notifyDataSetChanged();
-       // Log.d("YongHuListDialog", "yongHuListBeanList.size():" + yongHuListBeanList.size());
+        link_chaxunGLY();
         return view;
     }
 
@@ -123,7 +126,65 @@ public class YongHuListDialog extends DialogFragment {
     }
 
 
+    private void link_chaxunGLY() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/detail/user/rank?id="+zhuboid);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+                if (getActivity()!=null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.finishLoadMore(false/*,false*/);//传入false表示加载失败
+                        }
+                    });
+            }
 
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                if (getActivity()!=null)
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.finishLoadMore(500/*,false*/);//传入false表示加载失败
+                        }
+                    });
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "查询是否管理员:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                      Gson gson = new Gson();//{"code":0,"desc":"不是管理员","total":0}
+                    YongHuPaiHang yongHuPaiHang = gson.fromJson(jsonObject, YongHuPaiHang.class);
+                    if (jsonObject.get("code").getAsInt()== 2000) {
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    yongHuListBeanList.addAll(yongHuPaiHang.getResult());
+                                    yongHuListAdapter.notifyDataSetChanged();
+                                }
+                            });
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
 
 
 }

@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 im2.setBackgroundResource(R.drawable.fujin1);
                 viewpage.setCurrentItem(PAGE_TWO);
                 count=0;
-                initLocationOption();
+                showGPSContacts();
                 break;
             case R.id.ll3:
                 resetSelected();
@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             if (resultCode!=0){
                 ToastUtils.showInfo(MainActivity.this,"打开GPS失败");
             }else {
+               // initLocationOption();
                 showGPSContacts();
             }
         }
@@ -242,10 +243,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     ActivityCompat.requestPermissions(this, LOCATIONGPS,
                             BAIDU_READ_PHONE_STATE);
                 } else {
-                    getLocation();//getLocation为定位方法
+                    initLocationOption();
                 }
             } else {
-                getLocation();//getLocation为定位方法
+                initLocationOption();
             }
         } else {
             Toast.makeText(this, "系统检测到未开启GPS定位服务,请开启", Toast.LENGTH_SHORT).show();
@@ -265,9 +266,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if (requestCode == BAIDU_READ_PHONE_STATE) {//如果用户取消，permissions可能为null.
             if (grantResults[0] == PERMISSION_GRANTED) {  //有权限
                 // 获取到权限，作相应处理
-                getLocation();
+                initLocationOption();
             } else {
-                showGPSContacts();
+                Toast.makeText(this, "获取定位权限失败", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -394,9 +395,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         });
     }
 
+    private boolean isX=true;
     private class TanChuangThread extends Thread {
         boolean isRing;
-        boolean isX=true;
         int A=1;
 
         @Override
@@ -407,19 +408,19 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     if (isX) {
                         isX=false;
                         XiaZaiLiWuBean subject = linkedBlockingQueue.poll();
-                        if (subject==null){
+                        if (subject==null){//空是取完了
                             A+=1;
                             if (A==10){
-                                Log.d("MainActivity", "结束大循环");
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        jieya();
-                                    }
-                                }).start();
+//                                Log.d("MainActivity", "结束大循环");
+//                                new Thread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        jieya();
+//                                    }
+//                                }).start();
                                 isRing=true;
                             }
-                            SystemClock.sleep(1200);
+                            SystemClock.sleep(1000);
                             isX=true;
                         }else {
                             if (!subject.getSpecialUrl().equals("")){
@@ -442,19 +443,20 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                                             @Override
                                             protected void retry(final BaseDownloadTask task, final Throwable ex, final int retryingTimes, final int soFarBytes) {
-                                                isX=true;
+                                               // isX=true;
                                             }
                                             @Override
                                             protected void completed(BaseDownloadTask task) {
                                                 //完成
-                                                isX=true;
+                                               // isX=true;
                                                 subject.setD(true);
                                                 MyApplication.myApplication.getXiaZaiLiWuBeanBox().put(subject);
                                                 Log.d("MainActivity", "下载完成:"+task.getUrl());
+                                                jieya(subject);
                                             }
                                             @Override
                                             protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                                                isX=true;
+                                                //isX=true;
                                             }
                                             @Override
                                             protected void error(BaseDownloadTask task, Throwable e) {
@@ -462,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                                             }
                                             @Override
                                             protected void warn(BaseDownloadTask task) {
-                                                isX=true;
+                                               // isX=true;
                                             }
                                         }).start();
                             }else {//下一个
@@ -484,10 +486,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
-    private void jieya(){
-        boolean isA=true;
-        List<XiaZaiLiWuBean> xiaZaiLiWuBeanList=MyApplication.myApplication.getXiaZaiLiWuBeanBox().getAll();
-        for (XiaZaiLiWuBean xiaZaiLiWuBean:xiaZaiLiWuBeanList){
+    private void jieya(XiaZaiLiWuBean xiaZaiLiWuBean){
+      //  boolean isA=true;
+     //   List<XiaZaiLiWuBean> xiaZaiLiWuBeanList=MyApplication.myApplication.getXiaZaiLiWuBeanBox().getAll();
+      //  for (XiaZaiLiWuBean xiaZaiLiWuBean:xiaZaiLiWuBeanList){
             if (!xiaZaiLiWuBean.isJY() && xiaZaiLiWuBean.isD()){//没有解压
                 ZipFile zipFile=null;
                 List fileHeaderList=null;
@@ -503,9 +505,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     String path222=MyApplication.SDPATH+File.separator+xiaZaiLiWuBean.getId();
                     File file = new File(path222);
                     if (!file.exists()) {
-                        Log.d("ggg", "file.mkdirs():" + file.mkdirs());
+                        Log.d("MainActivity", "file.mkdirs():" + file.mkdirs());
                     }
-
 //                    List<LiwuPathBean> lll = new ArrayList<>();
 //                    for (int i = 0; i < fileHeaderList.size(); i++) {
 //                        FileHeader fileHeader = (FileHeader) fileHeaderList.get(i);
@@ -530,23 +531,26 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 //                    }
 //                    lll.clear();
                     //重命名之后解压
-                    zipFile.setRunInThread(true); // true 在子线程中进行解压 false主线程中解压
+                    zipFile.setRunInThread(false); // true 在子线程中进行解压 false主线程中解压
                     zipFile.extractAll(path222); // 将压缩文件解压到filePath中..
                     xiaZaiLiWuBean.setJY(true);
                     MyApplication.myApplication.getXiaZaiLiWuBeanBox().put(xiaZaiLiWuBean);
-
+                    isX=true;
                 } catch (final ZipException e) {
                     e.printStackTrace();
-                    isA=false;
+                   isX=true;
                     Log.d("MainActivity", e.getMessage()+"解压异常");
                 }
+            }else {
+                Log.d("MainActivity", "已经解压过");
+                isX=true;
             }
-        }
-        BaoCunBean baoCunBean=MyApplication.myApplication.getBaoCunBean();
-        if (isA){
-            baoCunBean.setLiwuISOK(true);
-            MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
-        }
+   //     }
+     //   BaoCunBean baoCunBean=MyApplication.myApplication.getBaoCunBean();
+//        if (isA){
+//            baoCunBean.setLiwuISOK(true);
+//            MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
+//        }
     }
 
 

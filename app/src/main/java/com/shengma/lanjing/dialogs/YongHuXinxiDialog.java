@@ -23,9 +23,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
+import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.PuTongInfio;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -189,8 +193,8 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 @Override
                                 public void run() {
                                     name.setText(logingBe.getResult().getNickname());
-                                    dengji.setText("Lv." + logingBe.getResult().getAnchorLevel());
-                                    dengji2.setText("Lv." + logingBe.getResult().getUserLevel());
+                                    dengji.setText("Lv." + logingBe.getResult().getUserLevel());
+                                    dengji2.setText("Lv." + logingBe.getResult().getAnchorLevel());
                                     myid.setText("ID:" + logingBe.getResult().getId());
                                     if (logingBe.getResult().getSex() == 1) {
                                         xingbie.setBackgroundResource(R.drawable.nan);
@@ -304,6 +308,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 public void run() {
                                     guanliyuan.setText("非管理员");
                                     swich1.setChecked(false);
+                                    EventBus.getDefault().post(new MsgWarp(3368,"0"));
                                 }
                             });
                     }else {
@@ -363,6 +368,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 public void run() {
                                     guanliyuan.setText("管理员");
                                     swich1.setChecked(true);
+                                    EventBus.getDefault().post(new MsgWarp(3368,"1"));
                                 }
                             });
                     }else {

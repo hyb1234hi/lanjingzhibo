@@ -28,6 +28,7 @@ import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.SaveBean;
+import com.shengma.lanjing.beans.Ziliaobean;
 import com.shengma.lanjing.dialogs.PhotoDialog;
 import com.shengma.lanjing.dialogs.XIuGaiQianMingDialog;
 import com.shengma.lanjing.dialogs.XIuGaiXingBieDialog;
@@ -37,27 +38,26 @@ import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.zyao89.view.zloading.ZLoadingDialog;
 import com.zyao89.view.zloading.Z_TYPE;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
 
 public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClickListener, OnDateSetListener {
     private PhotoDialog photoDialog;
@@ -113,6 +113,8 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(touxiang);
         }
+
+        link_ziliao();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -147,10 +149,65 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
             link_save(msgWarp.getMsg(),"signature");
             qianming.setText(msgWarp.getMsg());
         }
-
-
     }
 
+
+    private void link_ziliao() {
+        RequestBody body = null;
+        body = new FormBody.Builder()
+                .add("", "")
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/user/edit");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "混流" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    Ziliaobean logingBe = gson.fromJson(jsonObject, Ziliaobean.class);
+                    if (logingBe.getCode()==1){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                name.setText(logingBe.getResult().getNickname());
+                                if (logingBe.getResult().getSex()==1){
+                                    xingbie.setText("男");
+                                }else {
+                                    xingbie.setText("女");
+                                }
+                                nianling.setText(logingBe.getResult().getYear()+"");
+                                qianming.setText(logingBe.getResult().getSignature()+"");
+                                jiaxiang.setText(logingBe.getResult().getCity()+"");
+                            }
+                        });
+
+
+                    }
+
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败");
+                }
+            }
+        });
+    }
 
     @Override
     protected void onRestart() {
@@ -455,7 +512,6 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                 e.printStackTrace();
             }
         }
-
         RequestBody body = RequestBody.create(object.toString(),JSON);
     //    RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
 //        RequestBody requestBody = new MultipartBody.Builder()
@@ -475,9 +531,7 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
-
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -498,7 +552,7 @@ public class WoDeZiLiaoActivity extends AppCompatActivity implements View.OnClic
                         baoCunBean.setJiaxiang(saveBean.getResult().getCity());
                         baoCunBean.setHeadImage(saveBean.getResult().getHeadImage());
                         MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
-                      //  Log.d("WoDeZiLiaoActivity", MyApplication.myApplication.getBaoCunBean().getHeadImage());
+                      // Log.d("WoDeZiLiaoActivity", MyApplication.myApplication.getBaoCunBean().getHeadImage());
                     }
 
                 } catch (Exception e) {

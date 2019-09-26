@@ -11,16 +11,21 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.FuJinAdapter;
@@ -55,7 +60,7 @@ import okhttp3.ResponseBody;
  * A simple {@link Fragment} subclass.
  */
 public class Fragment2 extends Fragment {
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private SmartRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .writeTimeout(18000, TimeUnit.MILLISECONDS)
@@ -84,18 +89,39 @@ public class Fragment2 extends Fragment {
        rrr=view.findViewById(R.id.rtrr);
        sousuo=view.findViewById(R.id.sousuo);
        EventBus.getDefault().register(this);
-        swipeRefreshLayout=view.findViewById(R.id.refreshLayout);
+        refreshLayout=view.findViewById(R.id.refreshLayout);
         shuju=view.findViewById(R.id.shuju);
         recyclerView=view.findViewById(R.id.recyclerview);
-        //设置进度View的组合颜色，在手指上下滑时使用第一个颜色，在刷新中，会一个个颜色进行切换
-        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#3EE1F7"), Color.GREEN, Color.RED, Color.YELLOW, Color.BLUE);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
+//        //设置进度View的组合颜色，在手指上下滑时使用第一个颜色，在刷新中，会一个个颜色进行切换
+//        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#3EE1F7"), Color.GREEN, Color.RED, Color.YELLOW, Color.BLUE);
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//
+//                link_list();
+//            }
+//        });
 
-                link_list();
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshlayout) {
+                pag=1;
+                beanList.clear();
+                link_list(1);//刷新
+               // refreshlayout.finishRefresh(500/*,false*/);//传入false表示刷新失败
             }
         });
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshlayout) {
+                pag++;
+                link_list(2);//加载更多
+
+               // refreshlayout.finishLoadMore(500/*,false*/);//传入false表示加载失败
+            }
+        });
+
+
         sousuo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,7 +164,7 @@ public class Fragment2 extends Fragment {
             jd=msgWarp.getMsg();
             wd=msgWarp.getTemp();
             pag=1;
-            link_list();
+            link_list(1);
         }
     }
 
@@ -149,7 +175,7 @@ public class Fragment2 extends Fragment {
         sousuo.clearFocus();
     }
 
-    private void link_list() {
+    private void link_list(int type) {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
@@ -169,7 +195,11 @@ public class Fragment2 extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            swipeRefreshLayout.setRefreshing(false);
+                            if (type==1){//1是刷新
+                                refreshLayout.finishRefresh(false/*,false*/);//传入false表示加载失败
+                            }else {
+                                refreshLayout.finishLoadMore(false/*,false*/);//传入false表示加载失败
+                            }
                         }
                     });
             }
@@ -181,7 +211,11 @@ public class Fragment2 extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            swipeRefreshLayout.setRefreshing(false);
+                            if (type==1){//1是刷新
+                                refreshLayout.finishRefresh(500/*,false*/);//传入false表示加载失败
+                            }else {
+                                refreshLayout.finishLoadMore(500/*,false*/);//传入false表示加载失败
+                            }
                         }
                     });
 
@@ -198,9 +232,6 @@ public class Fragment2 extends Fragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (bean.getResult().size()>0){
-                                        pag+=1;
-                                    }
                                     beanList.addAll(bean.getResult());
                                     adapter.notifyDataSetChanged();
                                     if (beanList.size()>0){
@@ -215,13 +246,6 @@ public class Fragment2 extends Fragment {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     if (getActivity()!=null)
                         ToastUtils.showError(getActivity(),"获取数据失败");
-                    if (getActivity()!=null)
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
                 }
             }
         });
