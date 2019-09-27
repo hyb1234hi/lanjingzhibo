@@ -1,6 +1,9 @@
 package com.shengma.lanjing.ui;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alipay.sdk.app.PayTask;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -24,6 +28,7 @@ import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.QianBaoBean;
 import com.shengma.lanjing.beans.WXBean;
+import com.shengma.lanjing.beans.ZFBBean;
 import com.shengma.lanjing.beans.ZhiFuBB;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
@@ -31,6 +36,8 @@ import com.shengma.lanjing.utils.ToastUtils;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +45,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -229,7 +237,15 @@ public class ChongZhiActivity extends AppCompatActivity {
     }
 
     private void link_wx(String qq) {
-
+        ZLoadingDialog dialog = new ZLoadingDialog(ChongZhiActivity.this);
+        dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
+                .setLoadingColor(Color.parseColor("#FF3EE1F7"))//颜色
+                .setHintText("加载中...")
+                .setHintTextSize(16) // 设置字体大小 dp
+                .setHintTextColor(Color.WHITE)  // 设置字体颜色
+                .setDurationTime(0.6) // 设置动画时间百分比 - 0.5倍
+                .setDialogBackgroundColor(Color.parseColor("#bb111111")) // 设置背景色，默认白色
+                .show();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject object = new JSONObject();
         try {
@@ -252,11 +268,24 @@ public class ChongZhiActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(ChongZhiActivity.this, "获取数据失败,请检查网络");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
                 Log.d("AllConnects", "请求成功" + call.request().toString());
                 //获得返回体
                 try {
@@ -277,6 +306,89 @@ public class ChongZhiActivity extends AppCompatActivity {
                         request.timeStamp= wxBean.getResult().getTimestamp();
                         request.sign= wxBean.getResult().getSign();
                         api.sendReq(request);
+                    }else {
+                        ToastUtils.showError(ChongZhiActivity.this, wxBean.getDesc());
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    ToastUtils.showError(ChongZhiActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
+    private void link_zfb(String qq) {
+        ZLoadingDialog dialog = new ZLoadingDialog(ChongZhiActivity.this);
+        dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
+                .setLoadingColor(Color.parseColor("#FF3EE1F7"))//颜色
+                .setHintText("加载中...")
+                .setHintTextSize(16) // 设置字体大小 dp
+                .setHintTextColor(Color.WHITE)  // 设置字体颜色
+                .setDurationTime(0.6) // 设置动画时间百分比 - 0.5倍
+                .setDialogBackgroundColor(Color.parseColor("#bb111111")) // 设置背景色，默认白色
+                .show();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        JSONObject object = new JSONObject();
+        try {
+            object.put("amount", qq);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d("ChongZhiActivity", object.toString());
+        RequestBody body = RequestBody.create(object.toString(), JSON);
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url(Consts.URL + "/alipay");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                ToastUtils.showError(ChongZhiActivity.this, "获取数据失败,请检查网络");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog!=null)
+                            dialog.dismiss();
+                    }
+                });
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("ChongZhiActivity", "支付宝支付" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    ZFBBean wxBean = gson.fromJson(jsonObject, ZFBBean.class);
+                    if (wxBean.getCode()==2000){
+
+                        PayTask alipay = new PayTask(ChongZhiActivity.this);
+                        Map <String,String> result = alipay.payV2(wxBean.getResult(),true);
+
+                        Log.d("ChongZhiActivity", "支付宝支付:"+result.toString());
+                        Message msg = new Message();
+                        msg.what = 111;
+                        msg.obj = result;
+                        mHandler.sendMessage(msg);
+
+
                     }else {
                         ToastUtils.showError(ChongZhiActivity.this, wxBean.getDesc());
                     }
@@ -360,13 +472,31 @@ public class ChongZhiActivity extends AppCompatActivity {
                     }
                 }else {//支付宝
                     Log.d("ChongZhiActivity", "支付宝");
+                    if (!zhifuET.getText().toString().trim().equals("")) {
+                        link_zfb(zhifuET.getText().toString().trim());
+                    } else {
+                        Log.d("ChongZhiActivity", "monery:" + monery);
+                        if (monery != 0) {
+                            link_zfb(monery + "");
+                        } else {
+                            ToastUtils.showInfo(ChongZhiActivity.this, "请选择充值金额");
+                        }
+                    }
 
                 }
-
                 break;
         }
     }
 
+
+    private Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+           if (msg.what==111){
+               Log.d("ChongZhiActivity", "msg.obj:" + msg.obj);
+           }
+
+        };
+    };
 
     private void chongzhi() {
         for (ZhiFuBB vv : zhiFuBBS) {

@@ -600,7 +600,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                           linkedBlockingQueue.offer(bean);
                       }else {
                           Log.d("MainActivity", "已经存在礼物");
-                          if (!xiaZaiLiWuBean.isD()){//没有下载
+                          if (!xiaZaiLiWuBean.isD() || !xiaZaiLiWuBean.isJY()){//没有下载
                               Log.d("MainActivity", "没有下载的礼物");
                               linkedBlockingQueue.offer(xiaZaiLiWuBean);
                           }else {

@@ -21,11 +21,11 @@ public class GuanZhuAdapter  extends BaseQuickAdapter<GuanZhuBean.ResultBean,Bas
 
     @Override
     protected void convert(BaseViewHolder helper, GuanZhuBean.ResultBean item) {
-        helper.setText(R.id.title, item.getNickname());
+        helper.setText(R.id.title, item.getTitle());
         helper.setText(R.id.dengji, "Lv."+item.getAnchorLevel());
         helper.setText(R.id.renshu, item.getTotal()+"");
         Glide.with(mContext)
-                .load(item.getHeadImage())
+                .load(item.getCoverImg())
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners( 20)))
                 .into((ImageView) helper.getView(R.id.bgbg));
 

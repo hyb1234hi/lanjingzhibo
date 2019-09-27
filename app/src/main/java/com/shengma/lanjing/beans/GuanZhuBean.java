@@ -58,14 +58,23 @@ public class GuanZhuBean {
          * headImage : https://img-1259669722.cos.ap-guangzhou.myqcloud.com/images/27111567242259561.jpg
          */
 
-        private int id;
+        private long id;
         private String nickname;
         private int sex;
-        private String headImage;
+        private String coverImg;
         private int anchorLevel;
         private long total;
         private String pushUrl;
         private String playUrl;
+        private String title;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
 
         public int getAnchorLevel() {
             return anchorLevel;
@@ -99,11 +108,11 @@ public class GuanZhuBean {
             this.playUrl = playUrl;
         }
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 
@@ -123,12 +132,12 @@ public class GuanZhuBean {
             this.sex = sex;
         }
 
-        public String getHeadImage() {
-            return headImage;
+        public String getCoverImg() {
+            return coverImg;
         }
 
-        public void setHeadImage(String headImage) {
-            this.headImage = headImage;
+        public void setCoverImg(String coverImg) {
+            this.coverImg = coverImg;
         }
     }
 }

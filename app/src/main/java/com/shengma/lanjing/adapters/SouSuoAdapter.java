@@ -22,7 +22,7 @@ public class SouSuoAdapter extends BaseQuickAdapter<SouSuoBean.ResultBean,BaseVi
     @Override
     protected void convert(BaseViewHolder helper, SouSuoBean.ResultBean item) {
         helper.setText(R.id.name, item.getNickname());
-        helper.setText(R.id.idid, item.getId());
+        helper.setText(R.id.idid, item.getId()+"");
         Glide.with(mContext)
                 .load(item.getHeadImage())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))

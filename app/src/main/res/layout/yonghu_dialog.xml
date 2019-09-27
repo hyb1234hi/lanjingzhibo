@@ -22,7 +22,7 @@
             android:layout_height="28dp"/>
 
         <TextView
-            android:text="在线用户"
+            android:text="天梯排行榜"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintTop_toTopOf="@+id/fanhui"

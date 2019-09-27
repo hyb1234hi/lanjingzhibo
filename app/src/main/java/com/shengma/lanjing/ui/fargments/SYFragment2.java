@@ -59,7 +59,7 @@ import okhttp3.ResponseBody;
 public class SYFragment2 extends Fragment implements View.OnClickListener {
     private SmartRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
-    private int pag=1,type=0;
+    private int pag=1,myType=0;
     private List<ZhiBoBean.ResultBean> beanList=new ArrayList<>();
     private ZHiBoAdapter adapter;
     private LinearLayout linearLayout;
@@ -144,7 +144,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
                 .header("Content-Type", "application/json")
                 .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()//live/list?page=1&pageSize=10&type=0
-                .url(Consts.URL+"/live/list?page="+pag+"&pageSize=10&type="+type);
+                .url(Consts.URL+"/live/list?page="+pag+"&pageSize=10&type="+myType);
 
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
@@ -294,7 +294,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
               textView.setBackgroundColor(Color.TRANSPARENT);
           }
        }
-       type=Integer.parseInt(view.getTag().toString());
+       myType=Integer.parseInt(view.getTag().toString());
        beanList.clear();
        pag=1;
        link_list(1);

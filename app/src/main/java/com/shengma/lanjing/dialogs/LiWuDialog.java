@@ -29,6 +29,7 @@ import com.shengma.lanjing.beans.QianBaoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.views.LiWuViewPagerAdapter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -228,8 +229,7 @@ public class LiWuDialog extends DialogFragment {
                 for (XiaZaiLiWuBean bean:mDatas2){
                     if (bean.isA()){
                         //发送
-                        link_fasong2(bean.getId()+"");
-                        EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
+                        link_fasong2(bean.getId()+"",bean);
                         break;
                     }
                 }
@@ -240,8 +240,7 @@ public class LiWuDialog extends DialogFragment {
                 for (XiaZaiLiWuBean bean:mDatas){
                     if (bean.isA()){
                         //发送
-                    link_fasong(bean.getId()+"");
-                    EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
+                    link_fasong(bean.getId()+"",bean);
                         break;
                     }
                 }
@@ -257,9 +256,7 @@ public class LiWuDialog extends DialogFragment {
         EventBus.getDefault().unregister(this);
     }
 
-
-
-    private void link_fasong(String id2) {
+    private void link_fasong(String id2,XiaZaiLiWuBean bean) {
        // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = null;
         body = new FormBody.Builder()
@@ -305,7 +302,12 @@ public class LiWuDialog extends DialogFragment {
                     String ss = body.string().trim();
                     Log.d("AllConnects", "发送礼物:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-
+                    if (jsonObject.get("code").getAsInt()==1){
+                        EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
+                    }else {
+                        if (getActivity()!=null)
+                        ToastUtils.showError(getActivity(), "赠送礼物失败");
+                    }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
@@ -315,7 +317,7 @@ public class LiWuDialog extends DialogFragment {
         });
     }
 
-    private void link_fasong2(String id2) {
+    private void link_fasong2(String id2,XiaZaiLiWuBean bean) {
         // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = null;
         body = new FormBody.Builder()
@@ -361,6 +363,12 @@ public class LiWuDialog extends DialogFragment {
                     String ss = body.string().trim();
                     Log.d("AllConnects", "发送礼物2:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    if (jsonObject.get("code").getAsInt()==1){
+                        EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
+                    }else {
+                        if (getActivity()!=null)
+                            ToastUtils.showError(getActivity(), "赠送礼物失败");
+                    }
 
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");

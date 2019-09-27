@@ -2,13 +2,11 @@ package com.shengma.lanjing.ui.fargments;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -62,13 +60,13 @@ import okhttp3.ResponseBody;
 public class Fragment2 extends Fragment {
     private SmartRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
-    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .writeTimeout(18000, TimeUnit.MILLISECONDS)
-            .connectTimeout(18000, TimeUnit.MILLISECONDS)
-            .readTimeout(18000, TimeUnit.MILLISECONDS)
-            .cookieJar(new CookiesManager())
-            //        .retryOnConnectionFailure(true)
-            .build();
+//    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
+//            .writeTimeout(18000, TimeUnit.MILLISECONDS)
+//            .connectTimeout(18000, TimeUnit.MILLISECONDS)
+//            .readTimeout(18000, TimeUnit.MILLISECONDS)
+//            .cookieJar(new CookiesManager())
+//            //        .retryOnConnectionFailure(true)
+//            .build();
     private int pag=1;
     private String jd="",wd="";
     private List<FuJinBean.ResultBean> beanList=new ArrayList<>();
@@ -80,7 +78,6 @@ public class Fragment2 extends Fragment {
     public Fragment2() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,7 +118,6 @@ public class Fragment2 extends Fragment {
             }
         });
 
-
         sousuo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,7 +143,7 @@ public class Fragment2 extends Fragment {
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.d(TAG, "position:" + position);
+                Log.d(TAG, "position:" + beanList.get(position).getId());
                 Intent intent=new Intent(getActivity(), BoFangActivity.class);
                 intent.putExtra("idid",beanList.get(position).getId());
                 intent.putExtra("playPath",beanList.get(position).getPlayUrl());
@@ -164,6 +160,7 @@ public class Fragment2 extends Fragment {
             jd=msgWarp.getMsg();
             wd=msgWarp.getTemp();
             pag=1;
+            beanList.clear();
             link_list(1);
         }
     }
@@ -180,10 +177,10 @@ public class Fragment2 extends Fragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()///live/nearby?latitude=1&longitude=1&page=1&pageSize=10
-                .url(Consts.URL+"/live/nearby?latitude="+jd+"&longitude="+wd+"&page="+pag+"&pageSize=10");
+                .url(Consts.URL+"/live/nearby?latitude="+wd+"&longitude="+jd+"&page="+pag+"&pageSize=10");
 
         // step 3：创建 Call 对象
-        Call call = okHttpClient.newCall(requestBuilder.build());
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
         call.enqueue(new Callback() {
             @Override

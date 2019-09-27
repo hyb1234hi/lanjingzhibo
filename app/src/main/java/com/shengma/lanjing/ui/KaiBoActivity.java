@@ -135,7 +135,7 @@ public class KaiBoActivity extends AppCompatActivity {
                 break;
             }
             case R.id.kaibo:
-                kaibo.setEnabled(false);
+
 
                 if (fengmianPath == null || fengmianPath.equals("")) {
                     ToastUtils.showInfo(KaiBoActivity.this, "请先上传封面");
@@ -149,6 +149,7 @@ public class KaiBoActivity extends AppCompatActivity {
                     ToastUtils.showInfo(KaiBoActivity.this, "请先选择直播类型");
                     return;
                 }
+                kaibo.setEnabled(false);
                 dialog = new ZLoadingDialog(KaiBoActivity.this);
                 dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
                         .setLoadingColor(Color.parseColor("#FF3EE1F7"))//颜色
@@ -169,7 +170,6 @@ public class KaiBoActivity extends AppCompatActivity {
         }
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void photo(MsgWarp msgWarp) {
         if (msgWarp.getType() == 1003) {
@@ -183,7 +183,7 @@ public class KaiBoActivity extends AppCompatActivity {
                     .setDialogBackgroundColor(Color.parseColor("#bb111111")) // 设置背景色，默认白色
                     .show();
             link_loging(msgWarp.getMsg());
-            Log.d("KaiBoActivity", msgWarp.getMsg());
+           // Log.d("KaiBoActivity", msgWarp.getMsg());
         } else if (msgWarp.getType() == 100) {
             liveType = Integer.parseInt(msgWarp.getTemp());
             frrrd.setText(msgWarp.getMsg());
@@ -655,8 +655,8 @@ public class KaiBoActivity extends AppCompatActivity {
             double longitude = location.getLongitude();
             int errorCode = location.getLocType();
             Log.d("MyLocationListener", "errorCode:" + errorCode);
-            Log.d("MyLocationListener", "latitude:" + latitude);
-            Log.d("MyLocationListener", "longitude:" + longitude);
+            Log.d("MyLocationListener", "latitude纬度:" + latitude);
+            Log.d("MyLocationListener", "longitude经度:" + longitude);
 
             if (errorCode == 161 || errorCode == 61) {
                 jd = longitude + "";

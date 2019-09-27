@@ -72,7 +72,7 @@ public class ZhiBoBean {
         private int roomId;
         private String pushUrl;
         private String playUrl;
-        private int id;
+        private long id;
         private int startLight;
         private String nickname;
         private String headImage;
@@ -135,11 +135,11 @@ public class ZhiBoBean {
             this.playUrl = playUrl;
         }
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 
