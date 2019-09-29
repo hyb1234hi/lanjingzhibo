@@ -130,6 +130,7 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
 
                 break;
             case R.id.denglu:
+                denglu.setEnabled(false);
                 dialog = new ZLoadingDialog(LogingActivity.this);
                 dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
                         .setLoadingColor(Color.parseColor("#FF3EE1F7"))//颜色
@@ -244,6 +245,7 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                     public void run() {
                         if (dialog!=null)
                             dialog.dismiss();
+                        denglu.setEnabled(true);
                     }
                 });
             }
@@ -256,6 +258,7 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                     public void run() {
                         if (dialog!=null)
                             dialog.dismiss();
+                        denglu.setEnabled(true);
                     }
                 });
                 //获得返回体
@@ -275,6 +278,8 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                         baoCunBeanBox.put(bean);
                         startActivity(new Intent(LogingActivity.this, MainActivity.class));
                         finish();
+                    }else if (logingBe.getCode()==-1|| logingBe.getCode()==-2){
+                        ToastUtils.showInfo(LogingActivity.this,"账号或密码错误");
                     }else {
                         ToastUtils.showInfo(LogingActivity.this,logingBe.getDesc());
                     }
@@ -298,7 +303,6 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
 
 
     private void link_WX1(String code) {
-
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .get()
@@ -321,7 +325,6 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                     }
                 });
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
@@ -373,7 +376,6 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                     }
                 });
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -450,7 +452,6 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                     }
                 });
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -465,7 +466,7 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("LogingActivity", "微信"+ss);
+                    Log.d("LogingActivity", "登录我们的微信"+ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);

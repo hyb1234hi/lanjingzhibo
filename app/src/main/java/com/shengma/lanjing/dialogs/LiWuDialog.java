@@ -306,7 +306,7 @@ public class LiWuDialog extends DialogFragment {
                         EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
                     }else {
                         if (getActivity()!=null)
-                        ToastUtils.showError(getActivity(), "赠送礼物失败");
+                        ToastUtils.showError(getActivity(), jsonObject.get("desc").getAsString());
                     }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
@@ -367,7 +367,7 @@ public class LiWuDialog extends DialogFragment {
                         EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
                     }else {
                         if (getActivity()!=null)
-                            ToastUtils.showError(getActivity(), "赠送礼物失败");
+                            ToastUtils.showError(getActivity(),jsonObject.get("desc").getAsString());
                     }
 
                 } catch (Exception e) {

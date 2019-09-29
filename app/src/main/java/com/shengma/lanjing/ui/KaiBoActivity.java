@@ -48,16 +48,13 @@ import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.zyao89.view.zloading.ZLoadingDialog;
 import com.zyao89.view.zloading.Z_TYPE;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -69,6 +66,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
@@ -136,7 +134,6 @@ public class KaiBoActivity extends AppCompatActivity {
             }
             case R.id.kaibo:
 
-
                 if (fengmianPath == null || fengmianPath.equals("")) {
                     ToastUtils.showInfo(KaiBoActivity.this, "请先上传封面");
                     return;
@@ -197,6 +194,7 @@ public class KaiBoActivity extends AppCompatActivity {
             }
         }
     }
+
 
     @Override
     protected void onRestart() {
@@ -467,7 +465,6 @@ public class KaiBoActivity extends AppCompatActivity {
                     }
                 });
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -505,7 +502,6 @@ public class KaiBoActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-
                             @Override
                             public void onSuccess() {
                                 if (dialog != null)
@@ -528,12 +524,25 @@ public class KaiBoActivity extends AppCompatActivity {
                   }else if (bean.getCode()==-2){
                         ToastUtils.showError(KaiBoActivity.this, "你还未认证成主播,请先认证");
                         startActivity(new Intent(KaiBoActivity.this,ZhengJianXinXiActivity.class));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dialog != null)
+                                    dialog.dismiss();
+                            }
+                        });
                     }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(KaiBoActivity.this, "获取数据失败");
-                    if (dialog != null)
-                        dialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dialog != null)
+                                dialog.dismiss();
+                        }
+                    });
+
                 }
             }
         });

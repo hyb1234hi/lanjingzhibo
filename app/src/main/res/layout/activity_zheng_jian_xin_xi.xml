@@ -14,7 +14,7 @@
         android:padding="3dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/fanhui_hei"
+        android:src="@drawable/fanhui_hei"
         android:layout_width="15dp"
         android:layout_height="20dp"/>
 
@@ -179,7 +179,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:background="@drawable/wanchengbg"
         android:layout_width="315dp"
-        android:layout_height="44dp"/>
+        android:layout_height="48dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

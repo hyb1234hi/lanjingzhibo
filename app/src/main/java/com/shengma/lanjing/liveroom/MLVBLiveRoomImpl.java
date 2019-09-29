@@ -573,14 +573,12 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                     public void onError(int code, String errInfo) {
                         TXCLog.e(TAG, "[IM] 销毁群失败:" + code + ":" + errInfo);
                     }
-
                     @Override
                     public void onSuccess(Object... args) {
                         TXCLog.d(TAG, "[IM] 销毁群成功");
                     }
                 });
             }
-
         } else {
             //通知房间内其他主播
             notifyPusherChange();
@@ -1298,12 +1296,12 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                         pusherPlayer.destroy();
                     }
                 }
-
                 if (mSelfRoleType == LIVEROOM_ROLE_PUSHER) {
                     if (mPlayers.size() == 0) {
                         if (mTXLivePusher != null) {
                            // if (mMixMode == STREAM_MIX_MODE_PK) {
                                 //PK
+                           // Log.d(TAG, "VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER");
                                 mTXLivePusher.setVideoQuality(TXLiveConstants.VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER, true, true);
                                 TXLivePushConfig config = mTXLivePusher.getConfig();
                                 config.setVideoResolution(TXLiveConstants.VIDEO_RESOLUTION_TYPE_360_640);
@@ -1347,7 +1345,6 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                         }
                         else if (event == TXLiveConstants.PLAY_EVT_PLAY_END || event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT){
                             callbackOnThread(callback, "onError", event, "[LivePlayer] 播放异常[" + param.getString(TXLiveConstants.EVT_DESCRIPTION) + "]");
-
                             //结束播放
 //                        if (mPlayers.containsKey(anchorInfo.userID)) {
 //                            PlayerItem item = mPlayers.remove(anchorInfo.userID);
@@ -1398,19 +1395,22 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                 if (mPlayers.containsKey(anchorInfo.userID)){
                     PlayerItem pusherPlayer = mPlayers.remove(anchorInfo.userID);
                     pusherPlayer.destroy();
+
                 }
 
                 if (mPushers.containsKey(anchorInfo.userID)) {
                     mPushers.remove(anchorInfo.userID);
+
                 }
+
 
                 if (mSelfRoleType == LIVEROOM_ROLE_PUSHER) {
                     //主播混流删除一路
-                    if (mMixMode == STREAM_MIX_MODE_PK) {
-                        mStreamMixturer.delPKVideoStream(anchorInfo.accelerateURL);
-                    } else {
-                        mStreamMixturer.delSubVideoStream(anchorInfo.accelerateURL);
-                    }
+//                    if (mMixMode == STREAM_MIX_MODE_PK) {
+//                        mStreamMixturer.delPKVideoStream(anchorInfo.accelerateURL);
+//                    } else {
+//                        mStreamMixturer.delSubVideoStream(anchorInfo.accelerateURL);
+//                    }
                     if (mPlayers.size() == 0) {
                         //没有播放流了，切换推流回直播模式
                         if (mTXLivePusher != null) {

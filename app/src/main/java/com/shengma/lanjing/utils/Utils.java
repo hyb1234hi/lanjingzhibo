@@ -1,5 +1,7 @@
 package com.shengma.lanjing.utils;
 
+import java.text.DecimalFormat;
+
 public class Utils {
 
     /**
@@ -21,6 +23,11 @@ public class Utils {
         }
         time += second ;
         return time ;
+    }
+
+    public static String doubleToString(double num){
+        //使用0.00不足位补0，#.##仅保留有效位
+        return new DecimalFormat("0.0").format(num);
     }
 
 }

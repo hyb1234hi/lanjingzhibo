@@ -13,6 +13,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.YongHuListBean;
+import com.shengma.lanjing.utils.Utils;
 
 
 import java.util.List;
@@ -28,8 +29,12 @@ public class GuanZhongAdapter extends BaseQuickAdapter<YongHuListBean,BaseViewHo
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, YongHuListBean item) {
-
-        helper.setText(R.id.xiangguang,item.getJingbi()+"");
+        double xg = item.getJingbi();
+        if (xg>=10000){
+            helper.setText(R.id.xiangguang,Utils.doubleToString(xg)+"万");
+        }else {
+            helper.setText(R.id.xiangguang,xg+"");
+        }
         Glide.with(mContext)
                 .load(item.getHeadImage())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))

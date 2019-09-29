@@ -14,7 +14,7 @@
         android:textColor="#555555"
         android:textSize="14dp"
         android:layout_marginTop="30dp"
-        android:hint="输入主播姓名或ID"
+        android:hint="输入主播姓名或房间号"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="12dp"
         android:id="@+id/sousuo"

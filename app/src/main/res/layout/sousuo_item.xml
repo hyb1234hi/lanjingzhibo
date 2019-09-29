@@ -36,6 +36,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/touxiang"
                 android:layout_marginBottom="3dp"
                 android:id="@+id/idid"
+                android:layout_marginStart="12dp"
                 android:textSize="14sp"
                 android:textColor="#AAAAAA"
                 android:layout_width="wrap_content"

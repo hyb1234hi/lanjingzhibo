@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:visibility="gone"
         android:id="@+id/group"
-        app:constraint_referenced_ids="video_player2,daojishi,pkim2,pktopview,pkbottomview,pkview1,pkview2,pkxing1,pkxing2,pktv1,pktv2,toptop,video_player2"
+        app:constraint_referenced_ids="video_player2,daojishi,pkim2,pktopview,pkbottomview,pkview1,pkview2,pkxing1,pkxing2,pktv1,pktv2,toptop"
         android:layout_height="wrap_content"/>
 
     <View

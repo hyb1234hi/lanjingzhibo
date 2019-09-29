@@ -107,11 +107,12 @@ public class SouSuoActivity extends AppCompatActivity {
 
 
     private void link_list(String oo) {
+        Log.d("SouSuoActivity", oo);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL+"/anchor?condition="+oo+"1&page=1&pageSize=20");
+                .url(Consts.URL+"/anchor?condition="+oo+"&page=1&pageSize=20");
 
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
@@ -139,8 +140,12 @@ public class SouSuoActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 resultBeans.clear();
-                                resultBeans.addAll(bean.getResult());
-                                adapter.notifyDataSetChanged();
+                                if (bean.getResult().size()>0){
+                                    resultBeans.addAll(bean.getResult());
+                                    adapter.notifyDataSetChanged();
+                                }else {
+                                    ToastUtils.showInfo(SouSuoActivity.this,"未搜索到该主播");
+                                }
                             }
                         });
                     }

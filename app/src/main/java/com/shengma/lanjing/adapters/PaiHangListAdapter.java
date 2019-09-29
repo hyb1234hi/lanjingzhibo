@@ -10,6 +10,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.PaiHangListBean;
+import com.shengma.lanjing.utils.Utils;
 
 
 import java.util.List;
@@ -26,7 +27,13 @@ public class PaiHangListAdapter extends BaseQuickAdapter<PaiHangListBean.ResultB
         helper.setText(R.id.name, item.getNickname());
         helper.setText(R.id.dengji, "Lv."+item.getLevel());
         helper.setText(R.id.paihang, (helper.getLayoutPosition()+1)+"");
-        helper.setText(R.id.jingbi,item.getIncome()+"");
+        double xg = item.getIncome();
+        if (xg>=10000){
+            helper.setText(R.id.jingbi, Utils.doubleToString(xg)+"万");
+        }else {
+            helper.setText(R.id.jingbi,xg+"");
+        }
+
         if (helper.getLayoutPosition()==0 || helper.getLayoutPosition()==1 ||helper.getLayoutPosition()==2 ){
             helper.setTextColor(R.id.paihang, Color.parseColor("#F36D87"));
         }else {

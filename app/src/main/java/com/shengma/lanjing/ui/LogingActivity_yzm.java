@@ -254,7 +254,7 @@ public class LogingActivity_yzm extends AppCompatActivity {
                     String ss = body.string().trim();
                     Log.d("LogingActivity", "微信绑定手机"+ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    if (jsonObject.get("code").getAsInt()==1){
+                    if (jsonObject.get("code").getAsInt()==2000){
                         startActivity(new Intent(LogingActivity_yzm.this,LogingActivity_mima.class));
                     }
                     ToastUtils.showInfo(LogingActivity_yzm.this,jsonObject.get("desc").getAsString());
@@ -265,7 +265,6 @@ public class LogingActivity_yzm extends AppCompatActivity {
             }
         });
     }
-
 
     private void link_sjbind(String phone,String code) {
         //  MediaType JSON = MediaType.parse("application/json; charset=utf-8");

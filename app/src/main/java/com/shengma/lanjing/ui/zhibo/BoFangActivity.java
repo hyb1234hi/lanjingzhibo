@@ -346,7 +346,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 liaoTianAdapter.notifyDataSetChanged();
             }
         });
-
         tanChuangThread = new TanChuangThread();
         tanChuangThread.start();
         link_userinfo();
@@ -494,7 +493,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     public void onRecvRoomTextMsg(String roomID, String userID, String userName, String userAvatar, String message) {
 
     }
-
     @Override
     public void onRecvRoomCustomMsg(String roomID, String userID, String userName, String userAvatar, String cmd, String message) {
         switch (cmd) {
@@ -661,7 +659,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
                         ToastUtils.showError(BoFangActivity.this, "赠送礼物失败");
                     }
-
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送礼物自定义消息成功");
@@ -670,7 +667,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             liWuBoFangAdapter.notifyDataSetChanged();
                             linkedBlockingQueue.offer(1);
                         }
-
                     }
                 });
 
@@ -834,7 +830,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
     @Override
     public void onBackPressed() {
-
         TuiChuDialog tuiChuDialog = new TuiChuDialog(BoFangActivity.this);
         tuiChuDialog.setTextView("确定要退出直播间?");
         tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
@@ -854,7 +849,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 tuiChuDialog.dismiss();
                                 BoFangActivity.this.finish();
                             }
-
                             @Override
                             public void onSuccess() {
                                 mlvbLiveRoom.setListener(null);
@@ -863,7 +857,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             }
                         });
                     }
-
                     @Override
                     public void onSuccess() {
                         mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
@@ -873,7 +866,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 tuiChuDialog.dismiss();
                                 BoFangActivity.this.finish();
                             }
-
                             @Override
                             public void onSuccess() {
                                 mlvbLiveRoom.setListener(null);
@@ -1139,6 +1131,11 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
 //                    Gson gson = new Gson();
 //                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
+                    if (jsonObject.get("code").getAsInt()==1){
+                        ToastUtils.showInfo(BoFangActivity.this,"关注成功");
+                    }else {
+                        ToastUtils.showInfo(BoFangActivity.this,jsonObject.get("desc").getAsString());
+                    }
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -1203,7 +1200,11 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
 //                    Gson gson = new Gson();
 //                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
-
+                    if (jsonObject.get("code").getAsInt()==1){
+                        ToastUtils.showInfo(BoFangActivity.this,"已取消关注");
+                    }else {
+                        ToastUtils.showInfo(BoFangActivity.this,jsonObject.get("desc").getAsString());
+                    }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1432,7 +1433,12 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 paiming.setText("总排名:" + logingBe.getResult().getRank());
                                 name.setText(logingBe.getResult().getNickname());
                                 fangjianhao.setText("LANJING " + logingBe.getResult().getId());
-                                xingguang.setText(logingBe.getResult().getStarLight() + "");
+                                double xg = logingBe.getResult().getStarLight();
+                                if (xg>=10000){
+                                    xingguang.setText(Utils.doubleToString(xg)+"万");
+                                }else {
+                                    xingguang.setText(xg+ "");
+                                }
                                 Glide.with(BoFangActivity.this)
                                         .load(logingBe.getResult().getHeadImage())
                                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))

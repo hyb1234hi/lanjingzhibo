@@ -44,6 +44,7 @@ import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
+import com.shengma.lanjing.utils.Utils;
 import com.shengma.lanjing.views.ControlScrollViewPager;
 import com.shengma.lanjing.views.MyFragmentPagerAdapter;
 
@@ -55,6 +56,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import butterknife.BindView;
@@ -147,8 +149,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
       // Log.d("MainActivity", "ss:" + ss);
 
 
-
     }
+
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
