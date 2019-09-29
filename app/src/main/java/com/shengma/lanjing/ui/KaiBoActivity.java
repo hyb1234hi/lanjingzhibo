@@ -482,6 +482,7 @@ public class KaiBoActivity extends AppCompatActivity {
                         baoCunBean.setRoomId(bean.getResult().getRoomId());
                         baoCunBean.setPushUrl(bean.getResult().getPushUrl());
                         baoCunBean.setPlayUrl(bean.getResult().getPlayUrl());
+                        baoCunBean.setPlaySafeUrl(bean.getResult().getPlaySafeUrl());
                         MyApplication.myApplication.getBaoCunBeanBox().put(baoCunBean);
                         MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setmHasAddAnchor(true, baoCunBean.getUserid() + "", 1);
                         MLVBLiveRoom.sharedInstance(MyApplication.myApplication).exitRoom(new IMLVBLiveRoomListener.ExitRoomCallback() {
@@ -495,7 +496,6 @@ public class KaiBoActivity extends AppCompatActivity {
                                     public void onError(int errCode, String errInfo) {
                                         ToastUtils.showInfo(KaiBoActivity.this, "IM登录失败");
                                     }
-
                                     @Override
                                     public void onSuccess() {
                                         startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));
@@ -512,7 +512,6 @@ public class KaiBoActivity extends AppCompatActivity {
                                     public void onError(int errCode, String errInfo) {
                                         ToastUtils.showInfo(KaiBoActivity.this, "IM登录失败");
                                     }
-
                                     @Override
                                     public void onSuccess() {
                                         startActivity(new Intent(KaiBoActivity.this, ZhiBoActivity.class));

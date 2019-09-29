@@ -67,6 +67,15 @@ public class FuJinBean {
         private int roomId;
         private String pushUrl;
         private String playUrl;
+        private String playSafeUrl;
+
+        public String getPlaySafeUrl() {
+            return playSafeUrl;
+        }
+
+        public void setPlaySafeUrl(String playSafeUrl) {
+            this.playSafeUrl = playSafeUrl;
+        }
 
         public Long getId() {
             return id;

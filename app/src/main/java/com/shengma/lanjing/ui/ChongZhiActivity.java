@@ -412,50 +412,50 @@ public class ChongZhiActivity extends AppCompatActivity {
                 chongzhi();
                 textView1.setBackgroundResource(R.drawable.yuanxian_yinying2);
                 im1.setVisibility(View.VISIBLE);
-                shifu.setText("实付:¥5.8");
-                monery = 5.8f;
+                shifu.setText("实付:¥58");
+                monery = 58f;
                 break;
             case R.id.textView2:
                 chongzhi();
                 textView2.setBackgroundResource(R.drawable.yuanxian_yinying2);
                 im2.setVisibility(View.VISIBLE);
-                shifu.setText("实付:¥9.8");
-                monery = 9.8f;
+                shifu.setText("实付:¥98");
+                monery = 98f;
                 break;
             case R.id.textView3:
                 chongzhi();
                 textView3.setBackgroundResource(R.drawable.yuanxian_yinying2);
                 im3.setVisibility(View.VISIBLE);
-                shifu.setText("实付:¥59.8");
-                monery = 59.8f;
+                shifu.setText("实付:¥598");
+                monery = 598f;
                 break;
             case R.id.textView4:
                 chongzhi();
                 textView4.setBackgroundResource(R.drawable.yuanxian_yinying2);
                 im4.setVisibility(View.VISIBLE);
-                shifu.setText("实付:¥199.8");
-                monery = 199.8f;
+                shifu.setText("实付:¥1998");
+                monery = 1998f;
                 break;
             case R.id.textView5:
                 chongzhi();
                 textView5.setBackgroundResource(R.drawable.yuanxian_yinying2);
                 im5.setVisibility(View.VISIBLE);
-                shifu.setText("实付:¥399.8");
-                monery = 399.8f;
+                shifu.setText("实付:¥3998");
+                monery = 3998f;
                 break;
             case R.id.textView6:
                 chongzhi();
                 textView6.setBackgroundResource(R.drawable.yuanxian_yinying2);
                 im6.setVisibility(View.VISIBLE);
-                shifu.setText("实付:¥599.8");
-                monery = 599.8f;
+                shifu.setText("实付:¥5998");
+                monery = 5998f;
                 break;
             case R.id.textView7:
                 chongzhi();
                 textView7.setBackgroundResource(R.drawable.yuanxian_yinying2);
                 im7.setVisibility(View.VISIBLE);
-                shifu.setText("实付:¥999.8");
-                monery = 999.8f;
+                shifu.setText("实付:¥9998");
+                monery = 9998f;
                 break;
             case R.id.zhifu:
                 if (type==1){//微信

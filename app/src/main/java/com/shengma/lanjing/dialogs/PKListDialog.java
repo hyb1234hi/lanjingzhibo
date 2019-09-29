@@ -2,6 +2,7 @@ package com.shengma.lanjing.dialogs;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +19,28 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.GuanZhuAdapter;
 import com.shengma.lanjing.adapters.PKAdapter;
+import com.shengma.lanjing.beans.PaiHangListBean;
+import com.shengma.lanjing.beans.ZaiXianZhuBo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.RoomInfo;
+import com.shengma.lanjing.utils.Consts;
+import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.ToastUtils;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 public class PKListDialog extends DialogFragment implements View.OnClickListener {
@@ -33,13 +50,9 @@ public class PKListDialog extends DialogFragment implements View.OnClickListener
     private ImageView fanhui;
     private RecyclerView recyclerView;
     private EditText editText;
-    private List<RoomInfo> list;
+    private List<ZaiXianZhuBo.ResultBean> list=new ArrayList<>();
     private PKAdapter adapter=null;
 
-
-    public PKListDialog(List<RoomInfo> list) {
-        this.list = list;
-    }
 
 
     @Nullable
@@ -67,8 +80,68 @@ public class PKListDialog extends DialogFragment implements View.OnClickListener
 
       //  quxiao.setFocusableInTouchMode(true);//解决clearFocus无效
       //  editText.clearFocus();
-
+        link_u();
         return view;
+    }
+
+    private void link_u() {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/anchor/online?page=1&pageSize=50");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                if (getActivity()!=null)
+                    ToastUtils.showError(getActivity(), "获取数据失败,请检查网络");
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "获取pk主播" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    ZaiXianZhuBo logingBe = gson.fromJson(jsonObject, ZaiXianZhuBo.class);
+                    if (logingBe.getCode()==2000){
+                        if (getActivity()!=null){
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    list.clear();
+                                    long mtid=MyApplication.myApplication.getBaoCunBean().getUserid();
+                                    for (ZaiXianZhuBo.ResultBean resultBean:logingBe.getResult()){
+                                        if (mtid!=resultBean.getId()){
+                                            list.add(resultBean);
+                                        }
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                    if (list.size()==0){
+                                        if (getActivity()!=null)
+                                            ToastUtils.showError(getActivity(), "暂无合适的主播");
+                                    }
+                                }
+                            });
+                        }
+                    }else {
+                        if (getActivity()!=null)
+                        ToastUtils.showError(getActivity(), "暂无合适的主播");
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    if (getActivity()!=null)
+                        ToastUtils.showError(getActivity(), "获取数据失败");
+                }
+            }
+        });
     }
 
 

@@ -29,7 +29,6 @@ import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.FuJinAdapter;
 import com.shengma.lanjing.beans.FuJinBean;
 import com.shengma.lanjing.beans.MsgWarp;
-import com.shengma.lanjing.cookies.CookiesManager;
 import com.shengma.lanjing.ui.SouSuoActivity;
 import com.shengma.lanjing.ui.zhibo.BoFangActivity;
 import com.shengma.lanjing.utils.Consts;
@@ -45,11 +44,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
+
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -148,6 +147,7 @@ public class Fragment2 extends Fragment {
                 intent.putExtra("idid",beanList.get(position).getId());
                 intent.putExtra("playPath",beanList.get(position).getPlayUrl());
                 startActivity(intent);
+
             }
         });
         return view;

@@ -57,6 +57,15 @@ public class KaiBoBean {
         private long roomId;
         private String pushUrl;
         private String playUrl;
+        private String playSafeUrl;
+
+        public String getPlaySafeUrl() {
+            return playSafeUrl;
+        }
+
+        public void setPlaySafeUrl(String playSafeUrl) {
+            this.playSafeUrl = playSafeUrl;
+        }
 
         public long getRoomId() {
             return roomId;

@@ -1,16 +1,15 @@
 package com.shengma.lanjing.beans;
 
-
 import java.util.List;
 
-public class GuanZhuBean {
+public class ZaiXianZhuBo {
 
 
     /**
      * code : 2000
      * desc : Success
-     * result : [{"code":100029,"nickname":"的巴黎欧莱雅洗发","sex":0,"headImage":"https://img-1259669722.cos.ap-guangzhou.myqcloud.com/images/27111567242259561.jpg"}]
-     * total : 1
+     * result : [{"id":600046,"headImage":"https://img-1259669722.cos.ap-guangzhou.myqcloud.com/images/86531568517955304.png","nickname":"瑞瞳测试","sex":2,"level":24,"roomId":100046},{"id":600102,"headImage":"http://thirdwx.qlogo.cn/mmopen/vi_32/n2vmqxIOHJ6L9o6rLibkKVkpiaCwHZpA1mib0t6ZrMODztPF7gdfhcf3XPLgyAg47JO0MSY396vw4mOBVSgYEJCKg/132","nickname":"小军","sex":1,"level":1,"roomId":100106}]
+     * total : 2
      */
 
     private int code;
@@ -52,21 +51,20 @@ public class GuanZhuBean {
 
     public static class ResultBean {
         /**
-         * code : 100029
-         * nickname : 的巴黎欧莱雅洗发
-         * sex : 0
-         * headImage : https://img-1259669722.cos.ap-guangzhou.myqcloud.com/images/27111567242259561.jpg
+         * id : 600046
+         * headImage : https://img-1259669722.cos.ap-guangzhou.myqcloud.com/images/86531568517955304.png
+         * nickname : 瑞瞳测试
+         * sex : 2
+         * level : 24
+         * roomId : 100046
          */
 
         private long id;
+        private String headImage;
         private String nickname;
         private int sex;
-        private String coverImg;
-        private int anchorLevel;
-        private long total;
-        private String pushUrl;
-        private String playUrl;
-        private String title;
+        private int level;
+        private int roomId;
         private String playSafeUrl;
 
         public String getPlaySafeUrl() {
@@ -77,52 +75,20 @@ public class GuanZhuBean {
             this.playSafeUrl = playSafeUrl;
         }
 
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public int getAnchorLevel() {
-            return anchorLevel;
-        }
-
-        public void setAnchorLevel(int anchorLevel) {
-            this.anchorLevel = anchorLevel;
-        }
-
-        public long getTotal() {
-            return total;
-        }
-
-        public void setTotal(long total) {
-            this.total = total;
-        }
-
-        public String getPushUrl() {
-            return pushUrl;
-        }
-
-        public void setPushUrl(String pushUrl) {
-            this.pushUrl = pushUrl;
-        }
-
-        public String getPlayUrl() {
-            return playUrl;
-        }
-
-        public void setPlayUrl(String playUrl) {
-            this.playUrl = playUrl;
-        }
-
         public long getId() {
             return id;
         }
 
         public void setId(long id) {
             this.id = id;
+        }
+
+        public String getHeadImage() {
+            return headImage;
+        }
+
+        public void setHeadImage(String headImage) {
+            this.headImage = headImage;
         }
 
         public String getNickname() {
@@ -141,12 +107,20 @@ public class GuanZhuBean {
             this.sex = sex;
         }
 
-        public String getCoverImg() {
-            return coverImg;
+        public int getLevel() {
+            return level;
         }
 
-        public void setCoverImg(String coverImg) {
-            this.coverImg = coverImg;
+        public void setLevel(int level) {
+            this.level = level;
+        }
+
+        public int getRoomId() {
+            return roomId;
+        }
+
+        public void setRoomId(int roomId) {
+            this.roomId = roomId;
         }
     }
 }

@@ -26,6 +26,7 @@ import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.ChaXunGeRenXinXi;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.Utils;
 
 import java.io.IOException;
 
@@ -159,7 +160,12 @@ public class ZhuBoXinxiDialog extends DialogFragment  {
                                     }
                                     fensi.setText(logingBe.getResult().getFans()+"");
                                     guanzhu.setText(logingBe.getResult().getIdols()+"");
-                                    xingguang.setText(logingBe.getResult().getStarLight()+"");
+                                    double xg = logingBe.getResult().getStarLight();
+                                    if (xg>=10000){
+                                        xingguang.setText(Utils.doubleToString(xg/10000.0)+"万");
+                                    }else {
+                                        xingguang.setText(xg+ "");
+                                    }
                                     Glide.with(getActivity())
                                             .load(logingBe.getResult().getHeadImage())
                                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))

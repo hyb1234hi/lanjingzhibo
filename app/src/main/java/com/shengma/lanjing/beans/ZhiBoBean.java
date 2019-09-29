@@ -77,7 +77,15 @@ public class ZhiBoBean {
         private String nickname;
         private String headImage;
         private int rank;
+        private String playSafeUrl;
 
+        public String getPlaySafeUrl() {
+            return playSafeUrl;
+        }
+
+        public void setPlaySafeUrl(String playSafeUrl) {
+            this.playSafeUrl = playSafeUrl;
+        }
 
         public String getTitle() {
             return title;

@@ -25,6 +25,7 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.UserInfoBean;
+import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
 import com.shengma.lanjing.liveroom.MLVBLiveRoom;
 import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
@@ -246,7 +247,8 @@ public class Fragment4 extends Fragment {
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.textView1, R.id.textView2, R.id.textView3, R.id.bianji})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.textView1, R.id.textView2,
+            R.id.textView3, R.id.bianji,R.id.rl6})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.textView1:
@@ -271,6 +273,10 @@ public class Fragment4 extends Fragment {
                 startActivity(new Intent(getActivity(), GeXinSheZhiActivity.class));
                 break;
             case R.id.rl5:
+                FenXiangDialog dialog = new FenXiangDialog();
+                dialog.show(getFragmentManager(), "fenxiang");
+                break;
+            case R.id.rl6:
                 startActivity(new Intent(getActivity(), GuanYuWoMenActivity.class));
                 break;
             case R.id.bianji:

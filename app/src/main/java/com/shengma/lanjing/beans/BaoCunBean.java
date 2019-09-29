@@ -35,6 +35,15 @@ public class BaoCunBean {
     private String session;
     private int meiyan,meibai,hongrun;
     private boolean liwuISOK;
+    private String playSafeUrl;
+
+    public String getPlaySafeUrl() {
+        return playSafeUrl;
+    }
+
+    public void setPlaySafeUrl(String playSafeUrl) {
+        this.playSafeUrl = playSafeUrl;
+    }
 
     public boolean isLiwuISOK() {
         return liwuISOK;

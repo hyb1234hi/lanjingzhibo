@@ -102,14 +102,14 @@
         <TextView
             android:textColor="#333333"
             android:textSize="15sp"
-            android:text="58鲸币"
+            android:text="580鲸币"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#AAB5CA"
             android:textSize="15sp"
-            android:text="¥5.8"
+            android:text="¥58"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -143,14 +143,14 @@
         <TextView
             android:textColor="#333333"
             android:textSize="15sp"
-            android:text="98鲸币"
+            android:text="980鲸币"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#AAB5CA"
             android:textSize="15sp"
-            android:text="¥9.8"
+            android:text="¥98"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -182,14 +182,14 @@
         <TextView
             android:textColor="#333333"
             android:textSize="15sp"
-            android:text="598鲸币"
+            android:text="5980鲸币"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#AAB5CA"
             android:textSize="15sp"
-            android:text="¥59.8"
+            android:text="¥598"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -221,14 +221,14 @@
         <TextView
             android:textColor="#333333"
             android:textSize="15sp"
-            android:text="1998鲸币"
+            android:text="19980鲸币"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#AAB5CA"
             android:textSize="15sp"
-            android:text="¥199.8"
+            android:text="¥1998"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -260,14 +260,14 @@
         <TextView
             android:textColor="#333333"
             android:textSize="15sp"
-            android:text="3998鲸币"
+            android:text="39980鲸币"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#AAB5CA"
             android:textSize="15sp"
-            android:text="¥399.8"
+            android:text="¥3998"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -298,14 +298,14 @@
         <TextView
             android:textColor="#333333"
             android:textSize="15sp"
-            android:text="5998鲸币"
+            android:text="59980鲸币"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#AAB5CA"
             android:textSize="15sp"
-            android:text="¥599.8"
+            android:text="¥5998"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -337,14 +337,14 @@
         <TextView
             android:textColor="#333333"
             android:textSize="15sp"
-            android:text="9998鲸币"
+            android:text="99980鲸币"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:textColor="#AAB5CA"
             android:textSize="15sp"
-            android:text="¥999.8"
+            android:text="¥9998"
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -399,6 +399,7 @@
         android:paddingStart="96dp"
         android:textColor="#AAB5CA"
         android:textSize="16sp"
+        android:visibility="gone"
         android:inputType="number"
         android:background="@drawable/yuanxian_yinying"
         app:layout_constraintTop_toBottomOf="@+id/textView9"
@@ -413,6 +414,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/zhifuET"
             android:textColor="#333333"
             android:textSize="15sp"
+            android:visibility="gone"
             android:text="其他金额:"
             android:layout_marginLeft="16dp"
             android:layout_width="wrap_content"
@@ -420,7 +422,7 @@
 
     <RadioGroup
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/zhifuET"
+        app:layout_constraintTop_toBottomOf="@+id/textView7"
         android:id="@+id/radioGroup_gender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

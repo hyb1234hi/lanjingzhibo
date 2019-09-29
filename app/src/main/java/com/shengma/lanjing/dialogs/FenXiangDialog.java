@@ -19,9 +19,11 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.Util;
+import com.shengma.lanjing.utils.Utils;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -82,42 +84,60 @@ public class FenXiangDialog extends DialogFragment implements View.OnClickListen
         switch (view.getId()){
             case R.id.l1: {
                 api = WXAPIFactory.createWXAPI(getContext(), Consts.APP_ID, false);
-                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.logo1024);
+               // Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.logo1024);
 
-                //初始化 WXImageObject 和 WXMediaMessage 对象
-                WXImageObject imgObj = new WXImageObject(bmp);
+//                //初始化 WXImageObject 和 WXMediaMessage 对象
+//                WXImageObject imgObj = new WXImageObject(bmp);
+//                WXMediaMessage msg = new WXMediaMessage();
+//                msg.mediaObject = imgObj;
+//
+//                //设置缩略图
+//                Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, 80, 80, true);
+//                bmp.recycle();
+//                msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+//                //http://47.110.128.4:8090/invite/invite.html?inviteId=1
+//                //构造一个Req
+//                SendMessageToWX.Req req = new SendMessageToWX.Req();
+//                req.transaction = buildTransaction("img");
+//                req.message = msg;
+//                req.scene = mTargetTimeline;
+//                // req.userOpenId = getOpenId();
+//                //调用api接口，发送数据到微信
+//                api.sendReq(req);
+
+
+                WXTextObject textObj = new WXTextObject();
+                textObj.text = "http://47.110.128.4:8090/invite/invite.html?inviteId="+ Utils.encode("lanjing_",MyApplication.myApplication.getBaoCunBean().getUserid()+"");
+
                 WXMediaMessage msg = new WXMediaMessage();
-                msg.mediaObject = imgObj;
+                msg.mediaObject = textObj;
+                // msg.title = "Will be ignored";
+                msg.description = "蓝鲸视频邀请注册";
+                msg.mediaTagName = "蓝鲸视频邀请注册";
 
-                //设置缩略图
-                Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, 80, 80, true);
-                bmp.recycle();
-                msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
-
-                //构造一个Req
                 SendMessageToWX.Req req = new SendMessageToWX.Req();
-                req.transaction = buildTransaction("img");
+                req.transaction = buildTransaction("text");
                 req.message = msg;
                 req.scene = mTargetTimeline;
-                // req.userOpenId = getOpenId();
-                //调用api接口，发送数据到微信
+
                 api.sendReq(req);
+
                 break;
             }
             case R.id.l2: {
                 api = WXAPIFactory.createWXAPI(getContext(), Consts.APP_ID, false);
-                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.logo1024);
-                //初始化 WXImageObject 和 WXMediaMessage 对象
-                WXImageObject imgObj = new WXImageObject(bmp);
+
+                WXTextObject textObj = new WXTextObject();
+                textObj.text = "http://47.110.128.4:8090/invite/invite.html?inviteId="+ Utils.encode("lanjing_",MyApplication.myApplication.getBaoCunBean().getUserid()+"");
+
                 WXMediaMessage msg = new WXMediaMessage();
-                msg.mediaObject = imgObj;
-                //设置缩略图
-                Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, 80, 80, true);
-                bmp.recycle();
-                msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
-                //构造一个Req
+                msg.mediaObject = textObj;
+                // msg.title = "Will be ignored";
+                msg.description = "蓝鲸视频邀请注册";
+                msg.mediaTagName = "蓝鲸视频邀请注册";
+
                 SendMessageToWX.Req req = new SendMessageToWX.Req();
-                req.transaction = buildTransaction("img");
+                req.transaction = buildTransaction("text");
                 req.message = msg;
                 req.scene = mTargetScene;
                 // req.userOpenId = getOpenId();

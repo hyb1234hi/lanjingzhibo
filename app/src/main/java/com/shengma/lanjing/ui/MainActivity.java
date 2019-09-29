@@ -44,6 +44,7 @@ import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
+import com.shengma.lanjing.utils.Util;
 import com.shengma.lanjing.utils.Utils;
 import com.shengma.lanjing.views.ControlScrollViewPager;
 import com.shengma.lanjing.views.MyFragmentPagerAdapter;
@@ -127,8 +128,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewpage.addOnPageChangeListener(this);
         viewpage.setOffscreenPageLimit(4);
 
-
-
         tanChuangThread = new TanChuangThread();
         tanChuangThread.start();
         link_xiazai();
@@ -147,6 +146,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         //(A-B)÷Bx100%
      //  float ss= (float) ((1-100000)/100000.0);
       // Log.d("MainActivity", "ss:" + ss);
+//        try {
+//            String ss=Utils.desEncrypt(MyApplication.myApplication.getBaoCunBean().getUserid()+"","lanjing_");
+//            Log.d("MainActivity", ss);
+//            String yy = Utils.desDecrypt(ss.getBytes(),"lanjing_");
+//            Log.d("MainActivity", yy);
+//        } catch (Exception e) {
+//           Log.d("MainActivity", e.getMessage());
+//
+//        }
+
 
 
     }

@@ -404,7 +404,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
 //                if (retcode == HttpResponse.CODE_OK && data != null && data.pushURL != null) {
                 //    final String pushURL = data.pushURL;
                     mSelfPushUrl = pushURL;
-                    mSelfAccelerateURL = MyApplication.myApplication.getBaoCunBean().getPlayUrl();
+                    mSelfAccelerateURL = MyApplication.myApplication.getBaoCunBean().getPlaySafeUrl();
 
                     //3.开始推流
                     startPushStream(pushURL, TXLiveConstants.VIDEO_QUALITY_HIGH_DEFINITION, new StandardCallback() {
@@ -1330,7 +1330,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                 player.setPlayListener(new ITXLivePlayListener() {
                     @Override
                     public void onPlayEvent(final int event, final Bundle param) {
-                        Log.d("ZhiBoActivity", "2222222222222222222");
+                        Log.d("ZhiBoActivity", "播放地址"+anchorInfo.accelerateURL);
                         if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
                            // if (mSelfRoleType == LIVEROOM_ROLE_PUSHER) {
                                 //主播进行混流
@@ -1368,8 +1368,8 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
 
                     }
                 });
-
-                int result = player.startPlay(anchorInfo.accelerateURL, TXLivePlayer.PLAY_TYPE_LIVE_FLV);
+                int result = player.startPlay(anchorInfo.accelerateURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP_ACC);
+                Log.d(TAG, "result:" + result);
                 if (result != 0){
                     TXCLog.e(TAG, String.format("[BaseRoom] 播放成员 {%s} 地址 {%s} 失败", anchorInfo.userID, anchorInfo.accelerateURL));
                 }

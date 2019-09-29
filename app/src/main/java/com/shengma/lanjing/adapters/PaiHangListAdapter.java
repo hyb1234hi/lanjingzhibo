@@ -29,7 +29,7 @@ public class PaiHangListAdapter extends BaseQuickAdapter<PaiHangListBean.ResultB
         helper.setText(R.id.paihang, (helper.getLayoutPosition()+1)+"");
         double xg = item.getIncome();
         if (xg>=10000){
-            helper.setText(R.id.jingbi, Utils.doubleToString(xg)+"万");
+            helper.setText(R.id.jingbi, Utils.doubleToString(xg/10000.0)+"万");
         }else {
             helper.setText(R.id.jingbi,xg+"");
         }

@@ -278,7 +278,7 @@ public class LogingActivity extends AppCompatActivity implements EasyPermissions
                         baoCunBeanBox.put(bean);
                         startActivity(new Intent(LogingActivity.this, MainActivity.class));
                         finish();
-                    }else if (logingBe.getCode()==-1|| logingBe.getCode()==-2){
+                    }else if (logingBe.getCode()==-1|| logingBe.getCode()==-2 || logingBe.getCode()==-3){
                         ToastUtils.showInfo(LogingActivity.this,"账号或密码错误");
                     }else {
                         ToastUtils.showInfo(LogingActivity.this,logingBe.getDesc());

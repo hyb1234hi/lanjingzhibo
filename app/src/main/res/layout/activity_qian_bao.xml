@@ -16,11 +16,12 @@
 
     <ImageView
         android:id="@+id/fanhui"
+        android:padding="3dp"
         android:layout_marginTop="13dp"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/fanhui_bai"
+        android:src="@drawable/fanhui_bai"
         android:layout_width="15dp"
         android:layout_height="20dp"/>
 

@@ -429,12 +429,50 @@
                     android:id="@+id/im5"
                     android:layout_marginStart="14dp"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/shangchuan"
+                    android:background="@drawable/fenxiang2"
                     android:layout_width="22dp"
                     android:layout_height="22dp"/>
 
                 <TextView
                     android:layout_toRightOf="@+id/im5"
+                    android:layout_centerVertical="true"
+                    android:text="邀请注册"
+                    android:layout_marginLeft="12dp"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:layout_marginRight="18dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/you"
+                    android:layout_width="8dp"
+                    android:layout_height="12dp"/>
+
+                <View
+                    android:layout_alignParentBottom="true"
+                    android:background="#F5F5F5"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rl6"
+                android:layout_width="match_parent"
+                android:layout_height="46dp">
+
+                <ImageView
+                    android:id="@+id/im6"
+                    android:layout_marginStart="14dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/shangchuan"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"/>
+
+                <TextView
+                    android:layout_toRightOf="@+id/im6"
                     android:layout_centerVertical="true"
                     android:text="关于我们"
                     android:layout_marginLeft="12dp"

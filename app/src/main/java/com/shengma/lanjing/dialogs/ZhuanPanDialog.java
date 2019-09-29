@@ -206,6 +206,10 @@ public class ZhuanPanDialog extends DialogFragment  {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     ChouJiangBs logingBe = gson.fromJson(jsonObject, ChouJiangBs.class);
+                    if (logingBe.getCode()==-1){
+                        ToastUtils.showError(getActivity(), "余额不足");
+                        return;
+                    }
                     int s=0;
                     for (int i=0;i<beanList.size();i++){
                         s+=1;

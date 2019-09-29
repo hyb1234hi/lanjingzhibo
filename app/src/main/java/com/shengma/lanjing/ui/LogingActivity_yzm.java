@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.sdsmdg.tastytoast.TastyToast;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
@@ -256,8 +260,19 @@ public class LogingActivity_yzm extends AppCompatActivity {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     if (jsonObject.get("code").getAsInt()==2000){
                         startActivity(new Intent(LogingActivity_yzm.this,LogingActivity_mima.class));
+                    }else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast tastyToast = TastyToast.makeText(LogingActivity_yzm.this, "该手机号已注册过！", TastyToast.LENGTH_LONG, TastyToast.INFO);
+                                tastyToast.setGravity(Gravity.CENTER, 0, 0);
+                                tastyToast.show();
+                            }
+                        });
                     }
-                    ToastUtils.showInfo(LogingActivity_yzm.this,jsonObject.get("desc").getAsString());
+
+                   // ToastUtils.showInfo(LogingActivity_yzm.this,jsonObject.get("desc").getAsString());
+
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(LogingActivity_yzm.this,"获取数据失败");

@@ -229,22 +229,25 @@ public class LiWuDialog extends DialogFragment {
                 for (XiaZaiLiWuBean bean:mDatas2){
                     if (bean.isA()){
                         //发送
+                        fasong.setEnabled(false);
                         link_fasong2(bean.getId()+"",bean);
                         break;
                     }
                 }
-                dismiss();
+               // dismiss();
 
                 break;
             case R.id.fasong:
+
                 for (XiaZaiLiWuBean bean:mDatas){
                     if (bean.isA()){
+                        fasong.setEnabled(false);
                         //发送
                     link_fasong(bean.getId()+"",bean);
                         break;
                     }
                 }
-                dismiss();
+               // dismiss();
                 break;
         }
     }
@@ -291,6 +294,14 @@ public class LiWuDialog extends DialogFragment {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+                if (getActivity()!=null){
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LiWuDialog.this.dismiss();
+                        }
+                    });
+                }
             }
 
             @Override
@@ -305,13 +316,28 @@ public class LiWuDialog extends DialogFragment {
                     if (jsonObject.get("code").getAsInt()==1){
                         EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
                     }else {
-                        if (getActivity()!=null)
+                        
                         ToastUtils.showError(getActivity(), jsonObject.get("desc").getAsString());
+                    }
+                    if (getActivity()!=null){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LiWuDialog.this.dismiss();
+                            }
+                        });
                     }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
-
+                    if (getActivity()!=null){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LiWuDialog.this.dismiss();
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -352,6 +378,14 @@ public class LiWuDialog extends DialogFragment {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+                if (getActivity()!=null){
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LiWuDialog.this.dismiss();
+                        }
+                    });
+                }
             }
 
             @Override
@@ -366,14 +400,28 @@ public class LiWuDialog extends DialogFragment {
                     if (jsonObject.get("code").getAsInt()==1){
                         EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
                     }else {
-                        if (getActivity()!=null)
+
                             ToastUtils.showError(getActivity(),jsonObject.get("desc").getAsString());
                     }
-
+                    if (getActivity()!=null){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LiWuDialog.this.dismiss();
+                            }
+                        });
+                    }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
-
+                    if (getActivity()!=null){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LiWuDialog.this.dismiss();
+                            }
+                        });
+                    }
                 }
             }
         });

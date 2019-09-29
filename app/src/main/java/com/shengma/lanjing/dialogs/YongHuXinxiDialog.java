@@ -27,6 +27,7 @@ import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.PuTongInfio;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -203,7 +204,12 @@ public class YongHuXinxiDialog extends DialogFragment {
                                     }
                                     fensi.setText(logingBe.getResult().getFans() + "");
                                     guanzhu.setText(logingBe.getResult().getIdols() + "");
-                                    xingguang.setText(logingBe.getResult().getTotal() + "");
+                                    double xg = logingBe.getResult().getTotal();
+                                    if (xg>=10000){
+                                        xingguang.setText(Utils.doubleToString(xg/10000.0)+"万");
+                                    }else {
+                                        xingguang.setText(xg+ "");
+                                    }
                                     Glide.with(getActivity())
                                             .load(logingBe.getResult().getHeadImage())
                                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))
