@@ -46,6 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import okhttp3.OkHttpClient;
@@ -147,7 +148,8 @@ public class MyApplication extends Application implements Application.ActivityLi
                 .build();
 
         regToWx();
-
+        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
+        JPushInterface.init(this);
 
     }
 

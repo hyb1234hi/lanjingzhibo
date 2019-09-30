@@ -1,7 +1,6 @@
 package com.shengma.lanjing.dialogs;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,10 +17,10 @@ import androidx.fragment.app.DialogFragment;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.utils.Consts;
-import com.shengma.lanjing.utils.Util;
+
 import com.shengma.lanjing.utils.Utils;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.opensdk.modelmsg.WXImageObject;
+
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -107,7 +106,11 @@ public class FenXiangDialog extends DialogFragment implements View.OnClickListen
 
 
                 WXTextObject textObj = new WXTextObject();
-                textObj.text = "http://47.110.128.4:8090/invite/invite.html?inviteId="+ Utils.encode("lanjing_",MyApplication.myApplication.getBaoCunBean().getUserid()+"");
+                try {
+                    textObj.text = "http://47.110.128.4:8090/invite/invite.html?inviteId="+ Utils.aesEncrypt(MyApplication.myApplication.getBaoCunBean().getUserid()+"");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 WXMediaMessage msg = new WXMediaMessage();
                 msg.mediaObject = textObj;
@@ -128,7 +131,11 @@ public class FenXiangDialog extends DialogFragment implements View.OnClickListen
                 api = WXAPIFactory.createWXAPI(getContext(), Consts.APP_ID, false);
 
                 WXTextObject textObj = new WXTextObject();
-                textObj.text = "http://47.110.128.4:8090/invite/invite.html?inviteId="+ Utils.encode("lanjing_",MyApplication.myApplication.getBaoCunBean().getUserid()+"");
+                try {
+                    textObj.text = "http://47.110.128.4:8090/invite/invite.html?inviteId="+ Utils.aesEncrypt(MyApplication.myApplication.getBaoCunBean().getUserid()+"");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 WXMediaMessage msg = new WXMediaMessage();
                 msg.mediaObject = textObj;

@@ -110,5 +110,16 @@
             </RelativeLayout>
         </LinearLayout>
 
+    <TextView
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textSize="12sp"
+        android:textColor="#444444"
+        android:text="copyright© 2019  hfxhwh.cn版权所有"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

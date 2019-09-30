@@ -41,6 +41,7 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
+import com.shengma.lanjing.utils.AES;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -57,12 +58,14 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -156,7 +159,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 //
 //        }
 
-
+        String rid = JPushInterface.getRegistrationID(getApplicationContext());
+        Log.d("MainActivity", rid);
 
     }
 

@@ -24,6 +24,7 @@ import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.liveroom.IMLVBLiveRoomListener;
@@ -32,6 +33,7 @@ import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
 import com.shengma.lanjing.mediarecorder.RecordActivity;
 import com.shengma.lanjing.ui.GeXinSheZhiActivity;
 import com.shengma.lanjing.ui.KaiBoActivity;
+import com.shengma.lanjing.ui.LogingActivity;
 import com.shengma.lanjing.ui.QianBaoActivity;
 import com.shengma.lanjing.ui.WoDeFenSiActivity;
 import com.shengma.lanjing.ui.WoDeGuanZhuActivity;
@@ -42,6 +44,8 @@ import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.views.MyTopView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
@@ -229,11 +233,12 @@ public class Fragment4 extends Fragment {
                             if (jsonObject.get("code").getAsInt() == 4401) {
                                 if (getActivity() != null)
                                     ToastUtils.showInfo(getActivity(), "登录已过期,请重新登录");
+                                startActivity(new Intent(getActivity(),LogingActivity.class));
+                                EventBus.getDefault().post(new MsgWarp(1002,""));
                             }
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
-
                 }
             }
         });

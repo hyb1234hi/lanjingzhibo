@@ -31,7 +31,7 @@ public class GuanZhongAdapter extends BaseQuickAdapter<YongHuListBean,BaseViewHo
     protected void convert(@NonNull BaseViewHolder helper, YongHuListBean item) {
         double xg = item.getJingbi();
         if (xg>=10000){
-            helper.setText(R.id.xiangguang,Utils.doubleToString(xg)+"万");
+            helper.setText(R.id.xiangguang,Utils.doubleToString(xg/10000.0)+"万");
         }else {
             helper.setText(R.id.xiangguang,xg+"");
         }
