@@ -606,6 +606,9 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     isGLY = true;
                 }
                 break;
+            case "dangqianGZ"://当前观众
+
+                break;
         }
     }
 

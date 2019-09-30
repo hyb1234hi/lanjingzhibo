@@ -705,6 +705,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 guanZhuBeanList.clear();
                 guanZhuBeanList.addAll(listBeans);
                 guanZhongAdapter.notifyDataSetChanged();
+
+
+
                 //发送当前pk时间
                 if (isPK) {
                     if (pKtime1 != 600000) {//pk第一阶段
@@ -717,9 +720,29 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 mlvbLiveRoom.sendRoomCustomMsg("roomNum", numberGZ + "", new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
+                        //发送给中途进入的观众
+                        String sss= com.alibaba.fastjson.JSONObject.toJSONString(listBeans);
+                        mlvbLiveRoom.sendRoomCustomMsg("dangqianGZ", sss, new SendRoomCustomMsgCallback() {
+                            @Override
+                            public void onError(int errCode, String errInfo) {
+                            }
+                            @Override
+                            public void onSuccess() {
+                            }
+                        });
                     }
                     @Override
                     public void onSuccess() {
+                        //发送给中途进入的观众
+                        String sss= com.alibaba.fastjson.JSONObject.toJSONString(listBeans);
+                        mlvbLiveRoom.sendRoomCustomMsg("dangqianGZ", sss, new SendRoomCustomMsgCallback() {
+                            @Override
+                            public void onError(int errCode, String errInfo) {
+                            }
+                            @Override
+                            public void onSuccess() {
+                            }
+                        });
                     }
                 });
                 break;
