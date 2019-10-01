@@ -21,7 +21,7 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:textSize="14sp"
-        android:maxLength="18"
+        android:maxLength="108"
         android:maxLines="2"
         android:focusableInTouchMode="true"
         android:textColor="#505050"

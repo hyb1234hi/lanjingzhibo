@@ -306,6 +306,13 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         gz_recyclerView.setLayoutManager(layoutManager);
         //设置Adapter
         guanZhongAdapter = new GuanZhongAdapter(guanZhuBeanList);
+        guanZhongAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                ZhuBoXinxiDialog zhuBoXinxiDialog=new ZhuBoXinxiDialog(guanZhuBeanList.get(position).getId()+"");
+                zhuBoXinxiDialog.show(getSupportFragmentManager(),"dfrttt");
+            }
+        });
         gz_recyclerView.setAdapter(guanZhongAdapter);
 
         mlvbLiveRoom.setListener(this);
@@ -638,8 +645,15 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         mlvbLiveRoom.stopRemoteView(anchorInfo);
         pkMoney = 0;
         isPK = false;
-        //因为有延迟，发消息
-
+        //因为有延迟，发消息给观众关掉PK
+        mlvbLiveRoom.sendRoomCustomMsg("guanbiPK", "", new SendRoomCustomMsgCallback() {
+            @Override
+            public void onError(int errCode, String errInfo) {
+            }
+            @Override
+            public void onSuccess() {
+            }
+        });
 
     }
     @Override
@@ -705,8 +719,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 guanZhuBeanList.clear();
                 guanZhuBeanList.addAll(listBeans);
                 guanZhongAdapter.notifyDataSetChanged();
-
-
 
                 //发送当前pk时间
                 if (isPK) {

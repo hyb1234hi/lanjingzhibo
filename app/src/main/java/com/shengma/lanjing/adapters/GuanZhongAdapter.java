@@ -40,6 +40,7 @@ public class GuanZhongAdapter extends BaseQuickAdapter<YongHuListBean,BaseViewHo
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into((ImageView) helper.getView(R.id.touxiang));
 
+
     }
 
 

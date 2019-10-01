@@ -11,7 +11,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.beans.MsgWarp;

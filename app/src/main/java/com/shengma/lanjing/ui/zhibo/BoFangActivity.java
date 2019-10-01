@@ -52,6 +52,7 @@ import com.shengma.lanjing.beans.PuTongInfio;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.beans.YongHuListBean;
 import com.shengma.lanjing.beans.YongHuListBean_;
+import com.shengma.lanjing.beans.ZaiXianZhuBo;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
 import com.shengma.lanjing.dialogs.LiWuDialog;
@@ -280,6 +281,13 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         gz_recyclerView.setLayoutManager(layoutManager);
         //设置Adapter
         guanZhongAdapter = new GuanZhongAdapter(guanZhongBeanList);
+        guanZhongAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                ZhuBoXinxiDialog zhuBoXinxiDialog=new ZhuBoXinxiDialog(guanZhongBeanList.get(position).getId()+"");
+                zhuBoXinxiDialog.show(getSupportFragmentManager(),"dfrttt");
+            }
+        });
         gz_recyclerView.setAdapter(guanZhongAdapter);
 
         mlvbLiveRoom.setListener(this);
@@ -607,7 +615,33 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 }
                 break;
             case "dangqianGZ"://当前观众
-
+                List<YongHuListBean> yongHuListBean1 = com.alibaba.fastjson.JSONObject.parseArray(message, YongHuListBean.class);
+               // Log.d("BoFangActivity", "yongHuListBean1.size():" + yongHuListBean1.size());
+                for (YongHuListBean listBean:yongHuListBean1){
+                    MyApplication.myApplication.getYongHuListBeanBox().put(listBean);
+                }
+                List<YongHuListBean> listBeans2 = yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(0, 8);
+                guanZhongBeanList.clear();
+                guanZhongBeanList.addAll(listBeans2);
+                guanZhongAdapter.notifyDataSetChanged();
+                break;
+            case "guanbiPK"://关掉PK
+                if (timer1 != null)
+                    timer1.cancel();
+                timer1 = null;
+                if (timer2 != null)
+                    timer2.cancel();
+                timer2 = null;
+                chengfa.setVisibility(View.GONE);
+                pkjgim1.setVisibility(View.GONE);
+                pkjgim2.setVisibility(View.GONE);
+                group.setVisibility(View.GONE);
+                toptop.setVisibility(View.GONE);
+                //全屏播放
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+                params.height = heightPixels;
+                txCloudVideoView.setLayoutParams(params);
+                txCloudVideoView.invalidate();
                 break;
         }
     }

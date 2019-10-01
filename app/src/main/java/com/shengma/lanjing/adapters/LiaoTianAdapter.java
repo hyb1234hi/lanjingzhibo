@@ -21,6 +21,26 @@ public class LiaoTianAdapter extends BaseMultiItemQuickAdapter<LiaoTianBean,Base
         addItemType(2, R.layout.liaotian_item2);//进入直播间
 
     }
+//    /**
+//     * 获取textview最大能显示几个字
+//     * @param text 文本内容
+//     * @param size 文本字体大小
+//     * @param maxWidth textview的最大宽度
+//     * @return
+//     */
+//    private float getLineMaxNumber(String text, float size,float maxWidth) {
+//        if (null == text || "".equals(text)){
+//            return 0;
+//        }
+//        Paint paint = new Paint();
+//        paint.setTextSize(size);
+//        //得到文本内容总体长度
+//        float textWidth = paint.measureText(text);
+//        // textWidth
+//        float width = textWidth / text.length();
+//        float total = maxWidth / width;
+//        return total;
+//    }
 
 
     @Override

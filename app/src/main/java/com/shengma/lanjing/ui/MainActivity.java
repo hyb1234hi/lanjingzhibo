@@ -41,6 +41,8 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
+import com.shengma.lanjing.beans.YongHuListBean;
+import com.shengma.lanjing.beans.YongHuListBean_;
 import com.shengma.lanjing.utils.AES;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
@@ -159,8 +161,27 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 //
 //        }
 
-        String rid = JPushInterface.getRegistrationID(getApplicationContext());
-        Log.d("MainActivity", rid);
+        //String rid = JPushInterface.getRegistrationID(getApplicationContext());
+       // Log.d("MainActivity", rid);
+//        YongHuListBean bean=new YongHuListBean();
+//        bean.setJingbi(121212);
+//        bean.setId(122L);
+//        bean.setName("ddddd");
+//
+//        YongHuListBean bean2=new YongHuListBean();
+//        bean2.setJingbi(12121255);
+//        bean2.setId(12255L);
+//        bean2.setName("ddddd");
+//        MyApplication.myApplication.getYongHuListBeanBox().put(bean);
+//        MyApplication.myApplication.getYongHuListBeanBox().put(bean2);
+//
+//        List<YongHuListBean> listBeans = MyApplication.myApplication.getYongHuListBeanBox().query().orderDesc(YongHuListBean_.jingbi).build().find(0, 8);
+//        String sss= com.alibaba.fastjson.JSONObject.toJSONString(listBeans);
+//        Log.d("MainActivity", sss);
+//
+//        List<YongHuListBean> yongHuListBean1 = com.alibaba.fastjson.JSONObject.parseArray(sss,YongHuListBean.class);
+//        Log.d("MainActivity", "yongHuListBean1.size():" + yongHuListBean1.size());
+
 
     }
 
