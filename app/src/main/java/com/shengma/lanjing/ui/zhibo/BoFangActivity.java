@@ -52,7 +52,6 @@ import com.shengma.lanjing.beans.PuTongInfio;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.beans.YongHuListBean;
 import com.shengma.lanjing.beans.YongHuListBean_;
-import com.shengma.lanjing.beans.ZaiXianZhuBo;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
 import com.shengma.lanjing.dialogs.LiWuDialog;
@@ -163,6 +162,14 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     ImageView pkjgim1;
     @BindView(R.id.pkjgim2)
     ImageView pkjgim2;
+    @BindView(R.id.name_3)
+    TextView name3;
+    @BindView(R.id.name_zhibojian)
+    TextView nameZhibojian;
+    @BindView(R.id.name_liwu)
+    TextView nameLiwu;
+    @BindView(R.id.hengfu)
+    ConstraintLayout hengfu;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;    // 主播本地预览的 View
@@ -284,8 +291,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         guanZhongAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ZhuBoXinxiDialog zhuBoXinxiDialog=new ZhuBoXinxiDialog(guanZhongBeanList.get(position).getId()+"");
-                zhuBoXinxiDialog.show(getSupportFragmentManager(),"dfrttt");
+                ZhuBoXinxiDialog zhuBoXinxiDialog = new ZhuBoXinxiDialog(guanZhongBeanList.get(position).getId() + "");
+                zhuBoXinxiDialog.show(getSupportFragmentManager(), "dfrttt");
             }
         });
         gz_recyclerView.setAdapter(guanZhongAdapter);
@@ -580,7 +587,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 guanzhongxiangqiang.setText(numberGZ + "");
                 break;
             case "updatapkall": //主播更新pk
-               // Log.d("BoFangActivity", "主播更新pk1");
+                // Log.d("BoFangActivity", "主播更新pk1");
                 String[] sss = message.split(",");
                 gengxingPK(sss[0], sss[1]);
                 break;
@@ -594,12 +601,12 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 startPK();
                 break;
             case "zhongtupkall": //中途加入pk
-               // Log.d("BoFangActivity", "zhongtu加入1");
-                if (timer1 != null ||timer2!=null){//因为其他人的进入也会收到这个广播，所以如果不为空就表示已经收到过了
+                // Log.d("BoFangActivity", "zhongtu加入1");
+                if (timer1 != null || timer2 != null) {//因为其他人的进入也会收到这个广播，所以如果不为空就表示已经收到过了
                     return;
                 }
                 String[] zzz = message.split(",");
-              //  Log.d("BoFangActivity", "zhongtu加入"+zzz);
+                //  Log.d("BoFangActivity", "zhongtu加入"+zzz);
                 zhongtuPK(Long.parseLong(zzz[1]), zzz[0]);
                 //    Log.d("BoFangActivity", "zhongtu加入2");
                 break;
@@ -616,8 +623,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 break;
             case "dangqianGZ"://当前观众
                 List<YongHuListBean> yongHuListBean1 = com.alibaba.fastjson.JSONObject.parseArray(message, YongHuListBean.class);
-               // Log.d("BoFangActivity", "yongHuListBean1.size():" + yongHuListBean1.size());
-                for (YongHuListBean listBean:yongHuListBean1){
+                // Log.d("BoFangActivity", "yongHuListBean1.size():" + yongHuListBean1.size());
+                for (YongHuListBean listBean : yongHuListBean1) {
                     MyApplication.myApplication.getYongHuListBeanBox().put(listBean);
                 }
                 List<YongHuListBean> listBeans2 = yongHuListBeanBox.query().orderDesc(YongHuListBean_.jingbi).build().find(0, 8);
@@ -808,7 +815,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         animationView.setImageAssetDelegate(new ImageAssetDelegate() {
             @Override
             public Bitmap fetchBitmap(LottieImageAsset asset) {
-              //  Log.d("BoFangActivity", asset.getFileName());
+                //  Log.d("BoFangActivity", asset.getFileName());
                 Bitmap bitmap = null;
                 FileInputStream fileInputStream = null;
                 try {
@@ -850,7 +857,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             @Override
             public void onAnimationEnd(Animator animation) {
                 Log.d("BoFangActivity", "结束了");
-              //  animationView.cancelAnimation();
+                //  animationView.cancelAnimation();
                 animationView.setVisibility(View.GONE);
                 super.onAnimationEnd(animation);
                 isLWPlay = true;
@@ -914,6 +921,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 tuiChuDialog.dismiss();
                                 BoFangActivity.this.finish();
                             }
+
                             @Override
                             public void onSuccess() {
                                 mlvbLiveRoom.setListener(null);
@@ -922,6 +930,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             }
                         });
                     }
+
                     @Override
                     public void onSuccess() {
                         mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
@@ -931,6 +940,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                 tuiChuDialog.dismiss();
                                 BoFangActivity.this.finish();
                             }
+
                             @Override
                             public void onSuccess() {
                                 mlvbLiveRoom.setListener(null);
@@ -985,6 +995,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                         tuiChuDialog.dismiss();
                                         BoFangActivity.this.finish();
                                     }
+
                                     @Override
                                     public void onSuccess() {
                                         mlvbLiveRoom.setListener(null);
@@ -993,6 +1004,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                                     }
                                 });
                             }
+
                             @Override
                             public void onSuccess() {
                                 mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
@@ -1580,15 +1592,15 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 chengfa.setVisibility(View.VISIBLE);
                 pkjgim1.setVisibility(View.VISIBLE);
                 pkjgim2.setVisibility(View.VISIBLE);
-                int p1=Integer.parseInt(pktv1.getText().toString());
-                int p2=Integer.parseInt(pktv2.getText().toString());
-                if (p1>p2){
+                int p1 = Integer.parseInt(pktv1.getText().toString());
+                int p2 = Integer.parseInt(pktv2.getText().toString());
+                if (p1 > p2) {
                     pkjgim1.setBackgroundResource(R.drawable.shenlibg);
                     pkjgim2.setBackgroundResource(R.drawable.shibaibg);
-                }else if (p1<p2){
+                } else if (p1 < p2) {
                     pkjgim1.setBackgroundResource(R.drawable.shibaibg);
                     pkjgim2.setBackgroundResource(R.drawable.shenlibg);
-                }else {
+                } else {
                     pkjgim1.setBackgroundResource(R.drawable.pingjubg);
                     pkjgim2.setBackgroundResource(R.drawable.pingjubg);
                 }
@@ -1639,21 +1651,22 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     String st = Utils.timeParse((millisUntilFinished));
                     daojishi.setText(st);
                 }
+
                 @Override
                 public void onFinish() {
                     //第一次倒计时结束
                     chengfa.setVisibility(View.VISIBLE);
                     pkjgim1.setVisibility(View.VISIBLE);
                     pkjgim2.setVisibility(View.VISIBLE);
-                    int p1=Integer.parseInt(pktv1.getText().toString());
-                    int p2=Integer.parseInt(pktv2.getText().toString());
-                    if (p1>p2){
+                    int p1 = Integer.parseInt(pktv1.getText().toString());
+                    int p2 = Integer.parseInt(pktv2.getText().toString());
+                    if (p1 > p2) {
                         pkjgim1.setBackgroundResource(R.drawable.shenlibg);
                         pkjgim2.setBackgroundResource(R.drawable.shibaibg);
-                    }else if (p1<p2){
+                    } else if (p1 < p2) {
                         pkjgim1.setBackgroundResource(R.drawable.shibaibg);
                         pkjgim2.setBackgroundResource(R.drawable.shenlibg);
-                    }else {
+                    } else {
                         pkjgim1.setBackgroundResource(R.drawable.pingjubg);
                         pkjgim2.setBackgroundResource(R.drawable.pingjubg);
                     }
@@ -1696,15 +1709,15 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     daojishi.setText(st);
                     pkjgim1.setVisibility(View.VISIBLE);
                     pkjgim2.setVisibility(View.VISIBLE);
-                    int p1=Integer.parseInt(pktv1.getText().toString());
-                    int p2=Integer.parseInt(pktv2.getText().toString());
-                    if (p1>p2){
+                    int p1 = Integer.parseInt(pktv1.getText().toString());
+                    int p2 = Integer.parseInt(pktv2.getText().toString());
+                    if (p1 > p2) {
                         pkjgim1.setBackgroundResource(R.drawable.shenlibg);
                         pkjgim2.setBackgroundResource(R.drawable.shibaibg);
-                    }else if (p1<p2){
+                    } else if (p1 < p2) {
                         pkjgim1.setBackgroundResource(R.drawable.shibaibg);
                         pkjgim2.setBackgroundResource(R.drawable.shenlibg);
-                    }else {
+                    } else {
                         pkjgim1.setBackgroundResource(R.drawable.pingjubg);
                         pkjgim2.setBackgroundResource(R.drawable.pingjubg);
                     }

@@ -426,4 +426,76 @@
         android:layout_height="match_parent"
         app:lottie_autoPlay="true" />
 
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_marginTop="30dp"
+        android:id="@+id/hengfu"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/paihangView"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/lldd"
+            android:background="@drawable/liwu11"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_width="200dp"
+            android:layout_height="30dp"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/ffgggg"
+            app:layout_constraintLeft_toLeftOf="@+id/lldd"
+            app:layout_constraintRight_toRightOf="@+id/lldd"
+            app:layout_constraintTop_toBottomOf="@+id/lldd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#898DA5"
+                android:textSize="20sp"
+                android:id="@+id/name_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textColor="#111111"
+                android:textSize="20sp"
+                android:text="在"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textColor="#7f9dbc"
+                android:textSize="20sp"
+                android:id="@+id/name_zhibojian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textColor="#111111"
+                android:textSize="20sp"
+                android:text="直播间送出了"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textColor="#c059c6"
+                android:textSize="20sp"
+                android:id="@+id/name_liwu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <View
+            app:layout_constraintTop_toBottomOf="@+id/ffgggg"
+            android:background="@drawable/liwu22"
+            app:layout_constraintLeft_toLeftOf="@+id/ffgggg"
+            app:layout_constraintRight_toRightOf="@+id/ffgggg"
+            android:layout_width="200dp"
+            android:layout_height="30dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

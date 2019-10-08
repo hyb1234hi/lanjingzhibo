@@ -178,6 +178,14 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     ImageView pkjgim1;
     @BindView(R.id.pkjgim2)
     ImageView pkjgim2;
+    @BindView(R.id.name_3)
+    TextView name3;
+    @BindView(R.id.name_zhibojian)
+    TextView nameZhibojian;
+    @BindView(R.id.name_liwu)
+    TextView nameLiwu;
+    @BindView(R.id.hengfu)
+    ConstraintLayout hengfu;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;      // 主播本地预览的 View
@@ -215,9 +223,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private boolean isON = true;
     private long pKtime1, pKtime2;
     private Box<XiaZaiLiWuBean> xiaZaiLiWuBeanBox = MyApplication.myApplication.getXiaZaiLiWuBeanBox();
-    private int upadteCount = 0,upadteCountPK = 0;
+    private int upadteCount = 0, upadteCountPK = 0;
     private int shenli = -1;
-    private PKDialog pkDialog=null;
+    private PKDialog pkDialog = null;
 
 
     @Override
@@ -265,11 +273,11 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                             lingshiList.clear();
                             liaoTianAdapter.notifyDataSetChanged();
                         }
-                      //  Log.d("ZhiBoActivity", "isPK:" + isPK);
+                        //  Log.d("ZhiBoActivity", "isPK:" + isPK);
                         if (isPK) {
                             link_jieshupk(dangqianPKId);
-                            if (upadteCountPK>=18){
-                                upadteCountPK=0;
+                            if (upadteCountPK >= 18) {
+                                upadteCountPK = 0;
                                 link_iszaixian(dangqianPKId);
                             }
                         }
@@ -309,8 +317,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         guanZhongAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ZhuBoXinxiDialog zhuBoXinxiDialog=new ZhuBoXinxiDialog(guanZhuBeanList.get(position).getId()+"");
-                zhuBoXinxiDialog.show(getSupportFragmentManager(),"dfrttt");
+                ZhuBoXinxiDialog zhuBoXinxiDialog = new ZhuBoXinxiDialog(guanZhuBeanList.get(position).getId() + "");
+                zhuBoXinxiDialog.show(getSupportFragmentManager(), "dfrttt");
             }
         });
         gz_recyclerView.setAdapter(guanZhongAdapter);
@@ -503,7 +511,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     mlvbLiveRoom.responseRoomPK(anchorInfo.userID, false, "");
                     isPK = false;
                     pkDialog.dismiss();
-                    pkDialog=null;
+                    pkDialog = null;
                 }
             });
             pkDialog.setQuXiaoListener(new View.OnClickListener() {
@@ -532,21 +540,22 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                     String st = Utils.timeParse((millisUntilFinished));
                                     daojishi.setText(st);
                                 }
+
                                 @Override
                                 public void onFinish() {
                                     //第一次倒计时结束
                                     chengfa.setVisibility(View.VISIBLE);
                                     pkjgim1.setVisibility(View.VISIBLE);
                                     pkjgim2.setVisibility(View.VISIBLE);
-                                    int p1=Integer.parseInt(pktv1.getText().toString());
-                                    int p2=Integer.parseInt(pktv2.getText().toString());
-                                    if (p1>p2){
+                                    int p1 = Integer.parseInt(pktv1.getText().toString());
+                                    int p2 = Integer.parseInt(pktv2.getText().toString());
+                                    if (p1 > p2) {
                                         pkjgim1.setBackgroundResource(R.drawable.shenlibg);
                                         pkjgim2.setBackgroundResource(R.drawable.shibaibg);
-                                    }else if (p1<p2){
+                                    } else if (p1 < p2) {
                                         pkjgim1.setBackgroundResource(R.drawable.shibaibg);
                                         pkjgim2.setBackgroundResource(R.drawable.shenlibg);
-                                    }else {
+                                    } else {
                                         pkjgim1.setBackgroundResource(R.drawable.pingjubg);
                                         pkjgim2.setBackgroundResource(R.drawable.pingjubg);
                                     }
@@ -558,6 +567,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                             daojishi.setText(st);
 
                                         }
+
                                         @Override
                                         public void onFinish() {
                                             //惩罚倒计时结束
@@ -577,6 +587,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                                 @Override
                                                 public void onError(int errCode, String errInfo) {
                                                 }
+
                                                 @Override
                                                 public void onSuccess() {
                                                 }
@@ -589,16 +600,18 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                             };
                             timer1.start();
                         }
+
                         @Override
                         public void onError(int errCode, String errInfo) {
-                           // isPK = false;
+                            // isPK = false;
                         }
+
                         @Override
                         public void onEvent(int event, Bundle param) {
                         }
                     });
                     pkDialog.dismiss();
-                    pkDialog=null;
+                    pkDialog = null;
                 }
             });
             pkDialog.show();
@@ -610,9 +623,9 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (pkDialog != null){
+                            if (pkDialog != null) {
                                 pkDialog.dismiss();
-                                isPK=false;
+                                isPK = false;
                             }
                         }
                     });
@@ -625,13 +638,13 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     public void onQuitRoomPK(AnchorInfo anchorInfo) {
         //结束Pk
         Log.d("ZhiBoActivity", "收到结束PK");
-        ToastUtils.showError(ZhiBoActivity.this,"主播已经结束PK");
+        ToastUtils.showError(ZhiBoActivity.this, "主播已经结束PK");
         if (timer1 != null)
             timer1.cancel();
-        timer1=null;
+        timer1 = null;
         if (timer2 != null)
             timer2.cancel();
-        timer2=null;
+        timer2 = null;
         chengfa.setVisibility(View.GONE);
         pkjgim1.setVisibility(View.GONE);
         pkjgim2.setVisibility(View.GONE);
@@ -650,15 +663,18 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             @Override
             public void onError(int errCode, String errInfo) {
             }
+
             @Override
             public void onSuccess() {
             }
         });
 
     }
+
     @Override
     public void onRecvRoomTextMsg(String roomID, String userID, String userName, String userAvatar, String message) {
     }
+
     @Override
     public void onRecvRoomCustomMsg(String roomID, String userID, String userName, String userAvatar, String cmd, String message) {
         switch (cmd) {
@@ -705,7 +721,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                         Log.d("ZhiBoActivity", "收到观众入房" + yongHuListBean.getName());
+                        Log.d("ZhiBoActivity", "收到观众入房" + yongHuListBean.getName());
                         LiaoTianBean bean = new LiaoTianBean();
                         bean.setNickname(yongHuListBean.getName());
                         bean.setType(2);
@@ -733,24 +749,27 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     @Override
                     public void onError(int errCode, String errInfo) {
                         //发送给中途进入的观众
-                        String sss= com.alibaba.fastjson.JSONObject.toJSONString(listBeans);
+                        String sss = com.alibaba.fastjson.JSONObject.toJSONString(listBeans);
                         mlvbLiveRoom.sendRoomCustomMsg("dangqianGZ", sss, new SendRoomCustomMsgCallback() {
                             @Override
                             public void onError(int errCode, String errInfo) {
                             }
+
                             @Override
                             public void onSuccess() {
                             }
                         });
                     }
+
                     @Override
                     public void onSuccess() {
                         //发送给中途进入的观众
-                        String sss= com.alibaba.fastjson.JSONObject.toJSONString(listBeans);
+                        String sss = com.alibaba.fastjson.JSONObject.toJSONString(listBeans);
                         mlvbLiveRoom.sendRoomCustomMsg("dangqianGZ", sss, new SendRoomCustomMsgCallback() {
                             @Override
                             public void onError(int errCode, String errInfo) {
                             }
+
                             @Override
                             public void onSuccess() {
                             }
@@ -869,15 +888,15 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                                     chengfa.setVisibility(View.VISIBLE);
                                     pkjgim1.setVisibility(View.VISIBLE);
                                     pkjgim2.setVisibility(View.VISIBLE);
-                                    int p1=Integer.parseInt(pktv1.getText().toString());
-                                    int p2=Integer.parseInt(pktv2.getText().toString());
-                                    if (p1>p2){
+                                    int p1 = Integer.parseInt(pktv1.getText().toString());
+                                    int p2 = Integer.parseInt(pktv2.getText().toString());
+                                    if (p1 > p2) {
                                         pkjgim1.setBackgroundResource(R.drawable.shenlibg);
                                         pkjgim2.setBackgroundResource(R.drawable.shibaibg);
-                                    }else if (p1<p2){
+                                    } else if (p1 < p2) {
                                         pkjgim1.setBackgroundResource(R.drawable.shibaibg);
                                         pkjgim2.setBackgroundResource(R.drawable.shenlibg);
-                                    }else {
+                                    } else {
                                         pkjgim1.setBackgroundResource(R.drawable.pingjubg);
                                         pkjgim2.setBackgroundResource(R.drawable.pingjubg);
                                     }
@@ -925,13 +944,13 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         @Override
                         public void onError(int errCode, String errInfo) {
                             Log.d("ZhiBoActivity", "onError" + errInfo + errCode);
-                           // isPK = false;
+                            // isPK = false;
                         }
 
                         @Override
                         public void onEvent(int event, Bundle param) {
                             Log.d("ZhiBoActivity", "onEvent" + event + param.toString());
-                           // isPK = false;
+                            // isPK = false;
                         }
                     });
                 }
@@ -1017,10 +1036,10 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
         if (timer1 != null)
             timer1.cancel();
-           timer1=null;
+        timer1 = null;
         if (timer2 != null)
             timer2.cancel();
-            timer2=null;
+        timer2 = null;
         linkedBlockingQueue.clear();
         if (tanChuangThread != null)
             tanChuangThread.interrupt();
@@ -1607,7 +1626,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL + "/anchor/islive/"+toId);
+                .url(Consts.URL + "/anchor/islive/" + toId);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -1628,21 +1647,21 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     String ss = body.string().trim();
                     Log.d("ZhiBoActivity", "是否在线PK" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                  //  Gson gson = new Gson();
-                   // JieShuPkBean userInfoBean = gson.fromJson(jsonObject, JieShuPkBean.class);
+                    //  Gson gson = new Gson();
+                    // JieShuPkBean userInfoBean = gson.fromJson(jsonObject, JieShuPkBean.class);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Log.d("ZhiBoActivity", "dddd");//code=1是直播，0是未直播
 
-                            if (jsonObject.get("code").getAsInt()==0){
-                                ToastUtils.showError(ZhiBoActivity.this,"主播已经下播");
+                            if (jsonObject.get("code").getAsInt() == 0) {
+                                ToastUtils.showError(ZhiBoActivity.this, "主播已经下播");
                                 if (timer1 != null)
                                     timer1.cancel();
-                                timer1=null;
+                                timer1 = null;
                                 if (timer2 != null)
                                     timer2.cancel();
-                                timer2=null;
+                                timer2 = null;
                                 chengfa.setVisibility(View.GONE);
                                 pkjgim1.setVisibility(View.GONE);
                                 pkjgim2.setVisibility(View.GONE);
@@ -1703,6 +1722,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             @Override
             public void onError(int errCode, String errInfo) {
             }
+
             @Override
             public void onSuccess() {
             }
