@@ -254,16 +254,23 @@ public class YongHuXinxiDialog extends DialogFragment {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                   //  Gson gson = new Gson();//{"code":0,"desc":"不是管理员","total":0}
                   //  PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
-                    if (jsonObject.get("code").getAsInt()== 0) {
+                    if (jsonObject.get("code").getAsInt()== 0) {//0是非管理员
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (jsonObject.get("desc").getAsString().equals("不是管理员")){
-                                        swich1.setChecked(false);
-                                    }else {
-                                        swich1.setChecked(true);
-                                    }
+                                    swich1.setChecked(false);
+                                    guanliyuan.setText("非管理员");
+                                }
+                            });
+                    }else if (jsonObject.get("code").getAsInt()== 1){
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swich1.setChecked(true);
+                                    guanliyuan.setText("管理员");
+
                                 }
                             });
                     }
@@ -285,7 +292,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/im/cancel"+id);
+                .url(Consts.URL + "/im/cancel/"+id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -545,11 +552,19 @@ public class YongHuXinxiDialog extends DialogFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (jsonObject.get("desc").getAsString().equals("未被禁言")){
-                                        swich2.setChecked(false);
-                                    }else {
-                                        swich2.setChecked(true);
-                                    }
+                                    jingyan.setText("未禁言");
+                                    swich2.setChecked(false);
+
+                                }
+                            });
+                    }else if (jsonObject.get("code").getAsInt()== 1){
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    jingyan.setText("禁言");
+                                    swich2.setChecked(true);
+
                                 }
                             });
                     }

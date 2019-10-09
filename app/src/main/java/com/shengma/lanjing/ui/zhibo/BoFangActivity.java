@@ -207,6 +207,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     private boolean isON = true, isGLY = false;
     private Box<XiaZaiLiWuBean> xiaZaiLiWuBeanBox = MyApplication.myApplication.getXiaZaiLiWuBeanBox();
     private int updateCoune = 0;
+    private boolean isJY=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -388,6 +389,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             }
         };
         timer.schedule(task, 3000, 3000);
+        link_chaxunJY(idid+"",baoCunBean.getUserid()+"");
     }
 
 
@@ -658,6 +660,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         if (msgWarp.getType() == 1005) {//收到输入的消息广播
             //ToastUtils.showInfo(BoFangActivity.this,"收到关闭键盘通知");
             if (!msgWarp.getMsg().equals("")) {
+                if (!isJY){
                 try {
 //                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
 //                            .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
@@ -699,8 +702,11 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     }
                 });
 
-            }
-        }
+            }else {
+                    ToastUtils.showError(BoFangActivity.this, "你已被禁言!");
+                }
+          }
+         }
 
         if (msgWarp.getType() == 1100) {//发送礼物之后的广播1.播放自己的礼物动画，2发送自定义消息，让其他人播放礼物动画
             //  Log.d("BoFangActivity", "msgWarp.getTemp()" + msgWarp.getTemp());
@@ -1783,5 +1789,43 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         view.setLayoutParams(params);
         view.invalidate();
     }
+
+    private void link_chaxunJY(String zhuboid, String id) {
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .get()
+                .url(Consts.URL + "/im/ban/"+id+"?group="+zhuboid);
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "查询是否禁言:" + ss);
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    if (jsonObject.get("code").getAsInt()== 1){//禁言了
+                       isJY=true;
+                    }
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
+
+                }
+            }
+        });
+    }
+
 
 }
