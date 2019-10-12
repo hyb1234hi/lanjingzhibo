@@ -13,9 +13,9 @@ android {
             abiFilters "armeabi", "armeabi-v7a", "arm64-v8a"
         }
         manifestPlaceholders = [
-                JPUSH_PKGNAME : "com.shengma.lanjing",
+                JPUSH_PKGNAME: "com.shengma.lanjing",
                 JPUSH_APPKEY : "090d14a92786e1edb3e98900", //JPush 上注册的包名对应的 Appkey.
-                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
         ]
     }
     buildTypes {
@@ -68,10 +68,11 @@ dependencies {
     implementation 'com.scwang.smart:refresh-layout-kernel:2.0.0-alpha-1'      //核心必须依赖
     implementation 'com.scwang.smart:refresh-header-radar:2.0.0-alpha-1'       //雷达刷新头
     implementation 'com.scwang.smart:refresh-footer-classics:2.0.0-alpha-1'    //经典加载
-    implementation  'com.scwang.smart:refresh-header-material:2.0.0-alpha-1'
+    implementation 'com.scwang.smart:refresh-header-material:2.0.0-alpha-1'
     implementation 'com.airbnb.android:lottie:3.0.7'
     implementation 'com.github.yellowcath:VideoProcessor:2.3.4'//视频压缩
-    implementation (name: 'alipaySdk-15.6.5-20190718211159-noUtdid', ext: 'aar')
+    implementation(name: 'alipaySdk-15.6.5-20190718211159-noUtdid', ext: 'aar')
     implementation 'cn.jiguang.sdk:jpush:3.3.4'  // 此处以JPush 3.3.4 版本为例。
     implementation 'cn.jiguang.sdk:jcore:2.1.2'  // 此处以JCore 2.1.2 版本为例。
+    implementation 'com.joanzapata.pdfview:android-pdfview:1.0.4@aar'
 }

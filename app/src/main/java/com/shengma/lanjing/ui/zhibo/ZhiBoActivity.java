@@ -396,7 +396,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 LiaoTianBean bean = new LiaoTianBean();
                 bean.setType(2);
                 bean.setNickname("");
-                bean.setNeirong(" 欢迎来到直播间！直播内容严禁包含政治、低俗色情、吸烟酗酒等内容，若有违反，账号会被禁封。");
+                bean.setNeirong(" 蓝鲸倡导绿色直播环境，对直播内容会24小时巡查，封面和直播内容有任何违法违规、色情暴力、抹黑诋毁、低俗不良行为将被禁封。传播正能量，从自我做起！");
                 liaoTianBeanList.add(bean);
                 liaoTianAdapter.notifyDataSetChanged();
             }
@@ -1004,6 +1004,18 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                     }
                 });
             }
+        }
+
+        if (msgWarp.getType() == 3369) {//发送设置管理员自定义消息1是禁言 0是未禁言
+            mlvbLiveRoom.sendRoomCustomMsg("chaxunJY", "0", new SendRoomCustomMsgCallback() {
+                @Override
+                public void onError(int errCode, String errInfo) {
+                }
+                @Override
+                public void onSuccess() {
+                }
+            });
+
         }
     }
 

@@ -448,12 +448,36 @@
             android:text="支付宝支付" />
     </RadioGroup>
 
+
+    <TextView
+        android:id="@+id/xieyi1"
+        app:layout_constraintTop_toBottomOf="@id/radioGroup_gender"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="20dp"
+        android:text="充值即表示同意:"
+        android:textColor="#333333"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/xieyi2"
+        app:layout_constraintTop_toBottomOf="@id/radioGroup_gender"
+        app:layout_constraintLeft_toRightOf="@+id/xieyi1"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="8dp"
+        android:text="《蓝鲸视频充值消费协议》"
+        android:textColor="#1A5FEC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
     <TextView
         android:textColor="#AAB5CA"
         android:textSize="15sp"
         android:id="@+id/shifu"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/radioGroup_gender"
+        app:layout_constraintTop_toBottomOf="@id/xieyi1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="实付:¥0"

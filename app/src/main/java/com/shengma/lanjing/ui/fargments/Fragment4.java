@@ -125,6 +125,7 @@ public class Fragment4 extends Fragment {
         int heightPixels = outMetrics.heightPixels;
         mytopview.setWH(widthPixels, heightPixels);
         Log.d("ZhiBoActivity", "heightPixels:" + heightPixels);
+        link_userinfo();
         return view;
     }
 
@@ -158,8 +159,10 @@ public class Fragment4 extends Fragment {
         }
 
 
-        link_userinfo();
+
     }
+
+
 
     private void link_userinfo() {
         Request.Builder requestBuilder = new Request.Builder()

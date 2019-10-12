@@ -1,15 +1,22 @@
 package com.shengma.lanjing.ui.wuguanjingyao;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.shengma.lanjing.R;
+import com.shengma.lanjing.ui.ChongZhiActivity;
+import com.shengma.lanjing.ui.XieYiActivity;
 import com.shengma.lanjing.utils.ToastUtils;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,6 +33,8 @@ public class GuanYuWoMenActivity extends AppCompatActivity {
     RelativeLayout rl1;
     @BindView(R.id.rl2)
     RelativeLayout rl2;
+    @BindView(R.id.xieyi)
+    LinearLayout xieyi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +47,7 @@ public class GuanYuWoMenActivity extends AppCompatActivity {
         try {
             PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
             //返回版本号
-            banbenhao.setText(packageInfo.versionName+"");
+            banbenhao.setText(packageInfo.versionName + "");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -46,15 +55,22 @@ public class GuanYuWoMenActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.fanhui, R.id.rl2})
+    @OnClick({R.id.fanhui, R.id.rl2,R.id.xieyi})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fanhui:
                 finish();
                 break;
             case R.id.rl2:
-                ToastUtils.showInfo(GuanYuWoMenActivity.this,"已经是最新版本");
+                ToastUtils.showInfo(GuanYuWoMenActivity.this, "已经是最新版本");
+                break;
+            case R.id.xieyi:
+                Intent intent =new Intent(GuanYuWoMenActivity.this, XieYiActivity.class);
+                intent.putExtra("file","xieyi2.pdf");
+                startActivity(intent);
                 break;
         }
     }
+
+
 }

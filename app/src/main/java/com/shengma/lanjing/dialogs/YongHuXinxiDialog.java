@@ -441,6 +441,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 public void run() {
                                     swich2.setChecked(true);
                                     jingyan.setText("禁言");
+                                    EventBus.getDefault().post(new MsgWarp(3369,"1"));
                                 }
                             });
                     }else {
@@ -501,6 +502,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 public void run() {
                                     swich2.setChecked(false);
                                     jingyan.setText("未禁言");
+                                    EventBus.getDefault().post(new MsgWarp(3369,"0"));
                                 }
                             });
                     }else {

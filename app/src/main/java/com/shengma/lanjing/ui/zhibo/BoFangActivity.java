@@ -369,7 +369,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 LiaoTianBean bean = new LiaoTianBean();
                 bean.setType(2);
                 bean.setNickname("");
-                bean.setNeirong(" 欢迎来到直播间！直播内容严禁包含政治、低俗色情、吸烟酗酒等内容，若有违反，账号会被禁封。");
+                bean.setNeirong(" 蓝鲸倡导绿色直播环境，对直播内容会24小时巡查，封面和直播内容有任何违法违规、色情暴力、抹黑诋毁、低俗不良行为将被禁封。传播正能量，从自我做起！");
                 liaoTianBeanList.add(bean);
                 liaoTianAdapter.notifyDataSetChanged();
             }
@@ -529,7 +529,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     @Override
     public void onRecvRoomCustomMsg(String roomID, String userID, String userName, String userAvatar, String cmd, String message) {
         switch (cmd) {
-            case "1": //发送普通消息
+            case "1": //普通消息
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -652,6 +652,10 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 txCloudVideoView.setLayoutParams(params);
                 txCloudVideoView.invalidate();
                 break;
+            case "chaxunJY":
+                link_chaxunJY(idid+"",baoCunBean.getUserid()+"");
+                break;
+
         }
     }
 
@@ -1817,6 +1821,9 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     if (jsonObject.get("code").getAsInt()== 1){//禁言了
                        isJY=true;
+                    }
+                    if (jsonObject.get("code").getAsInt()== 0){//禁言了
+                        isJY=false;
                     }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");

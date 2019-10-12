@@ -1,5 +1,6 @@
 package com.shengma.lanjing.ui;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -109,8 +110,10 @@ public class ChongZhiActivity extends AppCompatActivity {
     List<ZhiFuBB> zhiFuBBS = new ArrayList<>();
     @BindView(R.id.radioGroup_gender)
     RadioGroup radioGroupGender;
+    @BindView(R.id.xieyi2)
+    TextView xieyi2;
     private float monery = 0;
-    private int type=1;
+    private int type = 1;
 
 
     @Override
@@ -132,14 +135,14 @@ public class ChongZhiActivity extends AppCompatActivity {
         radioGroupGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i){
+                switch (i) {
                     case R.id.nan:
                         //当用户点击男性按钮时执行的代码
-                        type=1;
+                        type = 1;
                         break;
                     case R.id.nv:
                         //当用户点击女性按钮时执行的代码
-                        type=2;
+                        type = 2;
                         break;
 
                 }
@@ -158,6 +161,7 @@ public class ChongZhiActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 chongzhi2();
@@ -170,7 +174,7 @@ public class ChongZhiActivity extends AppCompatActivity {
 
             }
         });
-     //  link_qianbao();
+        //  link_qianbao();
 
 
     }
@@ -178,9 +182,9 @@ public class ChongZhiActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-         textView1.setFocusableInTouchMode(true);
-         zhifuET.clearFocus();
-         link_qianbao();
+        textView1.setFocusableInTouchMode(true);
+        zhifuET.clearFocus();
+        link_qianbao();
     }
 
     private void link_qianbao() {
@@ -271,7 +275,7 @@ public class ChongZhiActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (dialog!=null)
+                        if (dialog != null)
                             dialog.dismiss();
                     }
                 });
@@ -282,7 +286,7 @@ public class ChongZhiActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (dialog!=null)
+                        if (dialog != null)
                             dialog.dismiss();
                     }
                 });
@@ -295,18 +299,19 @@ public class ChongZhiActivity extends AppCompatActivity {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     WXBean wxBean = gson.fromJson(jsonObject, WXBean.class);
-                    if (wxBean.getCode()==2000){
-                        IWXAPI api = WXAPIFactory.createWXAPI(ChongZhiActivity.this, Consts.APP_ID, false);;
+                    if (wxBean.getCode() == 2000) {
+                        IWXAPI api = WXAPIFactory.createWXAPI(ChongZhiActivity.this, Consts.APP_ID, false);
+                        ;
                         PayReq request = new PayReq();
-                        request.appId=Consts.APP_ID;
+                        request.appId = Consts.APP_ID;
                         request.partnerId = wxBean.getResult().getPartnerid();
-                        request.prepayId= wxBean.getResult().getPrepayid();
+                        request.prepayId = wxBean.getResult().getPrepayid();
                         request.packageValue = "Sign=WXPay";
-                        request.nonceStr= wxBean.getResult().getNoncestr();
-                        request.timeStamp= wxBean.getResult().getTimestamp();
-                        request.sign= wxBean.getResult().getSign();
+                        request.nonceStr = wxBean.getResult().getNoncestr();
+                        request.timeStamp = wxBean.getResult().getTimestamp();
+                        request.sign = wxBean.getResult().getSign();
                         api.sendReq(request);
-                    }else {
+                    } else {
                         ToastUtils.showError(ChongZhiActivity.this, wxBean.getDesc());
                     }
                 } catch (Exception e) {
@@ -353,7 +358,7 @@ public class ChongZhiActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (dialog!=null)
+                        if (dialog != null)
                             dialog.dismiss();
                     }
                 });
@@ -364,7 +369,7 @@ public class ChongZhiActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (dialog!=null)
+                        if (dialog != null)
                             dialog.dismiss();
                     }
                 });
@@ -377,19 +382,19 @@ public class ChongZhiActivity extends AppCompatActivity {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     ZFBBean wxBean = gson.fromJson(jsonObject, ZFBBean.class);
-                    if (wxBean.getCode()==2000){
+                    if (wxBean.getCode() == 2000) {
 
                         PayTask alipay = new PayTask(ChongZhiActivity.this);
-                        Map <String,String> result = alipay.payV2(wxBean.getResult(),true);
+                        Map<String, String> result = alipay.payV2(wxBean.getResult(), true);
 
-                        Log.d("ChongZhiActivity", "支付宝支付:"+result.toString());
+                        Log.d("ChongZhiActivity", "支付宝支付:" + result.toString());
                         Message msg = new Message();
                         msg.what = 111;
                         msg.obj = result;
                         mHandler.sendMessage(msg);
 
 
-                    }else {
+                    } else {
                         ToastUtils.showError(ChongZhiActivity.this, wxBean.getDesc());
                     }
                 } catch (Exception e) {
@@ -401,7 +406,8 @@ public class ChongZhiActivity extends AppCompatActivity {
         });
     }
 
-    @OnClick({R.id.fanhui, R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4, R.id.textView5, R.id.textView6, R.id.textView7, R.id.zhifu})
+    @OnClick({R.id.fanhui, R.id.textView1, R.id.textView2, R.id.textView3, R.id.textView4,
+            R.id.textView5, R.id.textView6, R.id.textView7, R.id.zhifu,R.id.xieyi2})
     public void onViewClicked(View view) {
 
         switch (view.getId()) {
@@ -458,7 +464,7 @@ public class ChongZhiActivity extends AppCompatActivity {
                 monery = 9998f;
                 break;
             case R.id.zhifu:
-                if (type==1){//微信
+                if (type == 1) {//微信
                     Log.d("ChongZhiActivity", "微信");
                     if (!zhifuET.getText().toString().trim().equals("")) {
                         link_wx(zhifuET.getText().toString().trim());
@@ -470,7 +476,7 @@ public class ChongZhiActivity extends AppCompatActivity {
                             ToastUtils.showInfo(ChongZhiActivity.this, "请选择充值金额");
                         }
                     }
-                }else {//支付宝
+                } else {//支付宝
                     Log.d("ChongZhiActivity", "支付宝");
                     if (!zhifuET.getText().toString().trim().equals("")) {
                         link_zfb(zhifuET.getText().toString().trim());
@@ -485,17 +491,25 @@ public class ChongZhiActivity extends AppCompatActivity {
 
                 }
                 break;
+            case R.id.xieyi2:
+                Intent intent =new Intent(ChongZhiActivity.this,XieYiActivity.class);
+                intent.putExtra("file","xieyi1.pdf");
+                startActivity(intent);
+
+                break;
         }
     }
 
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-           if (msg.what==111){
-               Log.d("ChongZhiActivity", "msg.obj:" + msg.obj);
-           }
+            if (msg.what == 111) {
+                Log.d("ChongZhiActivity", "msg.obj:" + msg.obj);
+            }
 
-        };
+        }
+
+        ;
     };
 
     private void chongzhi() {
@@ -506,6 +520,7 @@ public class ChongZhiActivity extends AppCompatActivity {
         }
         zhifuET.setText("");
     }
+
     private void chongzhi2() {
         for (ZhiFuBB vv : zhiFuBBS) {
             vv.getKuang().setBackgroundResource(R.drawable.yuanxian_yinying);
