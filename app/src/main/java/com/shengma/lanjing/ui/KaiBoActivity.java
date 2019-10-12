@@ -393,7 +393,7 @@ public class KaiBoActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             fengmian.setImageBitmap(BitmapFactory.decodeFile(path));
-                            if (photoDialog != null)
+                            if (photoDialog != null && !KaiBoActivity.this.isFinishing())
                                 photoDialog.dismiss();
 
                         }

@@ -347,7 +347,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d("ZhiBoActivity", "长按");
-                if (!(baoCunBean.getUserid() + "").equals(liaoTianBeanList.get(position).getUserid() + "")) {
+                if (baoCunBean.getUserid()!=0 && !(baoCunBean.getUserid() + "").equals(liaoTianBeanList.get(position).getUserid() + "")) {
                     YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(baoCunBean.getUserid() + "", liaoTianBeanList.get(position).getUserid() + "");
                     yongHuXinxiDialog.show(getSupportFragmentManager(), "yonghuxnxi");
                 }
@@ -786,6 +786,16 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 YongHuListBean huListBean = com.alibaba.fastjson.JSONObject.parseObject(message, YongHuListBean.class);
                 MyApplication.myApplication.getYongHuListBeanBox().remove(huListBean.getId());
                 guanZhongAdapter.notifyDataSetChanged();
+                break;
+            case "guanzhu":
+                LiaoTianBean bean22 = new LiaoTianBean();
+                bean22.setNickname(message);
+                bean22.setType(2);
+                bean22.setNeirong("关注了主播");
+                //bean.setHeadImage(yongHuListBean.getHeadImage());
+                bean22.setUserid(0);
+                lingshiList.add(bean22);
+
                 break;
         }
     }
@@ -1665,29 +1675,34 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         @Override
                         public void run() {
                             Log.d("ZhiBoActivity", "dddd");//code=1是直播，0是未直播
+                            try {
+                                if (jsonObject!=null && jsonObject.get("code")!=null && jsonObject.get("code").getAsInt() == 0) {
+                                        ToastUtils.showError(ZhiBoActivity.this, "主播已经下播");
+                                        if (timer1 != null)
+                                            timer1.cancel();
+                                        timer1 = null;
+                                        if (timer2 != null)
+                                            timer2.cancel();
+                                        timer2 = null;
+                                        chengfa.setVisibility(View.GONE);
+                                        pkjgim1.setVisibility(View.GONE);
+                                        pkjgim2.setVisibility(View.GONE);
+                                        group.setVisibility(View.GONE);
+                                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+                                        params.height = hight;
+                                        params.width = width;
+                                        txCloudVideoView.setLayoutParams(params);
+                                        txCloudVideoView.invalidate();
+                                        link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
+                                        mlvbLiveRoom.stopRemoteView(anchorInfo);
+                                        pkMoney = 0;
+                                        isPK = false;
 
-                            if (jsonObject.get("code").getAsInt() == 0) {
-                                ToastUtils.showError(ZhiBoActivity.this, "主播已经下播");
-                                if (timer1 != null)
-                                    timer1.cancel();
-                                timer1 = null;
-                                if (timer2 != null)
-                                    timer2.cancel();
-                                timer2 = null;
-                                chengfa.setVisibility(View.GONE);
-                                pkjgim1.setVisibility(View.GONE);
-                                pkjgim2.setVisibility(View.GONE);
-                                group.setVisibility(View.GONE);
-                                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
-                                params.height = hight;
-                                params.width = width;
-                                txCloudVideoView.setLayoutParams(params);
-                                txCloudVideoView.invalidate();
-                                link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
-                                mlvbLiveRoom.stopRemoteView(anchorInfo);
-                                pkMoney = 0;
-                                isPK = false;
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
+
                         }
                     });
                 } catch (Exception e) {

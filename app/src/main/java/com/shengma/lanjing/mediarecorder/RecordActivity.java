@@ -244,6 +244,7 @@ public class RecordActivity extends AppCompatActivity implements TextureView.Sur
         for (int[] ints : previewFpsRange) {
             if (ints[0] >= 20000) {
                 mFps = ints[0] / 1000;
+
                 break;
             }
         }
@@ -370,7 +371,7 @@ public class RecordActivity extends AppCompatActivity implements TextureView.Sur
         //再用44.1Hz采样率
         mMediaRecorder.setAudioEncodingBitRate(22050);
         //设置帧率，该帧率必须是硬件支持的，可以通过Camera.CameraParameter.getSupportedPreviewFpsRange()方法获取相机支持的帧率
-        mMediaRecorder.setVideoFrameRate(mFps);
+       // mMediaRecorder.setVideoFrameRate(mFps);
         //设置码率
         mMediaRecorder.setVideoEncodingBitRate(500 * 1024 * 8);
         //设置视频尺寸，通常搭配码率一起使用，可调整视频清晰度

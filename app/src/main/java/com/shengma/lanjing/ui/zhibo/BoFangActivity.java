@@ -655,6 +655,16 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             case "chaxunJY":
                 link_chaxunJY(idid+"",baoCunBean.getUserid()+"");
                 break;
+            case "guanzhu":
+                LiaoTianBean bean22 = new LiaoTianBean();
+                bean22.setNickname(message);
+                bean22.setType(2);
+                bean22.setNeirong("关注了主播");
+                //bean.setHeadImage(yongHuListBean.getHeadImage());
+                bean22.setUserid(0);
+                lingshiList.add(bean22);
+
+                break;
 
         }
     }
@@ -1228,6 +1238,26 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         public void run() {
                             isGuanzhu = true;
                             guanzhu.setBackgroundResource(R.drawable.guanzhu2);
+                            LiaoTianBean bean = new LiaoTianBean();
+                            bean.setNickname(baoCunBean.getNickname());
+                            bean.setType(2);
+                            bean.setNeirong("关注了主播");
+                            //bean.setHeadImage(yongHuListBean.getHeadImage());
+                            bean.setUserid(0);
+                            lingshiList.add(bean);
+
+                            mlvbLiveRoom.sendRoomCustomMsg("guanzhu", baoCunBean.getNickname(), new SendRoomCustomMsgCallback() {
+                                @Override
+                                public void onError(int errCode, String errInfo) {
+                                  //  ToastUtils.showError(BoFangActivity.this, "发送进房消息失败,请退出后重试");
+                                }
+
+                                @Override
+                                public void onSuccess() {
+
+                                }
+                            });
+
                         }
                     });
                 } catch (Exception e) {

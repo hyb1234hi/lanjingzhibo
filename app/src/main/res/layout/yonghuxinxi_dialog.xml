@@ -67,7 +67,7 @@
             android:layout_marginStart="6dp"
             android:id="@+id/fffsfs"
             android:background="@drawable/yuanxian_hong"
-            android:layout_width="45dp"
+            android:layout_width="48dp"
             android:layout_height="15dp"/>
 
         <ImageView
@@ -99,7 +99,7 @@
             android:layout_marginStart="6dp"
             android:id="@+id/f22"
             android:background="@drawable/yuanxian_lv"
-            android:layout_width="45dp"
+            android:layout_width="48dp"
             android:layout_height="15dp"/>
 
         <ImageView
