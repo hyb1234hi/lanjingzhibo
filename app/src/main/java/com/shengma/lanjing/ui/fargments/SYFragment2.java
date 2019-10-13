@@ -226,11 +226,9 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
                 if (getActivity()!=null)
                     ToastUtils.showError(getActivity(),"获取数据失败,请检查网络");
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
-
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
@@ -264,7 +262,7 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
                                            view_dk.setTag(i);
                                            linearLayout.addView(view_dk);
                                        }
-                                       link_list(1);
+                                     //  link_list(1);
                                    }
                                 }
                             });
@@ -279,6 +277,15 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
         });
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        pag=1;
+        beanList.clear();
+        link_list(1);//刷新
+    }
 
     @Override
     public void onClick(View view) {

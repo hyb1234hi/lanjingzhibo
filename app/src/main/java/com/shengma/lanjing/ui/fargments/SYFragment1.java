@@ -112,9 +112,6 @@ public class SYFragment1 extends Fragment {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
-
-
-
                 Intent intent=new Intent(getActivity(), BoFangActivity.class);
                 intent.putExtra("idid",beanList.get(position).getId());
                 intent.putExtra("playPath",beanList.get(position).getPlayUrl());

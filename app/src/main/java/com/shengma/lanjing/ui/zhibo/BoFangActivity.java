@@ -389,7 +389,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             }
         };
         timer.schedule(task, 3000, 3000);
-        link_chaxunJY(idid+"",baoCunBean.getUserid()+"");
+        //link_chaxunJY(idid+"",baoCunBean.getUserid()+"");
     }
 
 
