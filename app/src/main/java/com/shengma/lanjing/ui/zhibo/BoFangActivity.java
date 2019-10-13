@@ -1402,24 +1402,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
 
     private void link_qianbao() {
-        //  MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-//        RequestBody body = null;
-//        body = new FormBody.Builder()
-//                .add("", "")
-//                .build();
-//        JSONObject object=new JSONObject();
-//        try {
-//            object.put("uname",uname);
-//            object.put("pwd",pwd);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        //RequestBody body = RequestBody.create(object.toString(),JSON);
-//        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
-//        RequestBody requestBody = new MultipartBody.Builder()
-//                .setType(MultipartBody.FORM)
-//                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
-//                .build();
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
