@@ -208,6 +208,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     private Box<XiaZaiLiWuBean> xiaZaiLiWuBeanBox = MyApplication.myApplication.getXiaZaiLiWuBeanBox();
     private int updateCoune = 0;
     private boolean isJY=false;
+    protected InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +217,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         setContentView(R.layout.activity_bo_fang);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
+        imm = (InputMethodManager) BoFangActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
         animationView = findViewById(R.id.animation_view);
         MyApplication.myApplication.getYongHuListBeanBox().removeAll();
         playPath = getIntent().getStringExtra("playPath");
@@ -319,10 +321,12 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         liaoTianAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.d("ZhiBoActivity", "长按");
-
+               // Log.d("ZhiBoActivity", "长按");
                 if (isGLY && !(baoCunBean.getUserid() + "").equals(liaoTianBeanList.get(position).getUserid() + "")) {
-                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(baoCunBean.getUserid() + "", liaoTianBeanList.get(position).getUserid() + "");
+                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(idid + "", liaoTianBeanList.get(position).getUserid() + "",true);
+                    yongHuXinxiDialog.show(getSupportFragmentManager(), "yonghuxnxi");
+                }else {
+                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(idid + "", liaoTianBeanList.get(position).getUserid() + "",false);
                     yongHuXinxiDialog.show(getSupportFragmentManager(), "yonghuxnxi");
                 }
                 return false;
@@ -778,7 +782,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         ToastUtils.showError(BoFangActivity.this, "赠送礼物失败");
                         //  playDongHua(msgWarp.getMsg());
                     }
-
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送礼物自定义消息成功2");
@@ -794,34 +797,47 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         }
                         link_userinfo(idid + "");
 
-//                        LazyList<LiwuPathBean> list=MyApplication.myApplication.getLiwuPathBeanBox().query().equal(LiwuPathBean_.sid,nliwuname.getId())
-//                                .build().findLazy();
-//                        if (list.size()==0){
-//                            ToastUtils.showError(BoFangActivity.this, "未找到礼物资源,请等待后台下载完成");
-//                        }
-//                        AnimationDrawable animationDrawable = new AnimationDrawable();
-//                        animationDrawable.setOneShot(true);//播放一次
-//                        int duration = 0;
-//                        for (LiwuPathBean bean:list) {
-//                            Drawable drawable = Drawable.createFromPath(bean.getPath());
-//                            if (drawable!=null){
-//                                duration+=300;
-//                                animationDrawable.addFrame(drawable, 300);
-//                                Log.d("BoFangActivity", "drawable");
-//                            }
-//                        }
-//                        donghua.setBackground(animationDrawable);
-//                        animationDrawable.start();
-//                        Handler handler = new Handler();
-//                        handler.postDelayed(new Runnable() {
-//                            public void run() {//动画结束
-//                                donghua.setBackground(null);
-//                            }
-//                        }, duration);
-
                     }
                 });
             }
+        }
+        if (msgWarp.getType() == 3369) {//发送设置管理员自定义消息1是禁言 0是未禁言
+            mlvbLiveRoom.sendRoomCustomMsg("chaxunJY", "0", new SendRoomCustomMsgCallback() {
+                @Override
+                public void onError(int errCode, String errInfo) {
+                }
+                @Override
+                public void onSuccess() {
+                }
+            });
+        }
+
+        if (msgWarp.getType() == 887700) {//@别人
+            Log.d("ZhiBoActivity", "收到887700"+msgWarp.getMsg());
+            InputMethodUtils.showOrHide(this,txCloudVideoView);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SystemClock.sleep(200);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                        }
+                    });
+                    SystemClock.sleep(200);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (popupwindow != null)
+                                popupwindow.dismiss();
+                            popupwindow = new InputPopupwindow(BoFangActivity.this,msgWarp.getMsg());
+                            popupwindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, jianpangHight);
+                        }
+                    });
+                }
+            }).start();
         }
 
     }
@@ -1095,7 +1111,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             public void run() {
                                 if (popupwindow != null)
                                     popupwindow.dismiss();
-                                popupwindow = new InputPopupwindow(BoFangActivity.this);
+                                popupwindow = new InputPopupwindow(BoFangActivity.this,"");
                                 popupwindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, jianpangHight);
                             }
                         });

@@ -15,8 +15,8 @@ public class InputMethodUtils {
     //view为接受软键盘输入的视图，SHOW_FORCED表示强制显示
     public static void showOrHide(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        //  imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);//SHOW_FORCED表示强制显示
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0); //强制隐藏键盘
+          imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);//SHOW_FORCED表示强制显示
+       // imm.hideSoftInputFromWindow(view.getWindowToken(), 0); //强制隐藏键盘
     }
 
     //调用隐藏系统默认的输入法

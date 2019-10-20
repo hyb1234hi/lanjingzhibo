@@ -47,6 +47,7 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import cn.jpush.android.api.JPushInterface;
+import cn.tillusory.sdk.TiSDK;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import okhttp3.OkHttpClient;

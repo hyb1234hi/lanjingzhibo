@@ -498,4 +498,11 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    <cn.tillusory.tiui.view.TiBeautyView
+        android:layout_width="match_parent"
+        android:id="@+id/timview"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="300dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

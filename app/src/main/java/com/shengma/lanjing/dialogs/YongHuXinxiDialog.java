@@ -12,10 +12,12 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -23,15 +25,19 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
+import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.PuTongInfio;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
+import com.shengma.lanjing.utils.InputMethodUtils;
+import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -83,14 +89,18 @@ public class YongHuXinxiDialog extends DialogFragment {
     LinearLayout textView1;
     @BindView(R.id.textView3)
     LinearLayout textView3;
+    @BindView(R.id.tongzhita)
+    TextView tongzhita;
     private Window window;
     private Unbinder unbinder;
     private String id;
-    private String zhuboid;
+    private String zhuboid,namess=null;
+    private boolean isKYJY;
 
-    public YongHuXinxiDialog(String zhuboid, String id) {
+    public YongHuXinxiDialog(String zhuboid, String id,boolean jkjk) {
         this.id = id;
         this.zhuboid = zhuboid;
+        isKYJY=jkjk;
     }
 
 
@@ -114,21 +124,36 @@ public class YongHuXinxiDialog extends DialogFragment {
         swich1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    link_shezhiGLY(zhuboid, id);
-                }else {
-                    link_quxiaGLY(zhuboid, id);
+                BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
+                if (baoCunBean.getUserid() != Integer.parseInt(zhuboid)) {
+                    swich1.setChecked(!isChecked);
+                    if (getActivity() != null)
+                        ToastUtils.showError(getActivity(), "您不能设置管理员");
+                } else {
+                    if (isChecked) {
+                        link_shezhiGLY(zhuboid, id);
+                    } else {
+                        link_quxiaGLY(zhuboid, id);
+                    }
                 }
             }
         });
         swich2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    link_shezhiJY(zhuboid, id);
+                if (isKYJY){
+                    if (isChecked) {
+                        link_shezhiJY(zhuboid, id);
+                    } else {
+                        link_quxiaoJY(zhuboid, id);
+                    }
                 }else {
-                    link_quxiaoJY(zhuboid, id);
+                    swich2.setChecked(!isChecked);
+                    if (getActivity() != null)
+                        ToastUtils.showError(getActivity(), "您不能设置禁言");
                 }
+
+
             }
         });
         return view;
@@ -176,6 +201,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -192,6 +218,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    namess=logingBe.getResult().getNickname();
                                     name.setText(logingBe.getResult().getNickname());
                                     dengji.setText("Lv." + logingBe.getResult().getUserLevel());
                                     dengji2.setText("Lv." + logingBe.getResult().getAnchorLevel());
@@ -204,10 +231,10 @@ public class YongHuXinxiDialog extends DialogFragment {
                                     fensi.setText(logingBe.getResult().getFans() + "");
                                     guanzhu.setText(logingBe.getResult().getIdols() + "");
                                     double xg = logingBe.getResult().getTotal();
-                                    if (xg>=10000){
-                                        xingguang.setText(Utils.doubleToString(xg/10000.0)+"万");
-                                    }else {
-                                        xingguang.setText(xg+ "");
+                                    if (xg >= 10000) {
+                                        xingguang.setText(Utils.doubleToString(xg / 10000.0) + "万");
+                                    } else {
+                                        xingguang.setText(xg + "");
                                     }
                                     Glide.with(getActivity())
                                             .load(logingBe.getResult().getHeadImage())
@@ -231,7 +258,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL + "/im/"+id+"?group="+zhuboid);
+                .url(Consts.URL + "/im/" + id + "?group=" + zhuboid);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -251,9 +278,9 @@ public class YongHuXinxiDialog extends DialogFragment {
                     String ss = body.string().trim();
                     Log.d("AllConnects", "查询是否管理员:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                  //  Gson gson = new Gson();//{"code":0,"desc":"不是管理员","total":0}
-                  //  PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
-                    if (jsonObject.get("code").getAsInt()== 0) {//0是非管理员
+                    //  Gson gson = new Gson();//{"code":0,"desc":"不是管理员","total":0}
+                    //  PuTongInfio logingBe = gson.fromJson(jsonObject, PuTongInfio.class);
+                    if (jsonObject.get("code").getAsInt() == 0) {//0是非管理员
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -262,7 +289,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                                     guanliyuan.setText("非管理员");
                                 }
                             });
-                    }else if (jsonObject.get("code").getAsInt()== 1){
+                    } else if (jsonObject.get("code").getAsInt() == 1) {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -281,6 +308,7 @@ public class YongHuXinxiDialog extends DialogFragment {
             }
         });
     }
+
     private void link_quxiaGLY(String zhuboid, String id) {
         RequestBody body = null;
         body = new FormBody.Builder()
@@ -291,7 +319,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/im/cancel/"+id);
+                .url(Consts.URL + "/im/cancel/" + id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -320,10 +348,10 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 public void run() {
                                     guanliyuan.setText("非管理员");
                                     swich1.setChecked(false);
-                                    EventBus.getDefault().post(new MsgWarp(3368,"0"));
+                                    EventBus.getDefault().post(new MsgWarp(3368, "0"));
                                 }
                             });
-                    }else {
+                    } else {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -341,6 +369,7 @@ public class YongHuXinxiDialog extends DialogFragment {
             }
         });
     }
+
     private void link_shezhiGLY(String zhuboid, String id) {
         RequestBody body = null;
         body = new FormBody.Builder()
@@ -351,7 +380,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/im/"+id);
+                .url(Consts.URL + "/im/" + id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -378,18 +407,27 @@ public class YongHuXinxiDialog extends DialogFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    guanliyuan.setText("管理员");
-                                    swich1.setChecked(true);
-                                    EventBus.getDefault().post(new MsgWarp(3368,"1"));
+                                    try {
+                                        guanliyuan.setText("管理员");
+                                        swich1.setChecked(true);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    EventBus.getDefault().post(new MsgWarp(3368, "1"));
                                 }
                             });
-                    }else {
+                    } else {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    swich1.setChecked(false);
-                                    guanliyuan.setText("非管理员");
+                                    try {
+                                        swich1.setChecked(false);
+                                        guanliyuan.setText("非管理员");
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
                                 }
                             });
                     }
@@ -401,6 +439,7 @@ public class YongHuXinxiDialog extends DialogFragment {
             }
         });
     }
+
     private void link_shezhiJY(String zhuboid, String id) {
         RequestBody body = null;
         body = new FormBody.Builder()
@@ -411,7 +450,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/im/ban/"+id);
+                .url(Consts.URL + "/im/ban/" + id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -438,18 +477,28 @@ public class YongHuXinxiDialog extends DialogFragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    swich2.setChecked(true);
-                                    jingyan.setText("禁言");
-                                    EventBus.getDefault().post(new MsgWarp(3369,"1"));
+                                    try {
+                                        swich2.setChecked(true);
+                                        jingyan.setText("禁言");
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    EventBus.getDefault().post(new MsgWarp(3369, "1"));
                                 }
                             });
-                    }else {
+                    } else {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    swich2.setChecked(false);
-                                    jingyan.setText("未禁言");
+                                    try {
+                                        swich2.setChecked(false);
+                                        jingyan.setText("未禁言");
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
                                 }
                             });
                     }
@@ -472,7 +521,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
-                .url(Consts.URL + "/im/ban/cancel/"+id);
+                .url(Consts.URL + "/im/ban/cancel/" + id);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -501,10 +550,10 @@ public class YongHuXinxiDialog extends DialogFragment {
                                 public void run() {
                                     swich2.setChecked(false);
                                     jingyan.setText("未禁言");
-                                    EventBus.getDefault().post(new MsgWarp(3369,"0"));
+                                    EventBus.getDefault().post(new MsgWarp(3369, "0"));
                                 }
                             });
-                    }else {
+                    } else {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -528,7 +577,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL + "/im/ban/"+id+"?group="+zhuboid);
+                .url(Consts.URL + "/im/ban/" + id + "?group=" + zhuboid);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -548,7 +597,7 @@ public class YongHuXinxiDialog extends DialogFragment {
                     String ss = body.string().trim();
                     Log.d("AllConnects", "查询是否禁言:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    if (jsonObject.get("code").getAsInt()== 0) {
+                    if (jsonObject.get("code").getAsInt() == 0) {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -558,7 +607,7 @@ public class YongHuXinxiDialog extends DialogFragment {
 
                                 }
                             });
-                    }else if (jsonObject.get("code").getAsInt()== 1){
+                    } else if (jsonObject.get("code").getAsInt() == 1) {
                         if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -578,10 +627,23 @@ public class YongHuXinxiDialog extends DialogFragment {
         });
     }
 
-    @OnClick(R.id.bianji)
+//    @OnClick(R.id.bianji)
+//    public void onViewClicked() {
+//        SheZhiDialog dialog = new SheZhiDialog();
+//        dialog.show(getFragmentManager(), "ddffgdfg");
+//        dismiss();
+//    }
+
+    @OnClick(R.id.tongzhita)
     public void onViewClicked() {
-        SheZhiDialog dialog = new SheZhiDialog();
-        dialog.show(getFragmentManager(), "ddffgdfg");
+        Log.d("ZhiBoActivity",  "异常");
+        if (namess==null){
+            if (getActivity()!=null)
+            ToastUtils.showError(getActivity(), "信息未加载完成");
+            return;
+        }
         dismiss();
+        EventBus.getDefault().post(new MsgWarp(887700, "@"+namess+" "));
+        Log.d("ZhiBoActivity",  "异常");
     }
 }

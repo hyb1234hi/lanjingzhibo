@@ -17,7 +17,10 @@ import androidx.annotation.Nullable;
 import com.google.gson.JsonObject;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.beans.BaoCunBean;
+import com.shengma.lanjing.beans.ChaXunGeRenXinXi;
 import com.shengma.lanjing.beans.LogingBe;
+import com.shengma.lanjing.beans.MsgWarp;
+import com.shengma.lanjing.beans.XinTiaoBean;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
@@ -45,6 +48,7 @@ import com.tencent.rtmp.TXLivePushConfig;
 import com.tencent.rtmp.TXLivePusher;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -396,6 +400,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
     public void createRoom(final String roomID, final String roomInfo,String pushURL, final IMLVBLiveRoomListener.CreateRoomCallback callback) {
         TXCLog.i("ZhiBoActivity", "API -> createRoom:" + roomID + ":" + roomInfo+" "+pushURL);
         mSelfRoleType = LIVEROOM_ROLE_PUSHER;
+
         //1. 在应用层调用startLocalPreview，启动本地预览
         //2. 请求CGI:get_push_url，异步获取到推流地址pushUrl
 //        mHttpRequest.getPushUrl(mSelfAccountInfo.userID, roomID, new HttpRequests.OnResponseCallback<HttpResponse.PushUrl>() {
@@ -3171,8 +3176,26 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                   // JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                   // Gson gson = new Gson();
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    XinTiaoBean logingBe = gson.fromJson(jsonObject, XinTiaoBean.class);
+                    if (logingBe.getResult()!=null){
+                        for (int idid :logingBe.getResult()){
+                            if (mSelfAccountInfo.userID.equals(idid+"")){
+                                exitRoom(new IMLVBLiveRoomListener.ExitRoomCallback() {
+                                    @Override
+                                    public void onError(int errCode, String errInfo) {
+                                        EventBus.getDefault().post(new MsgWarp(9981, ""));
+                                    }
+                                    @Override
+                                    public void onSuccess() {
+                                        EventBus.getDefault().post(new MsgWarp(9981, ""));
+                                    }
+                                });
+                                break;
+                            }
+                        }
+                    }
                     Log.d("AllConnects", "心跳:" + ss);
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "心跳异常");

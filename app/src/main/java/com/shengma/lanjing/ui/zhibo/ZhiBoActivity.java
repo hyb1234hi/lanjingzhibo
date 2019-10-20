@@ -100,6 +100,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.tillusory.sdk.TiSDKManager;
+import cn.tillusory.sdk.TiSDKManagerBuilder;
+import cn.tillusory.tiui.view.TiBeautyView;
+import cn.tillusory.tiui.view.TiMakeupView;
 import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -186,6 +190,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     TextView nameLiwu;
     @BindView(R.id.hengfu)
     ConstraintLayout hengfu;
+    @BindView(R.id.timview)
+    TiBeautyView tiBeautyView;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;      // 主播本地预览的 View
@@ -226,7 +232,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
     private int upadteCount = 0, upadteCountPK = 0;
     private int shenli = -1;
     private PKDialog pkDialog = null;
-
+    protected InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,6 +240,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_zhi_bo);
         ButterKnife.bind(this);
+        imm = (InputMethodManager) ZhiBoActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
         animationView = findViewById(R.id.animation_view);
         MyApplication.myApplication.getYongHuListBeanBox().removeAll();
         EventBus.getDefault().register(this);
@@ -347,8 +354,8 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d("ZhiBoActivity", "长按");
-                if (baoCunBean.getUserid()!=0 && !(baoCunBean.getUserid() + "").equals(liaoTianBeanList.get(position).getUserid() + "")) {
-                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(baoCunBean.getUserid() + "", liaoTianBeanList.get(position).getUserid() + "");
+                if (baoCunBean.getUserid() != 0 && !(baoCunBean.getUserid() + "").equals(liaoTianBeanList.get(position).getUserid() + "")) {
+                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(baoCunBean.getUserid() + "", liaoTianBeanList.get(position).getUserid() + "", true);
                     yongHuXinxiDialog.show(getSupportFragmentManager(), "yonghuxnxi");
                 }
                 return false;
@@ -416,6 +423,13 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
             }
         };
         timer.schedule(task, 3000, 1600);
+
+
+
+        TiSDKManager tiSDKManager = new TiSDKManager(); //构造器生成
+
+        tiBeautyView.init(tiSDKManager);
+
     }
 
 
@@ -424,7 +438,33 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
         Log.d("ZhiBoActivity", "errCode:" + errCode);
         Log.d("ZhiBoActivity", "errCode:" + errMsg);
         Log.d("ZhiBoActivity", "errCode:" + extraInfo.toString());
+        if (errCode == -2301) {
+            if (isPK) {
+                dangqianPKId = "";
+                chengfa.setVisibility(View.GONE);
+                pkjgim1.setVisibility(View.GONE);
+                pkjgim2.setVisibility(View.GONE);
+                group.setVisibility(View.GONE);
+                ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+                params.height = hight;
+                params.width = width;
+                txCloudVideoView.setLayoutParams(params);
+                txCloudVideoView.invalidate();
+                link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
+                mlvbLiveRoom.stopRemoteView(anchorInfo);
+                mlvbLiveRoom.quitRoomPK(new QuitRoomPKCallback() {
+                    @Override
+                    public void onError(int errCode, String errInfo) {
+                    }
 
+                    @Override
+                    public void onSuccess() {
+                    }
+                });
+                isPK = false;
+                ToastUtils.showInfo(ZhiBoActivity.this, "主播已经下线");
+            }
+        }
     }
 
     @Override
@@ -496,7 +536,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
     @Override
     public void onRequestRoomPK(AnchorInfo anchorInfo2) {
-        Log.d("ggggg", "被动收到PK请求");
+        Log.d("ggggg", "被动收到PK请求" + anchorInfo2.accelerateURL);
         if (!isPK) {
             isPK = true;
             anchorInfo = anchorInfo2;
@@ -795,7 +835,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 //bean.setHeadImage(yongHuListBean.getHeadImage());
                 bean22.setUserid(0);
                 lingshiList.add(bean22);
-
                 break;
         }
     }
@@ -1021,11 +1060,43 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 @Override
                 public void onError(int errCode, String errInfo) {
                 }
+
                 @Override
                 public void onSuccess() {
                 }
             });
+        }
+        Log.d("ZhiBoActivity", "msgWarp.getType():" + msgWarp.getType());
+        if (msgWarp.getType() == 887700) {//@别人
+            Log.d("ZhiBoActivity", "收到8877" + msgWarp.getMsg());
 
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SystemClock.sleep(200);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                        }
+                    });
+                    SystemClock.sleep(200);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (popupwindow != null)
+                                popupwindow.dismiss();
+                            popupwindow = new InputPopupwindow(ZhiBoActivity.this, msgWarp.getMsg());
+                            popupwindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, jianpangHight);
+                            //
+                        }
+                    });
+                }
+            }).start();
+            if (msgWarp.getType() == 9981) {
+                ToastUtils.showInfo(ZhiBoActivity.this, "抱歉，您已被强制停播");
+                finish();
+            }
         }
     }
 
@@ -1072,38 +1143,43 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
     @Override
     public void onBackPressed() {
-        TuiChuDialog tuiChuDialog = new TuiChuDialog(ZhiBoActivity.this);
-        tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (anchorInfo != null)
-                    link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
-                mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
-                    @Override
-                    public void onError(int errCode, String errInfo) {
-                        mlvbLiveRoom.setListener(null);
-                        tuiChuDialog.dismiss();
-                        ZhiBoActivity.this.finish();
-                    }
+        if (!isPK) {
+            TuiChuDialog tuiChuDialog = new TuiChuDialog(ZhiBoActivity.this);
+            tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (anchorInfo != null)
+                        link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
+                    mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                        @Override
+                        public void onError(int errCode, String errInfo) {
+                            mlvbLiveRoom.setListener(null);
+                            tuiChuDialog.dismiss();
+                            ZhiBoActivity.this.finish();
+                        }
 
-                    @Override
-                    public void onSuccess() {
-                        mlvbLiveRoom.setListener(null);
-                        tuiChuDialog.dismiss();
-                        ZhiBoActivity.this.finish();
-                    }
-                });
-                link_tuichuzhibo();
-            }
-        });
-        tuiChuDialog.setQuXiaoListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tuiChuDialog.dismiss();
-            }
-        });
-        tuiChuDialog.setCanceledOnTouchOutside(false);
-        tuiChuDialog.show();
+                        @Override
+                        public void onSuccess() {
+                            mlvbLiveRoom.setListener(null);
+                            tuiChuDialog.dismiss();
+                            ZhiBoActivity.this.finish();
+                        }
+                    });
+                    link_tuichuzhibo();
+                }
+            });
+            tuiChuDialog.setQuXiaoListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    tuiChuDialog.dismiss();
+                }
+            });
+            tuiChuDialog.setCanceledOnTouchOutside(false);
+            tuiChuDialog.show();
+        } else {
+            ToastUtils.showInfo(ZhiBoActivity.this, "抱歉,PK中无法退出");
+        }
+
         //  super.onBackPressed();
     }
 
@@ -1123,38 +1199,42 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
 
                 break;
             case R.id.tuichu:
-                TuiChuDialog tuiChuDialog = new TuiChuDialog(ZhiBoActivity.this);
-                tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (anchorInfo != null)
-                            link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
-                        mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
-                            @Override
-                            public void onError(int errCode, String errInfo) {
-                                mlvbLiveRoom.setListener(null);
-                                tuiChuDialog.dismiss();
-                                ZhiBoActivity.this.finish();
-                            }
+                if (!isPK) {
+                    TuiChuDialog tuiChuDialog = new TuiChuDialog(ZhiBoActivity.this);
+                    tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (anchorInfo != null)
+                                link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
+                            mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
+                                @Override
+                                public void onError(int errCode, String errInfo) {
+                                    mlvbLiveRoom.setListener(null);
+                                    tuiChuDialog.dismiss();
+                                    ZhiBoActivity.this.finish();
+                                }
 
-                            @Override
-                            public void onSuccess() {
-                                mlvbLiveRoom.setListener(null);
-                                tuiChuDialog.dismiss();
-                                ZhiBoActivity.this.finish();
-                            }
-                        });
-                        link_tuichuzhibo();
-                    }
-                });
-                tuiChuDialog.setQuXiaoListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        tuiChuDialog.dismiss();
-                    }
-                });
-                tuiChuDialog.setCanceledOnTouchOutside(false);
-                tuiChuDialog.show();
+                                @Override
+                                public void onSuccess() {
+                                    mlvbLiveRoom.setListener(null);
+                                    tuiChuDialog.dismiss();
+                                    ZhiBoActivity.this.finish();
+                                }
+                            });
+                            link_tuichuzhibo();
+                        }
+                    });
+                    tuiChuDialog.setQuXiaoListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            tuiChuDialog.dismiss();
+                        }
+                    });
+                    tuiChuDialog.setCanceledOnTouchOutside(false);
+                    tuiChuDialog.show();
+                } else {
+                    ToastUtils.showInfo(ZhiBoActivity.this, "抱歉,PK中无法退出");
+                }
                 break;
             case R.id.fenxiang:
                 FenXiangDialog dialog = new FenXiangDialog();
@@ -1219,7 +1299,7 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                             public void run() {
                                 if (popupwindow != null)
                                     popupwindow.dismiss();
-                                popupwindow = new InputPopupwindow(ZhiBoActivity.this);
+                                popupwindow = new InputPopupwindow(ZhiBoActivity.this, "");
                                 popupwindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, jianpangHight);
                             }
                         });
@@ -1637,7 +1717,6 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     //ToastUtils.showError(QianBaoActivity.this,"获取数据失败");
-
                 }
             }
         });
@@ -1676,30 +1755,30 @@ public class ZhiBoActivity extends AppCompatActivity implements IMLVBLiveRoomLis
                         public void run() {
                             Log.d("ZhiBoActivity", "dddd");//code=1是直播，0是未直播
                             try {
-                                if (jsonObject!=null && jsonObject.get("code")!=null && jsonObject.get("code").getAsInt() == 0) {
-                                        ToastUtils.showError(ZhiBoActivity.this, "主播已经下播");
-                                        if (timer1 != null)
-                                            timer1.cancel();
-                                        timer1 = null;
-                                        if (timer2 != null)
-                                            timer2.cancel();
-                                        timer2 = null;
-                                        chengfa.setVisibility(View.GONE);
-                                        pkjgim1.setVisibility(View.GONE);
-                                        pkjgim2.setVisibility(View.GONE);
-                                        group.setVisibility(View.GONE);
-                                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
-                                        params.height = hight;
-                                        params.width = width;
-                                        txCloudVideoView.setLayoutParams(params);
-                                        txCloudVideoView.invalidate();
-                                        link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
-                                        mlvbLiveRoom.stopRemoteView(anchorInfo);
-                                        pkMoney = 0;
-                                        isPK = false;
+                                if (jsonObject != null && jsonObject.get("code") != null && jsonObject.get("code").getAsInt() == 0) {
+                                    ToastUtils.showError(ZhiBoActivity.this, "主播已经下播");
+                                    if (timer1 != null)
+                                        timer1.cancel();
+                                    timer1 = null;
+                                    if (timer2 != null)
+                                        timer2.cancel();
+                                    timer2 = null;
+                                    chengfa.setVisibility(View.GONE);
+                                    pkjgim1.setVisibility(View.GONE);
+                                    pkjgim2.setVisibility(View.GONE);
+                                    group.setVisibility(View.GONE);
+                                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) txCloudVideoView.getLayoutParams();
+                                    params.height = hight;
+                                    params.width = width;
+                                    txCloudVideoView.setLayoutParams(params);
+                                    txCloudVideoView.invalidate();
+                                    link_endmlx(anchorInfo.userID, baoCunBean.getUserid() + "");
+                                    mlvbLiveRoom.stopRemoteView(anchorInfo);
+                                    pkMoney = 0;
+                                    isPK = false;
 
                                 }
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 

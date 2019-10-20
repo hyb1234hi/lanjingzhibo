@@ -94,7 +94,7 @@ public class KaiBoActivity extends AppCompatActivity {
     private PhotoDialog photoDialog;
     ZLoadingDialog dialog;
     private int liveType = -1;
-    private String fengmianPath;
+    private String fengmianPath="";
     private LocationClient locationClient;
     private int count = 0;
     private String jd = "", wd = "";
@@ -134,7 +134,7 @@ public class KaiBoActivity extends AppCompatActivity {
             }
             case R.id.kaibo:
 
-                if (fengmianPath == null || fengmianPath.equals("")) {
+                if (fengmianPath == null ) {
                     ToastUtils.showInfo(KaiBoActivity.this, "请先上传封面");
                     return;
                 }

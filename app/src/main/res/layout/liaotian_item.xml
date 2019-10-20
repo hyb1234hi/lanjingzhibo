@@ -50,7 +50,7 @@
         <TextView
             android:id="@+id/name1"
             app:layout_constraintLeft_toRightOf="@+id/gghhjj"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
             android:layout_marginStart="4dp"
@@ -63,7 +63,7 @@
         <TextView
             android:id="@+id/neirong1"
             app:layout_constraintLeft_toRightOf="@+id/name1"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:ellipsize="end"
             android:layout_marginStart="3dp"
             android:layout_marginTop="3dp"
@@ -78,7 +78,7 @@
         <TextView
             android:id="@+id/neirong2"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:visibility="gone"
             android:layout_marginStart="6dp"
             android:paddingBottom="3dp"

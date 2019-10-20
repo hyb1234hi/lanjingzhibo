@@ -21,9 +21,11 @@ public class InputPopupwindow extends PopupWindow {
   //  private Activity context;
     private EditText editText;
     private Button button;
+    private String  shuo = "";
 
-    public InputPopupwindow(Activity context) {
+    public InputPopupwindow(Activity context,String shuo) {
         super(context);
+        this.shuo=shuo;
         init(context);
     }
 
@@ -44,6 +46,8 @@ public class InputPopupwindow extends PopupWindow {
                 EventBus.getDefault().post(new MsgWarp(1005,editText.getText().toString().trim()));
             }
         });
+        editText.setText(shuo);
+        editText.setSelection(shuo.length());//将光标移至文字末尾
         initPopWindow(view);
 
     };

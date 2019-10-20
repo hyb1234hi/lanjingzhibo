@@ -3,30 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/logo1010"
     android:layout_height="match_parent"
     tools:context=".ui.QiDongActivity">
 
 
 
-    <View
-        android:background="@drawable/logo1024"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="186dp"
-        android:layout_width="96dp"
-        android:layout_height="96dp"/>
+<!--    <View-->
+<!--        android:background="@drawable/logo1024"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:layout_marginTop="186dp"-->
+<!--        android:layout_width="96dp"-->
+<!--        android:layout_height="96dp"/>-->
 
 
-    <View
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="50dp"
-        android:background="@drawable/zizi"
-        android:layout_width="80dp"
-        android:layout_height="21dp"/>
+<!--    <View-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        android:layout_marginBottom="50dp"-->
+<!--        android:background="@drawable/zizi"-->
+<!--        android:layout_width="80dp"-->
+<!--        android:layout_height="21dp"/>-->
 
 
 

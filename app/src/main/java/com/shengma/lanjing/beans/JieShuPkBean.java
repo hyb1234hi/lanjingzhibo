@@ -1,13 +1,13 @@
 package com.shengma.lanjing.beans;
 
-import java.util.List;
+
 
 public class JieShuPkBean {
 
     private int code;
     private String desc;
     private int total;
-    private JieShuPkBean.ResultBean result;
+    private ResultBean result;
 
     public int getCode() {
         return code;
@@ -33,11 +33,11 @@ public class JieShuPkBean {
         this.total = total;
     }
 
-    public JieShuPkBean.ResultBean getResult() {
+    public ResultBean getResult() {
         return result;
     }
 
-    public void setResult(JieShuPkBean.ResultBean result) {
+    public void setResult(ResultBean result) {
         this.result = result;
     }
 
