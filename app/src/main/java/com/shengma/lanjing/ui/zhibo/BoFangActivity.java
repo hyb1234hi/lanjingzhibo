@@ -1076,7 +1076,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 dialog.show(getSupportFragmentManager(), "fenxiang");
                 break;
             case R.id.fanzhuang:
-                mlvbLiveRoom.switchCamera();
+               // mlvbLiveRoom.switchCamera();
                 break;
             case R.id.meiyan:
                 //美颜是转盘

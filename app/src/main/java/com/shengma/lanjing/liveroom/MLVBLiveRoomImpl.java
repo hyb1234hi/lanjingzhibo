@@ -65,6 +65,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import cn.tillusory.sdk.TiSDKManager;
+import cn.tillusory.sdk.bean.TiRotation;
 import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -93,7 +95,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
     protected boolean                       mJoinPusher             = false;
 
     protected boolean                       mBackground             = false;
-
+    protected boolean isFrontCamera = true;
     protected TXLivePlayer                  mTXLivePlayer;
 
     protected TXLivePlayConfig              mTXLivePlayConfig;
@@ -1516,6 +1518,12 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
     public void switchCamera() {
         if (mTXLivePusher != null) {
             mTXLivePusher.switchCamera();
+            if (isFrontCamera){
+                isFrontCamera=false;
+            }else {
+                isFrontCamera=true;
+            }
+
         }
     }
 
@@ -2354,6 +2362,20 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
             mTXLivePusher.setBeautyFilter(TXLiveConstants.BEAUTY_STYLE_SMOOTH, 5, 3, 2);
             mTXLivePushListener = new TXLivePushListenerImpl();
             mTXLivePusher.setPushListener(mTXLivePushListener);
+//            mTXLivePusher.setVideoProcessListener(new TXLivePusher.VideoCustomProcessListener() {
+//                @Override
+//                public int onTextureCustomProcess(int i, int i1, int i2) {
+//                    return TiSDKManager.getInstance().renderTexture2D(i,i1,i2, TiRotation.CLOCKWISE_ROTATION_0,isFrontCamera);
+//                }
+//                @Override
+//                public void onDetectFacePoints(float[] floats) {
+//                }
+//                @Override
+//                public void onTextureDestoryed() {
+//                    Log.d("dddddddd", "停止推流");
+//                    TiSDKManager.getInstance().destroy();
+//                }
+//            });
         }
     }
 

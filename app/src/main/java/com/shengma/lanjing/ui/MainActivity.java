@@ -67,7 +67,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.jpush.android.api.JPushInterface;
+
 import cn.tillusory.sdk.TiSDK;
 import io.objectbox.Box;
 import okhttp3.Call;
@@ -137,7 +137,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         tanChuangThread = new TanChuangThread();
         tanChuangThread.start();
         link_xiazai();
-        TiSDK.init("0158dcf3a4d34580bfd40b2fba2182b2",MainActivity.this);
+
+
 
       //  Log.d("MainActivity", "MyA:" + MyApplication.myApplication.getLiwuPathBeanBox().getAll().size());
 //        for (int i=0;i<1000;i++){

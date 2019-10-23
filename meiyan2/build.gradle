@@ -29,7 +29,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //implementation 'com.android.support:appcompat-v7:25.+'
    // implementation 'com.android.support:recyclerview-v7:25.+'
-    implementation 'com.tencent.liteavsdk:LiteAVSDK_Smart:6.6.7458'            // LiteAV SDK
+    implementation 'com.tencent.liteavsdk:LiteAVSDK_Smart:6.6.7551'
     //implementation files('libs/glide-3.7.0.jar')
     api 'com.github.bumptech.glide:glide:4.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

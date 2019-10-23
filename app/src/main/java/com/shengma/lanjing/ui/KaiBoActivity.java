@@ -68,6 +68,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 
+
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 
@@ -196,14 +197,6 @@ public class KaiBoActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onRestart() {
-//        if (photoDialog != null)
-//            photoDialog.dismiss();
-
-        Log.d("KaiBoActivity", "onRestart");
-        super.onRestart();
-    }
 
     @Override
     protected void onDestroy() {
@@ -530,6 +523,8 @@ public class KaiBoActivity extends AppCompatActivity {
                                     dialog.dismiss();
                             }
                         });
+                    }else {
+                        ToastUtils.showError(KaiBoActivity.this, bean.getDesc());
                     }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");

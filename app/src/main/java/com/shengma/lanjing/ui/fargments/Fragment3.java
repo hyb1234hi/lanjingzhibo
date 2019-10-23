@@ -191,7 +191,7 @@ public class Fragment3 extends Fragment {
                                     beanList.clear();
                                     beanList.addAll(bean.getResult());
                                     if (beanList.size()>0){
-                                       title.setText(beanList.get(0).getContent());
+                                       title.setText(beanList.get(0).getTitle());
                                        time.setText(beanList.get(beanList.size()-1).getCreateTime());
                                     }
 
