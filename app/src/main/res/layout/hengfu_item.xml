@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/hengfu"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/lldd"
+            android:background="@drawable/hf2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="190dp"
+            android:layout_height="27dp"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/ffgggg"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/lldd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#898DA5"
+                android:textSize="14sp"
+                android:id="@+id/name_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textColor="#111111"
+                android:textSize="14sp"
+                android:text="在"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textColor="#7f9dbc"
+                android:textSize="14sp"
+                android:id="@+id/name_zhibojian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textColor="#111111"
+                android:textSize="14sp"
+                android:text="直播间送出了"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textColor="#c059c6"
+                android:textSize="14sp"
+                android:id="@+id/name_liwu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <View
+            app:layout_constraintTop_toBottomOf="@+id/ffgggg"
+            android:background="@drawable/hf1"
+            app:layout_constraintLeft_toLeftOf="@+id/lldd"
+            app:layout_constraintRight_toRightOf="@+id/lldd"
+            android:layout_width="190dp"
+            android:layout_height="27dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

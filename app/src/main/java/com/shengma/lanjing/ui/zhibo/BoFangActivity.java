@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -162,14 +163,9 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     ImageView pkjgim1;
     @BindView(R.id.pkjgim2)
     ImageView pkjgim2;
-    @BindView(R.id.name_3)
-    TextView name3;
-    @BindView(R.id.name_zhibojian)
-    TextView nameZhibojian;
-    @BindView(R.id.name_liwu)
-    TextView nameLiwu;
-    @BindView(R.id.hengfu)
-    ConstraintLayout hengfu;
+    @BindView(R.id.rootv)
+    LinearLayout rootv;
+
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;    // 主播本地预览的 View
@@ -207,7 +203,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     private boolean isON = true, isGLY = false;
     private Box<XiaZaiLiWuBean> xiaZaiLiWuBeanBox = MyApplication.myApplication.getXiaZaiLiWuBeanBox();
     private int updateCoune = 0;
-    private boolean isJY=false;
+    private boolean isJY = false;
     protected InputMethodManager imm;
 
     @Override
@@ -321,12 +317,12 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         liaoTianAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
-               // Log.d("ZhiBoActivity", "长按");
+                // Log.d("ZhiBoActivity", "长按");
                 if (isGLY && !(baoCunBean.getUserid() + "").equals(liaoTianBeanList.get(position).getUserid() + "")) {
-                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(idid + "", liaoTianBeanList.get(position).getUserid() + "",true);
+                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(idid + "", liaoTianBeanList.get(position).getUserid() + "", true);
                     yongHuXinxiDialog.show(getSupportFragmentManager(), "yonghuxnxi");
-                }else {
-                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(idid + "", liaoTianBeanList.get(position).getUserid() + "",false);
+                } else {
+                    YongHuXinxiDialog yongHuXinxiDialog = new YongHuXinxiDialog(idid + "", liaoTianBeanList.get(position).getUserid() + "", false);
                     yongHuXinxiDialog.show(getSupportFragmentManager(), "yonghuxnxi");
                 }
                 return false;
@@ -657,7 +653,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 txCloudVideoView.invalidate();
                 break;
             case "chaxunJY":
-                link_chaxunJY(idid+"",baoCunBean.getUserid()+"");
+                link_chaxunJY(idid + "", baoCunBean.getUserid() + "");
                 break;
             case "guanzhu":
                 LiaoTianBean bean22 = new LiaoTianBean();
@@ -678,56 +674,56 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         if (msgWarp.getType() == 1005) {//收到输入的消息广播
             //ToastUtils.showInfo(BoFangActivity.this,"收到关闭键盘通知");
             if (!msgWarp.getMsg().equals("")) {
-                if (!isJY){
-                try {
+                if (!isJY) {
+                    try {
 //                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
 //                            .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
 //                                    InputMethodManager.HIDE_NOT_ALWAYS);
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null && txCloudVideoView != null) {
-                        // imm.hideSoftInputFromWindow(txCloudVideoView.getWindowToken(), 0);
-                        imm.showSoftInput(txCloudVideoView, InputMethodManager.SHOW_IMPLICIT);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null && txCloudVideoView != null) {
+                            // imm.hideSoftInputFromWindow(txCloudVideoView.getWindowToken(), 0);
+                            imm.showSoftInput(txCloudVideoView, InputMethodManager.SHOW_IMPLICIT);
+                        }
+                        if (popupwindow != null)
+                            popupwindow.dismiss();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ToastUtils.showInfo(BoFangActivity.this, "收到关闭键盘通知" + e.getMessage());
                     }
-                    if (popupwindow != null)
-                        popupwindow.dismiss();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ToastUtils.showInfo(BoFangActivity.this, "收到关闭键盘通知" + e.getMessage());
-                }
-                //发送消息
-                Log.d("BoFangActivity", msgWarp.getMsg());
-                LiaoTianBean bean = new LiaoTianBean();
-                bean.setNickname(baoCunBean.getNickname());
-                bean.setType(1);
-                bean.setDengji(baoCunBean.getAnchorLevel());
-                bean.setHeadImage(baoCunBean.getHeadImage());
-                bean.setUserid(baoCunBean.getUserid());
-                bean.setNeirong(msgWarp.getMsg());
-                bean.setSex(baoCunBean.getSex());
-                liaoTianBeanList.add(0, bean);
-                liaoTianAdapter.notifyDataSetChanged();
-                String js = com.alibaba.fastjson.JSONObject.toJSONString(bean);
-                mlvbLiveRoom.sendRoomCustomMsg("1", js, new SendRoomCustomMsgCallback() {
-                    @Override
-                    public void onError(int errCode, String errInfo) {
-                        Log.d("BoFangActivity", "errCode:" + errCode);
-                        Log.d("BoFangActivity", "errInfo:" + errInfo);
-                    }
+                    //发送消息
+                    Log.d("BoFangActivity", msgWarp.getMsg());
+                    LiaoTianBean bean = new LiaoTianBean();
+                    bean.setNickname(baoCunBean.getNickname());
+                    bean.setType(1);
+                    bean.setDengji(baoCunBean.getAnchorLevel());
+                    bean.setHeadImage(baoCunBean.getHeadImage());
+                    bean.setUserid(baoCunBean.getUserid());
+                    bean.setNeirong(msgWarp.getMsg());
+                    bean.setSex(baoCunBean.getSex());
+                    liaoTianBeanList.add(0, bean);
+                    liaoTianAdapter.notifyDataSetChanged();
+                    String js = com.alibaba.fastjson.JSONObject.toJSONString(bean);
+                    mlvbLiveRoom.sendRoomCustomMsg("1", js, new SendRoomCustomMsgCallback() {
+                        @Override
+                        public void onError(int errCode, String errInfo) {
+                            Log.d("BoFangActivity", "errCode:" + errCode);
+                            Log.d("BoFangActivity", "errInfo:" + errInfo);
+                        }
 
-                    @Override
-                    public void onSuccess() {
-                        Log.d("BoFangActivity", "发送自定义消息成功1");
-                    }
-                });
+                        @Override
+                        public void onSuccess() {
+                            Log.d("BoFangActivity", "发送自定义消息成功1");
+                        }
+                    });
 
-            }else {
+                } else {
                     ToastUtils.showError(BoFangActivity.this, "你已被禁言!");
                 }
-          }
-         }
+            }
+        }
 
         if (msgWarp.getType() == 1100) {//发送礼物之后的广播1.播放自己的礼物动画，2发送自定义消息，让其他人播放礼物动画
-            //  Log.d("BoFangActivity", "msgWarp.getTemp()" + msgWarp.getTemp());
+            Log.d("BoFangActivity", "msgWarp.getTemp()" + msgWarp.getTemp());
             if (Integer.parseInt(msgWarp.getTemp()) == 0) {
                 //礼物类型1
                 LiWuBoFangBean liWuBoFangBean = new LiWuBoFangBean();
@@ -743,7 +739,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 liWuBoFangBean.setLiwuName(nliwuname.getGiftName());
                 liWuBoFangBean.setLiwuPath(nliwuname.getGiftUrl());
                 String jsonString = com.alibaba.fastjson.JSONObject.toJSONString(liWuBoFangBean);
-                mlvbLiveRoom.sendRoomCustomMsg("liwudonghua1", jsonString, new SendRoomCustomMsgCallback() {
+                mlvbLiveRoom.sendRoomCustomMsg("liwudonghua2", jsonString, new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
                         Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
@@ -778,15 +774,17 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 mlvbLiveRoom.sendRoomCustomMsg("liwudonghua2", jsonString, new SendRoomCustomMsgCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
-                        Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
+                        //  Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
                         ToastUtils.showError(BoFangActivity.this, "赠送礼物失败");
-                        //  playDongHua(msgWarp.getMsg());
+                        // playDongHua(msgWarp.getMsg());
                     }
+
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送礼物自定义消息成功2");
                         //播放.query().equal(Subject_.teZhengMa, new String(result.faceToken)).build()
                         XiaZaiLiWuBean liWuBean = xiaZaiLiWuBeanBox.get(Long.parseLong(msgWarp.getMsg()));
+                        // Log.d("BoFangActivity", "liWuBean.isJY():" + liWuBean.isJY());
                         if (liWuBean.isJY()) {//解压过了
                             linkedBlockingQueueLW.offer(msgWarp.getMsg());
                         }
@@ -806,6 +804,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 @Override
                 public void onError(int errCode, String errInfo) {
                 }
+
                 @Override
                 public void onSuccess() {
                 }
@@ -813,8 +812,8 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
         }
 
         if (msgWarp.getType() == 887700) {//@别人
-            Log.d("ZhiBoActivity", "收到887700"+msgWarp.getMsg());
-            InputMethodUtils.showOrHide(this,txCloudVideoView);
+            Log.d("ZhiBoActivity", "收到887700" + msgWarp.getMsg());
+            InputMethodUtils.showOrHide(this, txCloudVideoView);
 
             new Thread(new Runnable() {
                 @Override
@@ -832,17 +831,35 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         public void run() {
                             if (popupwindow != null)
                                 popupwindow.dismiss();
-                            popupwindow = new InputPopupwindow(BoFangActivity.this,msgWarp.getMsg());
+                            popupwindow = new InputPopupwindow(BoFangActivity.this, msgWarp.getMsg());
                             popupwindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, jianpangHight);
                         }
                     });
                 }
             }).start();
         }
+        if (msgWarp.getType() == 100868) {
+            //横幅
+            String[] sls = msgWarp.getMsg().split(",");
+            View view_dk = View.inflate(BoFangActivity.this, R.layout.hengfu_item, null);
+            TextView tv1 = view_dk.findViewById(R.id.name_3);
+            TextView tv2 = view_dk.findViewById(R.id.name_zhibojian);
+            TextView tv3 = view_dk.findViewById(R.id.name_liwu);
+            tv1.setText(sls[0]);
+            tv2.setText(sls[1]);
+            tv3.setText(sls[2]);
+            rootv.addView(view_dk);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view_dk.getLayoutParams();
+            params.leftMargin = 300;
+            view_dk.setLayoutParams(params);
+            view_dk.invalidate();
+
+        }
 
     }
 
     private void playDongHua(String idid) {
+        Log.d("BoFangActivity", "播放礼物id:" + idid);
         animationView.setVisibility(View.VISIBLE);
         final String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath();
         //提供一个代理接口从 SD 卡读取 images 下的图片
@@ -916,7 +933,20 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
     @Override
     protected void onDestroy() {
         timer.cancel();
+        YongHuListBean yongHuListBean = new YongHuListBean();
+        yongHuListBean.setId(baoCunBean.getUserid());
+        String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
+        mlvbLiveRoom.sendRoomCustomMsg("tuifang", js, new SendRoomCustomMsgCallback() {
+            @Override
+            public void onError(int errCode, String errInfo) {
 
+            }
+
+            @Override
+            public void onSuccess() {
+
+            }
+        });
         if (timer1 != null)
             timer1.cancel();
         timer1 = null;
@@ -938,54 +968,30 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
 
     @Override
     public void onBackPressed() {
+
         TuiChuDialog tuiChuDialog = new TuiChuDialog(BoFangActivity.this);
         tuiChuDialog.setTextView("确定要退出直播间?");
         tuiChuDialog.setOnQueRenListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //退出时发送退房自定义通知
-                YongHuListBean yongHuListBean = new YongHuListBean();
-                yongHuListBean.setId(baoCunBean.getUserid());
-                String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
-                mlvbLiveRoom.sendRoomCustomMsg("tuifang", js, new SendRoomCustomMsgCallback() {
+
+                mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
                     @Override
                     public void onError(int errCode, String errInfo) {
-                        mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
-                            @Override
-                            public void onError(int errCode, String errInfo) {
-                                mlvbLiveRoom.setListener(null);
-                                tuiChuDialog.dismiss();
-                                BoFangActivity.this.finish();
-                            }
-
-                            @Override
-                            public void onSuccess() {
-                                mlvbLiveRoom.setListener(null);
-                                tuiChuDialog.dismiss();
-                                BoFangActivity.this.finish();
-                            }
-                        });
+                        mlvbLiveRoom.setListener(null);
+                        tuiChuDialog.dismiss();
+                        BoFangActivity.this.finish();
                     }
 
                     @Override
                     public void onSuccess() {
-                        mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
-                            @Override
-                            public void onError(int errCode, String errInfo) {
-                                mlvbLiveRoom.setListener(null);
-                                tuiChuDialog.dismiss();
-                                BoFangActivity.this.finish();
-                            }
-
-                            @Override
-                            public void onSuccess() {
-                                mlvbLiveRoom.setListener(null);
-                                tuiChuDialog.dismiss();
-                                BoFangActivity.this.finish();
-                            }
-                        });
+                        mlvbLiveRoom.setListener(null);
+                        tuiChuDialog.dismiss();
+                        BoFangActivity.this.finish();
                     }
                 });
+
             }
         });
         tuiChuDialog.setQuXiaoListener(new View.OnClickListener() {
@@ -1018,46 +1024,19 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     @Override
                     public void onClick(View view) {
                         //退出时发送退房自定义通知
-                        YongHuListBean yongHuListBean = new YongHuListBean();
-                        yongHuListBean.setId(baoCunBean.getUserid());
-                        String js = com.alibaba.fastjson.JSONObject.toJSONString(yongHuListBean);
-                        mlvbLiveRoom.sendRoomCustomMsg("tuifang", js, new SendRoomCustomMsgCallback() {
+                        mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
                             @Override
                             public void onError(int errCode, String errInfo) {
-                                mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
-                                    @Override
-                                    public void onError(int errCode, String errInfo) {
-                                        mlvbLiveRoom.setListener(null);
-                                        tuiChuDialog.dismiss();
-                                        BoFangActivity.this.finish();
-                                    }
-
-                                    @Override
-                                    public void onSuccess() {
-                                        mlvbLiveRoom.setListener(null);
-                                        tuiChuDialog.dismiss();
-                                        BoFangActivity.this.finish();
-                                    }
-                                });
+                                mlvbLiveRoom.setListener(null);
+                                tuiChuDialog.dismiss();
+                                BoFangActivity.this.finish();
                             }
 
                             @Override
                             public void onSuccess() {
-                                mlvbLiveRoom.exitRoom(new ExitRoomCallback() {
-                                    @Override
-                                    public void onError(int errCode, String errInfo) {
-                                        mlvbLiveRoom.setListener(null);
-                                        tuiChuDialog.dismiss();
-                                        BoFangActivity.this.finish();
-                                    }
-
-                                    @Override
-                                    public void onSuccess() {
-                                        mlvbLiveRoom.setListener(null);
-                                        tuiChuDialog.dismiss();
-                                        BoFangActivity.this.finish();
-                                    }
-                                });
+                                mlvbLiveRoom.setListener(null);
+                                tuiChuDialog.dismiss();
+                                BoFangActivity.this.finish();
                             }
                         });
                     }
@@ -1076,7 +1055,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 dialog.show(getSupportFragmentManager(), "fenxiang");
                 break;
             case R.id.fanzhuang:
-               // mlvbLiveRoom.switchCamera();
+                // mlvbLiveRoom.switchCamera();
                 break;
             case R.id.meiyan:
                 //美颜是转盘
@@ -1085,7 +1064,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 break;
             case R.id.pk:
                 //pk是礼物
-                LiWuDialog liWuDialog = new LiWuDialog(idid + "");
+                LiWuDialog liWuDialog = new LiWuDialog(idid + "", name.getText().toString());
                 liWuDialog.show(getSupportFragmentManager(), "liWuDialog");
 
                 break;
@@ -1111,7 +1090,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             public void run() {
                                 if (popupwindow != null)
                                     popupwindow.dismiss();
-                                popupwindow = new InputPopupwindow(BoFangActivity.this,"");
+                                popupwindow = new InputPopupwindow(BoFangActivity.this, "");
                                 popupwindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, jianpangHight);
                             }
                         });
@@ -1265,7 +1244,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             mlvbLiveRoom.sendRoomCustomMsg("guanzhu", baoCunBean.getNickname(), new SendRoomCustomMsgCallback() {
                                 @Override
                                 public void onError(int errCode, String errInfo) {
-                                  //  ToastUtils.showError(BoFangActivity.this, "发送进房消息失败,请退出后重试");
+                                    //  ToastUtils.showError(BoFangActivity.this, "发送进房消息失败,请退出后重试");
                                 }
 
                                 @Override
@@ -1827,7 +1806,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 .header("Content-Type", "application/json")
                 .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
-                .url(Consts.URL + "/im/ban/"+id+"?group="+zhuboid);
+                .url(Consts.URL + "/im/ban/" + id + "?group=" + zhuboid);
         // step 3：创建 Call 对象
         Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
         //step 4: 开始异步请求
@@ -1847,11 +1826,11 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                     String ss = body.string().trim();
                     Log.d("AllConnects", "查询是否禁言:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    if (jsonObject.get("code").getAsInt()== 1){//禁言了
-                       isJY=true;
+                    if (jsonObject.get("code").getAsInt() == 1) {//禁言了
+                        isJY = true;
                     }
-                    if (jsonObject.get("code").getAsInt()== 0){//禁言了
-                        isJY=false;
+                    if (jsonObject.get("code").getAsInt() == 0) {//禁言了
+                        isJY = false;
                     }
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");

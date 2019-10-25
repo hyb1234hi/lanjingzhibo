@@ -2,6 +2,7 @@ package com.shengma.lanjing.dialogs;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,18 +24,24 @@ import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.R;
 import com.shengma.lanjing.adapters.GridViewAdapter;
 import com.shengma.lanjing.adapters.GridViewAdapter2;
+import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.BeiBaoBean;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.QianBaoBean;
+import com.shengma.lanjing.beans.TuiSongBenass;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
+import com.shengma.lanjing.utils.Util;
+import com.shengma.lanjing.utils.Utils;
 import com.shengma.lanjing.views.LiWuViewPagerAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +54,7 @@ import butterknife.Unbinder;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -84,10 +92,11 @@ public class LiWuDialog extends DialogFragment {
     private LayoutInflater inflate;
     private List<GridViewAdapter> gridViewAdapters = new ArrayList<>();
     private List<GridViewAdapter2> gridViewAdapters2 = new ArrayList<>();
-    private String id;
+    private String id,nameZB;
 
-    public LiWuDialog(String id) {
+    public LiWuDialog(String id,String nameZB) {
         this.id=id;
+        this.nameZB=nameZB;
     }
 
     @Nullable
@@ -315,6 +324,7 @@ public class LiWuDialog extends DialogFragment {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     if (jsonObject.get("code").getAsInt()==1){
                         EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
+                       link_jiguang(bean.getGiftName());
                     }else {
                         
                         ToastUtils.showError(getActivity(), jsonObject.get("desc").getAsString());
@@ -399,6 +409,7 @@ public class LiWuDialog extends DialogFragment {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     if (jsonObject.get("code").getAsInt()==1){
                         EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
+                        link_jiguang(bean.getGiftName());
                     }else {
 
                             ToastUtils.showError(getActivity(),jsonObject.get("desc").getAsString());
@@ -565,6 +576,72 @@ public class LiWuDialog extends DialogFragment {
                 }
             }
         });
+
+
+
     }
 
+    //发送人+主播+礼物
+    private void link_jiguang(String liwuName) {
+          MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+//        RequestBody body = null;
+//        body = new FormBody.Builder()
+//                .add("", "")
+//                .build();
+//        JSONObject object=new JSONObject();
+//        try {
+//            object.put("uname",uname);
+//            object.put("pwd",pwd);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+        BaoCunBean baoCunBean= MyApplication.myApplication.getBaoCunBean();
+        String nsme =  baoCunBean.getNickname()+","+ nameZB+","+liwuName;
+        TuiSongBenass songBenass =new TuiSongBenass();
+        songBenass.setPlatform("all");
+        songBenass.setAudience("all");
+        songBenass.setMessage(new TuiSongBenass.MessageBean(nsme,"text"));
+        String js = com.alibaba.fastjson.JSONObject.toJSONString(songBenass);
+
+        Log.d("LiWuDialog", js);
+        RequestBody body = RequestBody.create(js,JSON);
+
+//        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
+//        RequestBody requestBody = new MultipartBody.Builder()
+//                .setType(MultipartBody.FORM)
+//                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
+//                .build();
+      String bbb=  Base64.encodeToString("090d14a92786e1edb3e98900:268f4c2cb15a47af2f39a7d5".getBytes(), Base64.NO_WRAP);
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Authorization","Basic "+bbb)
+                .header("Content-Type", "application/json")
+                //.header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
+                .post(body)
+                .url("https://bjapi.push.jiguang.cn/v3/push");
+        // step 3：创建 Call 对象
+        Call call = MyApplication.myApplication.getOkHttpClient().newCall(requestBuilder.build());
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+                // ToastUtils.showError(getActivity().this, "进房失败,请退出后重试");
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "极光推送:" + ss);
+                } catch (Exception e) {
+                    Log.d("AllConnects", e.getMessage() + "异常");
+                    //  ToastUtils.showError(BoFangActivity.this, "进房失败,请退出后重试");
+
+                }
+            }
+        });
+    }
 }

@@ -74,7 +74,7 @@ import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.RoomInfo;
-import com.shengma.lanjing.ui.MainActivity;
+
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.InputMethodUtils;
@@ -106,12 +106,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.tillusory.sdk.TiSDK;
-import cn.tillusory.sdk.TiSDKManager;
-
-import cn.tillusory.tiui.TiPanelLayout;
-
-
 import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;

@@ -141,6 +141,15 @@ public class ZhengJianXinXiActivity extends AppCompatActivity {
                     ToastUtils.showInfo(ZhengJianXinXiActivity.this,"证件照片为空");
                     return;
                 }
+                dialog = new ZLoadingDialog(ZhengJianXinXiActivity.this);
+                dialog.setLoadingBuilder(Z_TYPE.LEAF_ROTATE)//设置类型
+                        .setLoadingColor(Color.parseColor("#FF3EE1F7"))//颜色
+                        .setHintText("加载中...")
+                        .setHintTextSize(16) // 设置字体大小 dp
+                        .setHintTextColor(Color.WHITE)  // 设置字体颜色
+                        .setDurationTime(0.6) // 设置动画时间百分比 - 0.5倍
+                        .setDialogBackgroundColor(Color.parseColor("#bb111111")) // 设置背景色，默认白色
+                        .show();
                 link_loging(n,h);
                 break;
         }
@@ -156,8 +165,6 @@ public class ZhengJianXinXiActivity extends AppCompatActivity {
 //                .add("uname", uname)
 //                .add("pwd", pwd)
 //                .build();
-
-
 //        JSONObject object=new JSONObject();
 //        try {
 //            object.put("uname",uname);
@@ -191,9 +198,7 @@ public class ZhengJianXinXiActivity extends AppCompatActivity {
                             dialog.dismiss();
                     }
                 });
-
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -215,8 +220,6 @@ public class ZhengJianXinXiActivity extends AppCompatActivity {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
 //                    Gson gson = new Gson();
 //                    LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
-
-
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

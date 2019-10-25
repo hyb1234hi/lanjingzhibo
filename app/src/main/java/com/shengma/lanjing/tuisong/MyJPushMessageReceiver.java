@@ -3,6 +3,10 @@ package com.shengma.lanjing.tuisong;
 import android.content.Context;
 import android.util.Log;
 
+import com.shengma.lanjing.beans.MsgWarp;
+
+import org.greenrobot.eventbus.EventBus;
+
 import cn.jpush.android.api.CustomMessage;
 import cn.jpush.android.api.JPushMessage;
 import cn.jpush.android.service.JPushMessageReceiver;
@@ -36,7 +40,9 @@ public class MyJPushMessageReceiver extends JPushMessageReceiver {
 
     @Override
     public void onMessage(Context context, CustomMessage customMessage) {
-        Log.d("MyJPushMessageReceiver", customMessage.toString());
+        Log.d("极光推送", customMessage.toString());
+        EventBus.getDefault().post(new MsgWarp(100868,customMessage.message));
+
         super.onMessage(context, customMessage);
     }
 }
