@@ -3,6 +3,7 @@ package com.shengma.lanjing.ui.zhibo;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -730,6 +734,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 liWuBoFangBean.setHeadImage(baoCunBean.getHeadImage());
                 liWuBoFangBean.setId(baoCunBean.getUserid());
                 liWuBoFangBean.setName(baoCunBean.getNickname());
+                liWuBoFangBean.setNum(Integer.valueOf(msgWarp.getNum()));//数量
                 XiaZaiLiWuBean nliwuname = MyApplication.myApplication.getXiaZaiLiWuBeanBox().get(Integer.parseInt(msgWarp.getMsg()));
                 if (nliwuname == null) {
                     ToastUtils.showError(BoFangActivity.this, "未找到本地礼物");
@@ -762,6 +767,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 liWuBoFangBean.setHeadImage(baoCunBean.getHeadImage());
                 liWuBoFangBean.setId(baoCunBean.getUserid());
                 liWuBoFangBean.setName(baoCunBean.getNickname());
+                liWuBoFangBean.setNum(Integer.valueOf(msgWarp.getNum()));//数量
                 XiaZaiLiWuBean nliwuname = MyApplication.myApplication.getXiaZaiLiWuBeanBox().get(Integer.parseInt(msgWarp.getMsg()));
                 if (nliwuname == null) {
                     ToastUtils.showError(BoFangActivity.this, "未找到本地礼物");
@@ -778,7 +784,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         ToastUtils.showError(BoFangActivity.this, "赠送礼物失败");
                         // playDongHua(msgWarp.getMsg());
                     }
-
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送礼物自定义消息成功2");
@@ -849,10 +854,49 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
             tv2.setText(sls[1]);
             tv3.setText(sls[2]);
             rootv.addView(view_dk);
+            view_dk.setX(width);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view_dk.getLayoutParams();
-            params.leftMargin = 300;
+            //params.leftMargin = width;
             view_dk.setLayoutParams(params);
             view_dk.invalidate();
+            ValueAnimator animator = ValueAnimator.ofInt(width,-width);
+            Interpolator interpolator = new LinearInterpolator();
+            animator.setInterpolator(interpolator);
+            //如下传入多个参数，效果则为0->5,5->3,3->10
+            //ValueAnimator animator = ValueAnimator.ofInt(0,5,3,10);
+            //设置动画的基础属性
+            animator.setDuration(8000);//播放时长
+           // animator.setStartDelay(300);//延迟播放
+            animator.setRepeatCount(0);//重放次数
+          //  animator.setRepeatMode(ValueAnimator.RESTART);
+            //重放模式
+            //ValueAnimator.START：正序
+            //ValueAnimator.REVERSE：倒序
+            //设置更新监听
+            //值 改变一次，该方法就执行一次
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    //获取改变后的值
+                    int currentValue = (int) animation.getAnimatedValue();
+                    //输出改变后的值
+                  //  Log.d("1111", "onAnimationUpdate: " + currentValue);
+                    //改变后的值发赋值给对象的属性值
+                    view_dk.setTranslationX(currentValue);
+                    //刷新视图
+                    view_dk.requestLayout();
+                }
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    Log.d("BoFangActivity", "结束");
+                    super.onAnimationEnd(animation);
+                    rootv.removeView(view_dk);
+                }
+            });
+            //启动动画
+            animator.start();
 
         }
 
@@ -1466,7 +1510,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 try {
                     //有动画 ，延迟到一秒一次
                     Integer subject = linkedBlockingQueue.take();
-                    SystemClock.sleep(4000);
+                    SystemClock.sleep(5000);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

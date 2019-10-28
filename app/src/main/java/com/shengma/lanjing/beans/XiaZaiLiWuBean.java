@@ -101,4 +101,20 @@ public class XiaZaiLiWuBean {
             this.type = type;
         }
 
+
+    @Override
+    public String toString() {
+        return "XiaZaiLiWuBean{" +
+                "id=" + id +
+                ", giftName='" + giftName + '\'' +
+                ", giftMoney='" + giftMoney + '\'' +
+                ", giftUrl='" + giftUrl + '\'' +
+                ", specialUrl='" + specialUrl + '\'' +
+                ", num=" + num +
+                ", type=" + type +
+                ", isD=" + isD +
+                ", isJY=" + isJY +
+                ", isA=" + isA +
+                '}';
+    }
 }

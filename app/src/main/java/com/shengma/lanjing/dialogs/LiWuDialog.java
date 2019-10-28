@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,8 +34,6 @@ import com.shengma.lanjing.beans.XiaZaiLiWuBean;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
-import com.shengma.lanjing.utils.Util;
-import com.shengma.lanjing.utils.Utils;
 import com.shengma.lanjing.views.LiWuViewPagerAdapter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -81,6 +80,12 @@ public class LiWuDialog extends DialogFragment {
     TextView chongzhi;
     @BindView(R.id.fasong)
     TextView fasong;
+    @BindView(R.id.jia)
+    ImageView jia;
+    @BindView(R.id.shuliang)
+    TextView shuliang;
+    @BindView(R.id.jian)
+    ImageView jian;
     private Window window;
     private Unbinder unbinder;
     private List<View> mViewPagerGridList;
@@ -92,11 +97,12 @@ public class LiWuDialog extends DialogFragment {
     private LayoutInflater inflate;
     private List<GridViewAdapter> gridViewAdapters = new ArrayList<>();
     private List<GridViewAdapter2> gridViewAdapters2 = new ArrayList<>();
-    private String id,nameZB;
+    private String id, nameZB;
+    private int amount = 0;
 
-    public LiWuDialog(String id,String nameZB) {
-        this.id=id;
-        this.nameZB=nameZB;
+    public LiWuDialog(String id, String nameZB) {
+        this.id = id;
+        this.nameZB = nameZB;
     }
 
     @Nullable
@@ -128,7 +134,7 @@ public class LiWuDialog extends DialogFragment {
 //        }
 //        viewpage.setAdapter(new LiWuViewPagerAdapter(mViewPagerGridList));
         viewpage.setOffscreenPageLimit(3);
-        List<XiaZaiLiWuBean> xiaZaiLiWuBeanList=MyApplication.myApplication.getXiaZaiLiWuBeanBox().getAll();
+        List<XiaZaiLiWuBean> xiaZaiLiWuBeanList = MyApplication.myApplication.getXiaZaiLiWuBeanBox().getAll();
         mDatas.addAll(xiaZaiLiWuBeanList);
         mViewPagerGridList = new ArrayList<View>();
         //塞入GridView：
@@ -153,7 +159,7 @@ public class LiWuDialog extends DialogFragment {
         /////////////////
         link_beibao();
         link_qianbao();
-      //  link_userinfo();
+        //  link_userinfo();
         return view;
     }
 
@@ -210,7 +216,7 @@ public class LiWuDialog extends DialogFragment {
     }
 
 
-    @OnClick({R.id.jingdian, R.id.beibao, R.id.chongzhi,R.id.fasong})
+    @OnClick({R.id.jingdian, R.id.beibao, R.id.chongzhi, R.id.fasong,R.id.jia,R.id.jian})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.jingdian:
@@ -235,30 +241,45 @@ public class LiWuDialog extends DialogFragment {
 
                 break;
             case R.id.chongzhi:
-                for (XiaZaiLiWuBean bean:mDatas2){
-                    if (bean.isA()){
+                for (XiaZaiLiWuBean bean : mDatas2) {
+                    if (bean.isA()) {
                         //发送
                         fasong.setEnabled(false);
-                        link_fasong2(bean.getId()+"",bean);
+                        link_fasong2(bean.getId() + "", bean);
                         break;
                     }
                 }
-               // dismiss();
+                // dismiss();
 
                 break;
             case R.id.fasong:
 
-                for (XiaZaiLiWuBean bean:mDatas){
-                    if (bean.isA()){
+                for (XiaZaiLiWuBean bean : mDatas) {
+                    if (bean.isA()) {
                         fasong.setEnabled(false);
                         //发送
-                    link_fasong(bean.getId()+"",bean);
+                        link_fasong(bean.getId() + "", bean);
                         break;
                     }
                 }
-               // dismiss();
+                // dismiss();
+                break;
+            case R.id.jia:
+              int jj =   Integer.valueOf(shuliang.getText().toString());
+              jj+=1;
+              shuliang.setText(jj+"");
+
+                break;
+            case R.id.jian:
+                int jj2 =   Integer.valueOf(shuliang.getText().toString());
+                jj2-=1;
+                if (jj2<1){
+                    jj2=1;
+                }
+                shuliang.setText(jj2+"");
                 break;
         }
+
     }
 
     @Override
@@ -268,31 +289,33 @@ public class LiWuDialog extends DialogFragment {
         EventBus.getDefault().unregister(this);
     }
 
-    private void link_fasong(String id2,XiaZaiLiWuBean bean) {
-       // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = null;
-        body = new FormBody.Builder()
-                .add("anchorId", id)
-                .add("giftId", id2)
-                .build();
-//        JSONObject object=new JSONObject();
-//        try {
-//            object.put("uname",uname);
-//            object.put("pwd",pwd);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        //RequestBody body = RequestBody.create(object.toString(),JSON);
+    private void link_fasong(String id2, XiaZaiLiWuBean bean) {
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        // RequestBody body = null;
+//        body = new FormBody.Builder()
+//                .add("anchorId", id)
+//                .add("giftId", id2)
+//                .build();
+        Log.d("LiWuDialog", "bean:" + bean.toString());
+        JSONObject object = new JSONObject();
+        try {
+            object.put("anchorId", id);
+            object.put("giftId", id2);
+            object.put("amount", shuliang.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody body = RequestBody.create(object.toString(), JSON);
 //        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
 //        RequestBody requestBody = new MultipartBody.Builder()
 //                .setType(MultipartBody.FORM)
 //                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
 //                .build();
-       // Log.d("LiWuDialog", "anchorId"+id);
-       // Log.d("LiWuDialog", "giftId"+id2);
+        // Log.d("LiWuDialog", "anchorId"+id);
+        // Log.d("LiWuDialog", "giftId"+id2);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL + "/gift/send");
         // step 3：创建 Call 对象
@@ -303,7 +326,7 @@ public class LiWuDialog extends DialogFragment {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
-                if (getActivity()!=null){
+                if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -312,7 +335,6 @@ public class LiWuDialog extends DialogFragment {
                     });
                 }
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -322,14 +344,15 @@ public class LiWuDialog extends DialogFragment {
                     String ss = body.string().trim();
                     Log.d("AllConnects", "发送礼物:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    if (jsonObject.get("code").getAsInt()==1){
-                        EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
-                       link_jiguang(bean.getGiftName());
-                    }else {
-                        
+                    if (jsonObject.get("code").getAsInt() == 1) {
+                        EventBus.getDefault().post(new MsgWarp(1100, bean.getId() + "", bean.getType() + "",shuliang.getText().toString()));
+                        if (bean.getId() == 39 || bean.getId() == 40) {
+                            link_jiguang(bean.getGiftName());
+                        }
+                    } else {
                         ToastUtils.showError(getActivity(), jsonObject.get("desc").getAsString());
                     }
-                    if (getActivity()!=null){
+                    if (getActivity() != null) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -340,7 +363,7 @@ public class LiWuDialog extends DialogFragment {
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
-                    if (getActivity()!=null){
+                    if (getActivity() != null) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -353,21 +376,23 @@ public class LiWuDialog extends DialogFragment {
         });
     }
 
-    private void link_fasong2(String id2,XiaZaiLiWuBean bean) {
-        // MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = null;
-        body = new FormBody.Builder()
-                .add("anchorId", id)
-                .add("giftId", id2)
-                .build();
-//        JSONObject object=new JSONObject();
-//        try {
-//            object.put("uname",uname);
-//            object.put("pwd",pwd);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        //RequestBody body = RequestBody.create(object.toString(),JSON);
+    private void link_fasong2(String id2, XiaZaiLiWuBean bean) {
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+//        RequestBody body = null;
+//        body = new FormBody.Builder()
+//                .add("anchorId", id)
+//                .add("giftId", id2)
+//                .build();
+        Log.d("LiWuDialog", "bean:" + bean.toString());
+        JSONObject object = new JSONObject();
+        try {
+            object.put("anchorId", id);
+            object.put("giftId", id2);
+            object.put("amount", shuliang.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody body = RequestBody.create(object.toString(), JSON);
 //        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
 //        RequestBody requestBody = new MultipartBody.Builder()
 //                .setType(MultipartBody.FORM)
@@ -377,7 +402,7 @@ public class LiWuDialog extends DialogFragment {
         // Log.d("LiWuDialog", "giftId"+id2);
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
                 .url(Consts.URL + "/backpack/send");
         // step 3：创建 Call 对象
@@ -388,7 +413,7 @@ public class LiWuDialog extends DialogFragment {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
-                if (getActivity()!=null){
+                if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -397,7 +422,6 @@ public class LiWuDialog extends DialogFragment {
                     });
                 }
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -407,14 +431,15 @@ public class LiWuDialog extends DialogFragment {
                     String ss = body.string().trim();
                     Log.d("AllConnects", "发送礼物2:" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-                    if (jsonObject.get("code").getAsInt()==1){
-                        EventBus.getDefault().post(new MsgWarp(1100,bean.getId()+"",bean.getType()+""));
-                        link_jiguang(bean.getGiftName());
-                    }else {
-
-                            ToastUtils.showError(getActivity(),jsonObject.get("desc").getAsString());
+                    if (jsonObject.get("code").getAsInt() == 1) {
+                        EventBus.getDefault().post(new MsgWarp(1100, bean.getId() + "", bean.getType() + "",shuliang.getText().toString()));
+                        if (bean.getId() == 39 || bean.getId() == 40) {
+                            link_jiguang(bean.getGiftName());
+                        }
+                    } else {
+                        ToastUtils.showError(getActivity(), jsonObject.get("desc").getAsString());
                     }
-                    if (getActivity()!=null){
+                    if (getActivity() != null) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -425,7 +450,7 @@ public class LiWuDialog extends DialogFragment {
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
-                    if (getActivity()!=null){
+                    if (getActivity() != null) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -442,7 +467,7 @@ public class LiWuDialog extends DialogFragment {
     private void link_beibao() {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("Content-Type", "application/json")
-                .header("Cookie","JSESSIONID="+ MyApplication.myApplication.getBaoCunBean().getSession())
+                .header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .get()
                 .url(Consts.URL + "/backpack?page=1&pageSize=100");
         // step 3：创建 Call 对象
@@ -466,8 +491,8 @@ public class LiWuDialog extends DialogFragment {
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     BeiBaoBean logingBe = gson.fromJson(jsonObject, BeiBaoBean.class);
-                    if (logingBe.getCode()==2000) {
-                        for (BeiBaoBean.ResultBean bean:logingBe.getResult()){
+                    if (logingBe.getCode() == 2000) {
+                        for (BeiBaoBean.ResultBean bean : logingBe.getResult()) {
                             XiaZaiLiWuBean xiaZaiLiWuBean = new XiaZaiLiWuBean();
                             xiaZaiLiWuBean.setId(bean.getId());
                             xiaZaiLiWuBean.setType(bean.getType());
@@ -476,33 +501,33 @@ public class LiWuDialog extends DialogFragment {
                             xiaZaiLiWuBean.setGiftName(bean.getName());
                             mDatas2.add(xiaZaiLiWuBean);
                         }
-                        if (getActivity()!=null)
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                viewpage2.setOffscreenPageLimit(3);
-                                mViewPagerGridList2 = new ArrayList<View>();
-                                //塞入GridView：
-                                //计算每页最大显示个数
-                                int pageSize = 4 * 2;
-                                //一共的页数等于 总数/每页数量，并取整。
-                                int pageCount = (int) Math.ceil(mDatas2.size() * 1.0 / pageSize);
-                                Log.i("TAG", "mDatas.size()*1.0/pageSize:" + (mDatas2.size() * 1.0 / pageSize));
+                        if (getActivity() != null)
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    viewpage2.setOffscreenPageLimit(3);
+                                    mViewPagerGridList2 = new ArrayList<View>();
+                                    //塞入GridView：
+                                    //计算每页最大显示个数
+                                    int pageSize = 4 * 2;
+                                    //一共的页数等于 总数/每页数量，并取整。
+                                    int pageCount = (int) Math.ceil(mDatas2.size() * 1.0 / pageSize);
+                                    Log.i("TAG", "mDatas.size()*1.0/pageSize:" + (mDatas2.size() * 1.0 / pageSize));
 
-                                for (int index = 0; index < pageCount; index++) {
-                                    //每个页面都是inflate出一个新实例
-                                    GridView grid = (GridView) inflate.inflate(R.layout.item_viewpager, null, false);
-                                    grid.setNumColumns(4);
-                                    //给GridView设置Adapter，传入index
-                                    adapter2 = new GridViewAdapter2(getActivity(), mDatas2, index);
-                                    gridViewAdapters2.add(adapter2);
-                                    grid.setAdapter(adapter2);
-                                    //加入到ViewPager的View数据集中
-                                    mViewPagerGridList2.add(grid);
+                                    for (int index = 0; index < pageCount; index++) {
+                                        //每个页面都是inflate出一个新实例
+                                        GridView grid = (GridView) inflate.inflate(R.layout.item_viewpager, null, false);
+                                        grid.setNumColumns(4);
+                                        //给GridView设置Adapter，传入index
+                                        adapter2 = new GridViewAdapter2(getActivity(), mDatas2, index);
+                                        gridViewAdapters2.add(adapter2);
+                                        grid.setAdapter(adapter2);
+                                        //加入到ViewPager的View数据集中
+                                        mViewPagerGridList2.add(grid);
+                                    }
+                                    viewpage2.setAdapter(new LiWuViewPagerAdapter(mViewPagerGridList2));
                                 }
-                                viewpage2.setAdapter(new LiWuViewPagerAdapter(mViewPagerGridList2));
-                            }
-                        });
+                            });
 
                     }
 
@@ -561,11 +586,11 @@ public class LiWuDialog extends DialogFragment {
                     Gson gson = new Gson();
                     QianBaoBean logingBe = gson.fromJson(jsonObject, QianBaoBean.class);
                     if (logingBe.getCode() == 2000) {
-                        if (getActivity()!=null)
+                        if (getActivity() != null)
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    yue.setText("余额:"+logingBe.getResult().getBalance());
+                                    yue.setText("余额:" + logingBe.getResult().getBalance());
                                 }
                             });
                     }
@@ -578,12 +603,11 @@ public class LiWuDialog extends DialogFragment {
         });
 
 
-
     }
 
     //发送人+主播+礼物
     private void link_jiguang(String liwuName) {
-          MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 //        RequestBody body = null;
 //        body = new FormBody.Builder()
 //                .add("", "")
@@ -596,25 +620,25 @@ public class LiWuDialog extends DialogFragment {
 //            e.printStackTrace();
 //        }
 
-        BaoCunBean baoCunBean= MyApplication.myApplication.getBaoCunBean();
-        String nsme =  baoCunBean.getNickname()+","+ nameZB+","+liwuName;
-        TuiSongBenass songBenass =new TuiSongBenass();
+        BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
+        String nsme = baoCunBean.getNickname() + "," + nameZB + "," + liwuName;
+        TuiSongBenass songBenass = new TuiSongBenass();
         songBenass.setPlatform("all");
         songBenass.setAudience("all");
-        songBenass.setMessage(new TuiSongBenass.MessageBean(nsme,"text"));
+        songBenass.setMessage(new TuiSongBenass.MessageBean(nsme, "text"));
         String js = com.alibaba.fastjson.JSONObject.toJSONString(songBenass);
 
         Log.d("LiWuDialog", js);
-        RequestBody body = RequestBody.create(js,JSON);
+        RequestBody body = RequestBody.create(js, JSON);
 
 //        RequestBody fileBody = RequestBody.create(new File(path), MediaType.parse("application/octet-stream"));
 //        RequestBody requestBody = new MultipartBody.Builder()
 //                .setType(MultipartBody.FORM)
 //                .addFormDataPart("img", System.currentTimeMillis() + ".png", fileBody)
 //                .build();
-      String bbb=  Base64.encodeToString("090d14a92786e1edb3e98900:268f4c2cb15a47af2f39a7d5".getBytes(), Base64.NO_WRAP);
+        String bbb = Base64.encodeToString("090d14a92786e1edb3e98900:268f4c2cb15a47af2f39a7d5".getBytes(), Base64.NO_WRAP);
         Request.Builder requestBuilder = new Request.Builder()
-                .header("Authorization","Basic "+bbb)
+                .header("Authorization", "Basic " + bbb)
                 .header("Content-Type", "application/json")
                 //.header("Cookie", "JSESSIONID=" + MyApplication.myApplication.getBaoCunBean().getSession())
                 .post(body)
@@ -628,6 +652,7 @@ public class LiWuDialog extends DialogFragment {
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 // ToastUtils.showError(getActivity().this, "进房失败,请退出后重试");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
@@ -644,4 +669,6 @@ public class LiWuDialog extends DialogFragment {
             }
         });
     }
+
+
 }

@@ -82,6 +82,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+
+
+
+
         <TextView
             android:id="@+id/fasong"
             android:textSize="10sp"
@@ -94,7 +98,7 @@
             android:layout_marginEnd="11dp"
             android:layout_marginBottom="16sp"
             android:layout_width="49dp"
-            android:layout_height="24dp"/>
+            android:layout_height="26dp"/>
 
         <TextView
             android:id="@+id/chongzhi"
@@ -109,7 +113,44 @@
             android:layout_marginEnd="11dp"
             android:layout_marginBottom="16sp"
             android:layout_width="49dp"
-            android:layout_height="24dp"/>
+            android:layout_height="26dp"/>
+
+
+        <ImageView
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="81dp"
+            android:padding="4dp"
+            android:id="@+id/jia"
+            android:layout_marginBottom="14sp"
+            android:src="@drawable/jiabg"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            app:layout_constraintTop_toTopOf="@+id/jia"
+            app:layout_constraintBottom_toBottomOf="@+id/jia"
+            app:layout_constraintRight_toLeftOf="@+id/jia"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text="1"
+            android:id="@+id/shuliang"
+            android:textColor="#555555"
+            android:background="@drawable/yuanxian_bai2"
+            android:layout_width="30dp"
+            android:layout_height="20dp"/>
+
+        <ImageView
+            app:layout_constraintTop_toTopOf="@+id/jia"
+            app:layout_constraintBottom_toBottomOf="@+id/jia"
+            app:layout_constraintRight_toLeftOf="@+id/shuliang"
+            android:layout_marginEnd="8dp"
+            android:padding="4dp"
+            android:id="@+id/jian"
+            android:src="@drawable/jianbg"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

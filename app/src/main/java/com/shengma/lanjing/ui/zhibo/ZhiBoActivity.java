@@ -3,6 +3,7 @@ package com.shengma.lanjing.ui.zhibo;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,15 +18,15 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.FragmentActivity;
@@ -59,7 +60,6 @@ import com.shengma.lanjing.beans.YongHuListBean;
 import com.shengma.lanjing.beans.YongHuListBean_;
 import com.shengma.lanjing.dialogs.FenXiangDialog;
 import com.shengma.lanjing.dialogs.InputPopupwindow;
-
 import com.shengma.lanjing.dialogs.MeiYanDialog;
 import com.shengma.lanjing.dialogs.PKDialog;
 import com.shengma.lanjing.dialogs.PKListDialog;
@@ -74,7 +74,6 @@ import com.shengma.lanjing.liveroom.MLVBLiveRoomImpl;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AudienceInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.RoomInfo;
-
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.InputMethodUtils;
@@ -82,7 +81,6 @@ import com.shengma.lanjing.utils.KeyboardStatusDetector;
 import com.shengma.lanjing.utils.ReadAssetsJsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.utils.Utils;
-
 import com.tencent.rtmp.ui.TXCloudVideoView;
 import com.zyao89.view.zloading.ZLoadingDialog;
 import com.zyao89.view.zloading.Z_TYPE;
@@ -192,6 +190,8 @@ public class ZhiBoActivity extends FragmentActivity implements IMLVBLiveRoomList
     TextView nameLiwu;
     @BindView(R.id.hengfu)
     ConstraintLayout hengfu;
+    @BindView(R.id.rootv)
+    LinearLayout rootv;
     private MLVBLiveRoom mlvbLiveRoom = MLVBLiveRoomImpl.sharedInstance(MyApplication.myApplication);
     private BaoCunBean baoCunBean = MyApplication.myApplication.getBaoCunBean();
     private TXCloudVideoView txCloudVideoView;      // 主播本地预览的 View
@@ -424,9 +424,9 @@ public class ZhiBoActivity extends FragmentActivity implements IMLVBLiveRoomList
         };
         timer.schedule(task, 3000, 1600);
 
-     //   TiSDK.init("0158dcf3a4d34580bfd40b2fba2182b2", ZhiBoActivity.this);
+        //   TiSDK.init("0158dcf3a4d34580bfd40b2fba2182b2", ZhiBoActivity.this);
 
-     //   addContentView(new TiPanelLayout(this).init(TiSDKManager.getInstance()),new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+        //   addContentView(new TiPanelLayout(this).init(TiSDKManager.getInstance()),new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
 
 
     }
@@ -1097,6 +1097,63 @@ public class ZhiBoActivity extends FragmentActivity implements IMLVBLiveRoomList
                 finish();
             }
         }
+        if (msgWarp.getType() == 100868) {
+            //横幅
+            String[] sls = msgWarp.getMsg().split(",");
+            View view_dk = View.inflate(ZhiBoActivity.this, R.layout.hengfu_item, null);
+            TextView tv1 = view_dk.findViewById(R.id.name_3);
+            TextView tv2 = view_dk.findViewById(R.id.name_zhibojian);
+            TextView tv3 = view_dk.findViewById(R.id.name_liwu);
+            tv1.setText(sls[0]);
+            tv2.setText(sls[1]);
+            tv3.setText(sls[2]);
+            rootv.addView(view_dk);
+            view_dk.setX(width);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view_dk.getLayoutParams();
+            //params.leftMargin = width;
+            view_dk.setLayoutParams(params);
+            view_dk.invalidate();
+            ValueAnimator animator = ValueAnimator.ofInt(width, -width);
+            Interpolator interpolator = new LinearInterpolator();
+            animator.setInterpolator(interpolator);
+            //如下传入多个参数，效果则为0->5,5->3,3->10
+            //ValueAnimator animator = ValueAnimator.ofInt(0,5,3,10);
+            //设置动画的基础属性
+            animator.setDuration(8000);//播放时长
+            // animator.setStartDelay(300);//延迟播放
+            animator.setRepeatCount(0);//重放次数
+            //  animator.setRepeatMode(ValueAnimator.RESTART);
+            //重放模式
+            //ValueAnimator.START：正序
+            //ValueAnimator.REVERSE：倒序
+            //设置更新监听
+            //值 改变一次，该方法就执行一次
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    //获取改变后的值
+                    int currentValue = (int) animation.getAnimatedValue();
+                    //输出改变后的值
+                    //  Log.d("1111", "onAnimationUpdate: " + currentValue);
+                    //改变后的值发赋值给对象的属性值
+                    view_dk.setTranslationX(currentValue);
+                    //刷新视图
+                    view_dk.requestLayout();
+                }
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    Log.d("BoFangActivity", "结束");
+                    super.onAnimationEnd(animation);
+                    rootv.removeView(view_dk);
+                }
+            });
+            //启动动画
+            animator.start();
+
+        }
+
     }
 
 
@@ -1358,22 +1415,22 @@ public class ZhiBoActivity extends FragmentActivity implements IMLVBLiveRoomList
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-               // Log.d("AllConnects", "请求失败" + e.getMessage());
-               // //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
+                // Log.d("AllConnects", "请求失败" + e.getMessage());
+                // //  ToastUtils.showError(WoDeZiLiaoActivity.this, "获取数据失败,请检查网络");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-              //  Log.d("AllConnects", "请求成功" + call.request().toString());
+                //  Log.d("AllConnects", "请求成功" + call.request().toString());
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                  //  Log.d("AllConnects", "退出直播:" + ss);
-                  //  JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    //  Log.d("AllConnects", "退出直播:" + ss);
+                    //  JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
 
                 } catch (Exception e) {
-                  //  Log.d("AllConnects", e.getMessage() + "异常");
+                    //  Log.d("AllConnects", e.getMessage() + "异常");
                     // ToastUtils.showError(BoFangActivity.this, "获取数据失败");
                 }
             }
@@ -1403,24 +1460,24 @@ public class ZhiBoActivity extends FragmentActivity implements IMLVBLiveRoomList
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-               // Log.d("AllConnects", "请求失败" + e.getMessage());
-               // ToastUtils.showError(ZhiBoActivity.this, "获取数据失败,请检查网络");
+                // Log.d("AllConnects", "请求失败" + e.getMessage());
+                // ToastUtils.showError(ZhiBoActivity.this, "获取数据失败,请检查网络");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-               // Log.d("AllConnects", "请求成功" + call.request().toString());
+                // Log.d("AllConnects", "请求成功" + call.request().toString());
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                   // Log.d("AllConnects", id1 + "  " + id2 + "  混流" + ss);
+                    // Log.d("AllConnects", id1 + "  " + id2 + "  混流" + ss);
                     //  JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     // Gson gson = new Gson();
                     //  LogingBe logingBe = gson.fromJson(jsonObject, LogingBe.class);
                 } catch (Exception e) {
-                   // Log.d("AllConnects", e.getMessage() + "异常");
-                   // ToastUtils.showError(ZhiBoActivity.this, "获取数据失败");
+                    // Log.d("AllConnects", e.getMessage() + "异常");
+                    // ToastUtils.showError(ZhiBoActivity.this, "获取数据失败");
                 }
             }
         });
@@ -1436,7 +1493,7 @@ public class ZhiBoActivity extends FragmentActivity implements IMLVBLiveRoomList
                 try {
                     //有动画 ，延迟到一秒一次
                     Integer subject = linkedBlockingQueue.take();
-                    SystemClock.sleep(4000);
+                    SystemClock.sleep(5000);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
