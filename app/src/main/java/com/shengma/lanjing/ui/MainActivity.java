@@ -41,14 +41,12 @@ import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.MsgWarp;
 import com.shengma.lanjing.beans.UserInfoBean;
 import com.shengma.lanjing.beans.XiaZaiLiWuBean;
-import com.shengma.lanjing.beans.YongHuListBean;
-import com.shengma.lanjing.beans.YongHuListBean_;
-import com.shengma.lanjing.utils.AES;
+
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
 import com.shengma.lanjing.utils.Util;
-import com.shengma.lanjing.utils.Utils;
+
 import com.shengma.lanjing.views.ControlScrollViewPager;
 import com.shengma.lanjing.views.MyFragmentPagerAdapter;
 
@@ -60,15 +58,14 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
+
+
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import cn.tillusory.sdk.TiSDK;
 import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -608,11 +605,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 ToastUtils.showError(MainActivity.this,"获取数据失败,请检查网络");
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d("AllConnects", "请求成功" + call.request().toString());
-
                 //获得返回体
                 try {
                     ResponseBody body = response.body();
@@ -629,6 +624,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                           Log.d("MainActivity", "新礼物");
                           XiaZaiLiWuBean bean=new XiaZaiLiWuBean();
                           bean.setD(false);
+                          bean.setJY(false);
                           bean.setGiftMoney(object.get("giftMoney").getAsString());
                           bean.setGiftName(object.get("giftName").getAsString());
                           bean.setGiftUrl(object.get("giftUrl").getAsString());
@@ -647,7 +643,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                           }
                       }
                     }
-
                 } catch (Exception e) {
                     Log.d("AllConnects", e.getMessage() + "异常");
                     ToastUtils.showError(MainActivity.this,"获取数据失败");

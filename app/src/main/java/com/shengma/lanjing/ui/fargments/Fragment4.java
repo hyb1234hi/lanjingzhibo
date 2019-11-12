@@ -40,6 +40,7 @@ import com.shengma.lanjing.ui.WoDeGuanZhuActivity;
 import com.shengma.lanjing.ui.WoDeZhiBoActivity;
 import com.shengma.lanjing.ui.WoDeZiLiaoActivity;
 import com.shengma.lanjing.ui.wuguanjingyao.GuanYuWoMenActivity;
+import com.shengma.lanjing.ui.zhibo.ZhiBoActivity;
 import com.shengma.lanjing.utils.Consts;
 import com.shengma.lanjing.utils.GsonUtil;
 import com.shengma.lanjing.utils.ToastUtils;
@@ -272,7 +273,17 @@ public class Fragment4 extends Fragment {
                 startActivity(new Intent(getActivity(), QianBaoActivity.class));
                 break;
             case R.id.rl2:
-                startActivity(new Intent(getActivity(), KaiBoActivity.class));
+                MLVBLiveRoom.sharedInstance(MyApplication.myApplication).setmHasAddAnchor(true, baoCunBean.getUserid() + "", 1);
+                MLVBLiveRoom.sharedInstance(MyApplication.myApplication).exitRoom(new IMLVBLiveRoomListener.ExitRoomCallback() {
+                    @Override
+                    public void onError(int errCode, String errInfo) {
+                        startActivity(new Intent(getActivity(), ZhiBoActivity.class));
+                    }
+                    @Override
+                    public void onSuccess() {
+                        startActivity(new Intent(getActivity(), ZhiBoActivity.class));
+                    }
+                });
                 break;
             case R.id.rl3:
                 startActivity(new Intent(getActivity(), RecordActivity.class));

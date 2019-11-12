@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -68,14 +69,17 @@ public class XiTongXiaoXiActivity extends AppCompatActivity {
            recyclerView.setLayoutManager(layoutManager);
       //  设置Adapter
            adapter=new XiaoXiAdapter(beanList);
-          recyclerView.setAdapter(adapter);
+           recyclerView.setAdapter(adapter);
+           recyclerView.addOnItemTouchListener(new OnItemClickListener() {
+               @Override
+               public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+                   Log.d(TAG, "position:" + position);
+                   Intent intent =new Intent(XiTongXiaoXiActivity.this,XiaoXiInFoActivity.class);
+                   intent.putExtra("info",beanList.get(position).getContent());
+                   startActivity(intent);
+               }
+           });
 
-        recyclerView.addOnItemTouchListener(new OnItemClickListener() {
-            @Override
-            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Log.d(TAG, "position:" + position);
-            }
-        });
 
         link_list();
     }

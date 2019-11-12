@@ -15,6 +15,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.google.gson.JsonObject;
+import com.meihu.beautylibrary.manager.MHBeautyManager;
 import com.shengma.lanjing.MyApplication;
 import com.shengma.lanjing.beans.BaoCunBean;
 import com.shengma.lanjing.beans.ChaXunGeRenXinXi;
@@ -65,8 +66,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import cn.tillusory.sdk.TiSDKManager;
-import cn.tillusory.sdk.bean.TiRotation;
+
 import io.objectbox.Box;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -142,6 +142,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
     private int                             mMixMode = STREAM_MIX_MODE_JOIN_ANCHOR;
 
     private long                            mTimeDiff = 0; //客户端和服务器时间差，用户连麦和PK请求超时处理
+    private  MHBeautyManager mMhSDKManager;
 
     public static MLVBLiveRoom sharedInstance(Context context) {
         synchronized (MLVBLiveRoomImpl.class) {
@@ -387,6 +388,15 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
         }
     }
 
+
+
+    public MHBeautyManager getMHBeautyManager(){
+        return mMhSDKManager;
+    }
+    public void destroyMHBeautyManager(){
+        mMhSDKManager.destroy();
+    }
+
     /**
      * 创建房间（主播调用）
      *
@@ -402,6 +412,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
     public void createRoom(final String roomID, final String roomInfo,String pushURL, final IMLVBLiveRoomListener.CreateRoomCallback callback) {
         TXCLog.i("ZhiBoActivity", "API -> createRoom:" + roomID + ":" + roomInfo+" "+pushURL);
         mSelfRoleType = LIVEROOM_ROLE_PUSHER;
+
 
         //1. 在应用层调用startLocalPreview，启动本地预览
         //2. 请求CGI:get_push_url，异步获取到推流地址pushUrl
@@ -427,11 +438,12 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                                 return;
                             }
 
-                            if (mTXLivePusher != null) {
-                                TXLivePushConfig config = mTXLivePusher.getConfig();
-                                config.setVideoEncodeGop(2);
-                                mTXLivePusher.setConfig(config);
-                            }
+//                            if (mTXLivePusher != null) {
+//                                TXLivePushConfig config = mTXLivePusher.getConfig();
+//                                config.setVideoEncodeGop(5);
+//                                //config.setVideoEncodeGop(2);
+//                                mTXLivePusher.setConfig(config);
+//                            }
 
                             mBackground = false;
                             //4.推流成功，请求CGI:create_room，获取roomID、roomSig
@@ -925,7 +937,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                     mSelfPushUrl = data.pushURL;
                     mSelfAccelerateURL = data.accelerateURL;
                     //5. 开始推流
-                    startPushStream(data.pushURL, TXLiveConstants.VIDEO_QUALITY_LINKMIC_SUB_PUBLISHER, new StandardCallback() {
+                    startPushStream(data.pushURL, TXLiveConstants.VIDEO_QUALITY_HIGH_DEFINITION , new StandardCallback() {
                         @Override
                         public void onError(final int code, final String info) {
                             callbackOnThread(callback, "onError", code, info);
@@ -1252,8 +1264,9 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
      * @param view        承载视频画面的控件
      */
     @Override
-    public void startLocalPreview(boolean frontCamera, TXCloudVideoView view) {
+    public void startLocalPreview(boolean frontCamera, TXCloudVideoView view,Context context) {
         TXCLog.i(TAG, "API -> startLocalPreview:" + frontCamera);
+        mMhSDKManager = new MHBeautyManager(context.getApplicationContext());//美狐sdk这里初始化 放到上面去初始化
         initLivePusher(frontCamera);
         if (mTXLivePusher != null) {
             if (view != null) {
@@ -1309,7 +1322,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
                            // if (mMixMode == STREAM_MIX_MODE_PK) {
                                 //PK
                            // Log.d(TAG, "VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER");
-                                mTXLivePusher.setVideoQuality(TXLiveConstants.VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER, true, true);
+                                mTXLivePusher.setVideoQuality(TXLiveConstants.VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER, true, false);
                                 TXLivePushConfig config = mTXLivePusher.getConfig();
                                 config.setVideoResolution(TXLiveConstants.VIDEO_RESOLUTION_TYPE_360_640);
                                 config.setAutoAdjustBitrate(false);
@@ -1979,12 +1992,12 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
         mListenerHandler = new Handler(mAppContext.getMainLooper());
         mStreamMixturer = new StreamMixturer();
         mHeartBeatThread = new HeartBeatThread();
-
         mTXLivePlayConfig = new TXLivePlayConfig();
         mTXLivePlayer = new TXLivePlayer(context);
         mTXLivePlayConfig.setAutoAdjustCacheTime(true);
         mTXLivePlayConfig.setMaxAutoAdjustCacheTime(2.0f);
         mTXLivePlayConfig.setMinAutoAdjustCacheTime(2.0f);
+
         mTXLivePlayer.setConfig(mTXLivePlayConfig);
         mTXLivePlayer.setRenderMode(TXLiveConstants.RENDER_MODE_FULL_FILL_SCREEN);
         mTXLivePlayer.setPlayListener(new ITXLivePlayListener() {
@@ -2032,7 +2045,8 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
             public void run() {
                 if (mTXLivePusher != null && mTXLivePushListener != null) {
                     mTXLivePushListener.setCallback(callback);
-                    mTXLivePusher.setVideoQuality(videoQuality, false, false);
+
+                 //   mTXLivePusher.setVideoQuality(videoQuality, false, false);
                     int ret = mTXLivePusher.startPusher(url);
                     if (ret == -5) {
                         String msg = "[LiveRoom] 推流失败[license 校验失败]";
@@ -2352,30 +2366,41 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
 
 
     protected void initLivePusher(boolean frontCamera) {
+//        mMhSDKManager = new MHBeautyManager(mAppContext);//美狐sdk这里初始化 放到上面去初始化
         if (mTXLivePusher == null) {
             TXLivePushConfig config = new TXLivePushConfig();
             config.setFrontCamera(frontCamera);
-            config.enableScreenCaptureAutoRotate(mScreenAutoEnable);// 是否开启屏幕自适应
-            config.setPauseFlag(TXLiveConstants.PAUSE_FLAG_PAUSE_VIDEO | TXLiveConstants.PAUSE_FLAG_PAUSE_AUDIO);
+            config.setVideoResolution(TXLiveConstants.VIDEO_RESOLUTION_TYPE_540_960);
+//            config.setVideoEncodeGop(2);
+//            config.setHardwareAcceleration(TXLiveConstants.ENCODE_VIDEO_HARDWARE);
+            //config.enableScreenCaptureAutoRotate(mScreenAutoEnable);// 是否开启屏幕自适应
+           // config.setPauseFlag(TXLiveConstants.PAUSE_FLAG_PAUSE_VIDEO | TXLiveConstants.PAUSE_FLAG_PAUSE_AUDIO);
             mTXLivePusher = new TXLivePusher(mAppContext);
             mTXLivePusher.setConfig(config);
+          //  mTXLivePusher.setVideoQuality(TXLiveConstants.VIDEO_QUALITY_HIGH_DEFINITION ,false,false);
             mTXLivePusher.setBeautyFilter(TXLiveConstants.BEAUTY_STYLE_SMOOTH, 5, 3, 2);
             mTXLivePushListener = new TXLivePushListenerImpl();
             mTXLivePusher.setPushListener(mTXLivePushListener);
-//            mTXLivePusher.setVideoProcessListener(new TXLivePusher.VideoCustomProcessListener() {
-//                @Override
-//                public int onTextureCustomProcess(int i, int i1, int i2) {
-//                    return TiSDKManager.getInstance().renderTexture2D(i,i1,i2, TiRotation.CLOCKWISE_ROTATION_0,isFrontCamera);
-//                }
-//                @Override
-//                public void onDetectFacePoints(float[] floats) {
-//                }
-//                @Override
-//                public void onTextureDestoryed() {
-//                    Log.d("dddddddd", "停止推流");
-//                    TiSDKManager.getInstance().destroy();
-//                }
-//            });
+
+            mTXLivePusher.setVideoProcessListener(new TXLivePusher.VideoCustomProcessListener() {
+                @Override
+                public int onTextureCustomProcess(int i, int i1, int i2) {
+
+                    if (mMhSDKManager!=null)
+                    mMhSDKManager.render(i,i1,i2,0);
+                    return i;
+                }
+                @Override
+                public void onDetectFacePoints(float[] floats) {
+
+                }
+                @Override
+                public void onTextureDestoryed() {
+                    if (mMhSDKManager!=null)
+                        mMhSDKManager.destroy();
+                    Log.d("dddddddd", "停止推流");
+                }
+            });
         }
     }
 
@@ -3255,7 +3280,7 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
 
         @Override
         public void onNetStatus(Bundle status) {
-
+            Log.d("推流状态信息：", status.toString());
         }
     }
 

@@ -28,7 +28,11 @@ public class ZHiBoAdapter extends BaseQuickAdapter<ZhiBoBean.ResultBean,BaseView
                 .load(item.getCoverImg())
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners( 20)))
                 .into((ImageView) helper.getView(R.id.bgbg));
-
+        if (item.getStatus()==0){
+            helper.setVisible(R.id.xiuxi,true);
+        }else {
+            helper.setVisible(R.id.xiuxi,false);
+        }
         //RequestOptions.bitmapTransform(new CircleCrop())//圆形
         //RequestOptions.bitmapTransform(new RoundedCorners( 5))//圆角
     }

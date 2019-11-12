@@ -750,7 +750,6 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                         Log.d("BoFangActivity", "发送礼物自定义消息失败" + errInfo + errCode);
                         ToastUtils.showError(BoFangActivity.this, "赠送礼物失败");
                     }
-
                     @Override
                     public void onSuccess() {
                         Log.d("BoFangActivity", "发送礼物自定义消息成功");
@@ -759,6 +758,7 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                             liWuBoFangAdapter.notifyDataSetChanged();
                             linkedBlockingQueue.offer(1);
                         }
+                        link_userinfo(idid + "");
                     }
                 });
 
@@ -916,8 +916,15 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 Bitmap bitmap = null;
                 FileInputStream fileInputStream = null;
                 try {
-                    fileInputStream = new FileInputStream(absolutePath + File.separator + "lanjing/" + idid + "/images/" + asset.getFileName());
-                    bitmap = BitmapFactory.decodeStream(fileInputStream);
+                    String paths = absolutePath + File.separator + "lanjing/" + idid + "/images/" + asset.getFileName();
+                    File file=new File(paths);
+                    if (file.exists()){
+                        fileInputStream = new FileInputStream( paths);
+                        bitmap = BitmapFactory.decodeStream(fileInputStream);
+                    }else {
+                        animationView.cancelAnimation();
+                        animationView.setVisibility(View.GONE);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     animationView.cancelAnimation();
@@ -948,8 +955,12 @@ public class BoFangActivity extends AppCompatActivity implements IMLVBLiveRoomLi
                 return bitmap;
             }
         });
-
-        animationView.setAnimationFromJson(ReadAssetsJsonUtil.readJSON(idid));
+        String sss = ReadAssetsJsonUtil.readJSON(idid);
+        if (sss.equals("")){
+            animationView.setVisibility(View.GONE);
+            return;
+        }
+        animationView.setAnimationFromJson(sss);
         animationView.addAnimatorListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

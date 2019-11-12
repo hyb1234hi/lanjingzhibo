@@ -2,6 +2,8 @@ package com.shengma.lanjing.adapters;
 
 
 
+import android.text.Html;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.shengma.lanjing.R;
@@ -17,9 +19,9 @@ public class XiaoXiAdapter extends BaseQuickAdapter<MyXiaoXiBean.ResultBean,Base
 
     @Override
     protected void convert(BaseViewHolder helper, MyXiaoXiBean.ResultBean item) {
-        helper.setText(R.id.title, item.getTitle());
+        helper.setText(R.id.title, Html.fromHtml(item.getTitle()));
         helper.setText(R.id.time, item.getCreateTime());
-        helper.setText(R.id.neirong, item.getContent());
+        helper.setText(R.id.neirong, Html.fromHtml(item.getContent()));
 //        Glide.with(mContext)
 //                .load(item.getHeadImage())
 //                .apply(RequestOptions.bitmapTransform(new RoundedCorners( 10)))

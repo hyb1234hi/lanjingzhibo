@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
+import com.meihu.beautylibrary.manager.MHBeautyManager;
 import com.shengma.lanjing.liveroom.roomutil.commondef.AnchorInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.LoginInfo;
 import com.shengma.lanjing.liveroom.roomutil.commondef.MLVBCommonDef;
@@ -68,6 +69,8 @@ public abstract class MLVBLiveRoom {
         MLVBLiveRoomImpl.destroySharedInstance();
     }
 
+
+
     /**
      * 设置回调接口
      *
@@ -100,6 +103,11 @@ public abstract class MLVBLiveRoom {
      * 退出登录
      */
     public abstract void logout();
+
+    public abstract MHBeautyManager getMHBeautyManager();
+
+    public abstract void destroyMHBeautyManager();
+
 
     /**
      * 修改个人信息
@@ -342,7 +350,7 @@ public abstract class MLVBLiveRoom {
      * @param frontCamera YES：前置摄像头；NO：后置摄像头。
      * @param view 承载视频画面的控件
      */
-    public abstract void startLocalPreview(boolean frontCamera, TXCloudVideoView view);
+    public abstract void startLocalPreview(boolean frontCamera, TXCloudVideoView view,Context context);
 
     /**
      * 停止本地视频采集及预览

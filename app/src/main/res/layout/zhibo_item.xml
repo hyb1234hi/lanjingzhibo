@@ -7,6 +7,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/consts"
+        android:background="@drawable/morenzhibo"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -71,6 +72,19 @@
             android:layout_width="11dp"
             android:layout_height="12dp"/>
 
+        <Button
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/white"
+            android:id="@+id/xiuxi"
+            android:visibility="gone"
+            android:background="@drawable/zidonghuoqu3222"
+            android:layout_marginLeft="8dp"
+            android:textSize="8sp"
+            android:text="休息中.."
+            android:layout_width="40dp"
+            android:layout_height="18dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

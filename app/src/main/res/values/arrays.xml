@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--基础美颜全部类型-->
+    <string-array name="name_basic_beauty_name_array">
+        <item>@string/beauty_meibai</item>
+        <item>@string/beauty_mopi</item>
+        <item>@string/beauty_hongrun</item>
+    </string-array>
+
+    <!--美型全部类型-->
+    <string-array name="name_beauty_shape">
+        <item>@string/beauty_origin</item>
+        <item>@string/beauty_big_eye</item>
+        <item>@string/beauty_eye_brow</item>
+        <item>@string/beauty_eye_length</item>
+        <item>@string/beauty_eye_corner</item>
+        <item>@string/beauty_face</item>
+        <item>@string/beauty_mouse</item>
+        <item>@string/beauty_nose</item>
+        <item>@string/beauty_chin</item>
+        <item>@string/beauty_forehead</item>
+        <item>@string/beauty_lengthen_nose</item>
+        <item>@string/beauty_face_shave</item>
+        <item>@string/beauty_eye_alat</item>
+    </string-array>
+
+    <!--。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。-->
+
+
+    <!--美颜调型原始数据(真实人脸数据)，需要与下面数组美颜名称一一对应-->
+    <integer-array name="name_beauty_origin_progress">
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>  <!--上面为基础美颜，下面为美型-->
+        <item>0</item><!--大眼-->
+        <item>50</item><!--眉毛-->
+        <item>50</item><!--眼距-->
+        <item>50</item><!--眼角-->
+        <item>0</item><!--瘦脸-->
+        <item>50</item><!--嘴形-->
+        <item>50</item><!--瘦鼻-->
+        <item>50</item><!--下巴-->
+        <item>50</item><!--额头-->
+        <item>50</item><!--长鼻-->
+        <item>0</item><!--削脸-->
+        <item>50</item><!--开眼角-->
+    </integer-array>
+
+    <!--美颜调型默认数据(轻微美颜效果数据)，需要与下面数组美颜名称一一对应-->
+    <integer-array name="name_beauty_default_progress">
+        <item>5</item>
+        <item>4</item>
+        <item>2</item>  <!--上面为基础美颜，下面为美型-->
+        <item>30</item><!--大眼-->
+        <item>0</item><!--眉毛-->
+        <item>50</item><!--眼距-->
+        <item>50</item><!--眼角-->
+        <item>30</item><!--瘦脸-->
+        <item>50</item><!--嘴形-->
+        <item>50</item><!--瘦鼻-->
+        <item>50</item><!--下巴-->
+        <item>50</item><!--额头-->
+        <item>50</item><!--长鼻-->
+        <item>0</item><!--削脸-->
+        <item>50</item><!--开眼角-->
+    </integer-array>
+
+    <!--美颜带进度条的全部类型，需要与上面默认值一一对应-->
+    <string-array name="name_beauty_name_array">
+        <item>@string/beauty_meibai</item>
+        <item>@string/beauty_mopi</item>
+        <item>@string/beauty_hongrun</item>
+        <item>@string/beauty_big_eye</item>
+        <item>@string/beauty_eye_brow</item>
+        <item>@string/beauty_eye_length</item>
+        <item>@string/beauty_eye_corner</item>
+        <item>@string/beauty_face</item>
+        <item>@string/beauty_mouse</item>
+        <item>@string/beauty_nose</item>
+        <item>@string/beauty_chin</item>
+        <item>@string/beauty_forehead</item>
+        <item>@string/beauty_lengthen_nose</item>
+        <item>@string/beauty_face_shave</item>
+        <item>@string/beauty_eye_alat</item>
+    </string-array>
+
+    <!--。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。-->
+    <!--美型按钮默认图标-->
+    <integer-array name="icons_beauty_shape">
+        <item>@mipmap/beauty_origin</item>
+        <item>@mipmap/beauty_shape_bigeye</item>
+        <item>@mipmap/beauty_shape_eye_brow</item>
+        <item>@mipmap/beauty_shape_eye_length</item>
+        <item>@mipmap/beauty_shape_eye_alat</item>
+        <item>@mipmap/beauty_shape_shoulian</item>
+        <item>@mipmap/beauty_shape_mouse</item>
+        <item>@mipmap/beauty_shape_shoubi</item>
+        <item>@mipmap/beauty_shape_xiaba</item>
+        <item>@mipmap/beauty_shape_etou</item>
+        <item>@mipmap/beauty_shape_lengthen_nose</item>
+        <item>@mipmap/beauty_shape_face_shave</item>
+        <item>@mipmap/beauty_shape_eye_corner</item>
+    </integer-array>
+
+    <!--美型按钮选中图标-->
+    <integer-array name="icons_beauty_shape_seledted">
+        <item>@mipmap/beauty_origin_selected</item>
+        <item>@mipmap/beauty_shape_bigeye_selected</item>
+        <item>@mipmap/beauty_shape_eye_brow_selected</item>
+        <item>@mipmap/beauty_shape_eye_length_selected</item>
+        <item>@mipmap/beauty_shape_eye_alat_selected</item>
+        <item>@mipmap/beauty_shape_shoulian_selected</item>
+        <item>@mipmap/beauty_shape_mouse_selected</item>
+        <item>@mipmap/beauty_shape_shoubi_selected</item>
+        <item>@mipmap/beauty_shape_xiaba_selected</item>
+        <item>@mipmap/beauty_shape_etou_selected</item>
+        <item>@mipmap/beauty_shape_lengthen_nose_selected</item>
+        <item>@mipmap/beauty_shape_face_shave_selected</item>
+        <item>@mipmap/beauty_shape_eye_corner_selected</item>
+    </integer-array>
+
+    <!--基础版本 美型全部类型-->
+    <string-array name="name_default_beauty_shape">
+        <item>@string/beauty_origin</item>
+        <item>@string/beauty_big_eye</item>
+        <item>@string/beauty_face</item>
+    </string-array>
+
+
+    <!--基础班本 美型按钮默认图标-->
+    <integer-array name="icons_default_beauty_shape">
+        <item>@mipmap/beauty_origin</item>
+        <item>@mipmap/beauty_shape_bigeye</item>
+        <item>@mipmap/beauty_shape_shoulian</item>
+    </integer-array>
+
+    <!--基础班本 美型按钮选中图标-->
+    <integer-array name="icons_default_beauty_shape_seledted">
+        <item>@mipmap/beauty_origin_selected</item>
+        <item>@mipmap/beauty_shape_bigeye_selected</item>
+        <item>@mipmap/beauty_shape_shoulian_selected</item>
+    </integer-array>
+
+    <!--特效 效果列表-->
+    <string-array name="specially_name_list">
+        <item>@string/filter_no</item>
+        <item>@string/rock_astral_projection</item>
+        <item>@string/shake</item>
+        <item>@string/rock_flash_white</item>
+        <item>@string/rock_glitch</item>
+        <item>@string/rock_Illusion</item>
+    </string-array>
+
+    <integer-array name="specially_icon_list">
+        <item>@mipmap/beauty_specially_none</item>
+        <item>@mipmap/beauty_specially_soulout</item>
+        <item>@mipmap/beauty_specially_shake</item>
+        <item>@mipmap/beauty_specially_flashwhite</item>
+        <item>@mipmap/beauty_specially_glitch</item>
+        <item>@mipmap/beauty_specially_illusion</item>
+    </integer-array>
+
+    <!--哈哈镜 效果名称列表-->
+    <string-array name="distortion_name_list">
+        <item>@string/filter_no</item>
+        <item>@string/haha_1</item>
+        <item>@string/haha_2</item>
+        <item>@string/haha_3</item>
+        <item>@string/haha_5</item>
+    </string-array>
+
+    <!--哈哈镜 演示图列表-->
+    <integer-array name="distortion_icon_list">
+        <item>@mipmap/beauty_distortion_none</item>
+        <item>@mipmap/beauty_distortion_alienface</item>
+        <item>@mipmap/beauty_distortion_pearface</item>
+        <item>@mipmap/beauty_distortion_thinface</item>
+        <item>@mipmap/beauty_distortion_thinface</item>
+    </integer-array>
+
+</resources>

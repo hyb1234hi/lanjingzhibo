@@ -103,6 +103,7 @@ public class Fragment2 extends Fragment {
             public void onRefresh(@NonNull RefreshLayout refreshlayout) {
                 pag=1;
                 beanList.clear();
+              //  adapter.notifyDataSetChanged();
                 link_list(1);//刷新
                // refreshlayout.finishRefresh(500/*,false*/);//传入false表示刷新失败
             }

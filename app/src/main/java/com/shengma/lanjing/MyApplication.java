@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 
 import com.liulishuo.filedownloader.FileDownloader;
+import com.meihu.beautylibrary.MHSDK;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.scwang.smart.refresh.layout.api.RefreshFooter;
@@ -39,6 +40,7 @@ import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.rtmp.TXLiveBase;
+import com.zzhoujay.richtext.RichText;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +49,6 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import cn.jpush.android.api.JPushInterface;
-import cn.tillusory.sdk.TiSDK;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import okhttp3.OkHttpClient;
@@ -97,6 +98,8 @@ public class MyApplication extends Application implements Application.ActivityLi
                 return new ClassicsFooter(context).setDrawableSize(20);
             }
         });
+
+
     }
 
 
@@ -107,7 +110,9 @@ public class MyApplication extends Application implements Application.ActivityLi
         BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
         Bugly.init(getApplicationContext(), "f4afeb35e1", false);
 
-      //全局dialog
+        MHSDK.init(MyApplication.myApplication, "bcfaba599efabd3d1e5531e21bef231a"); //appkey 为申请的基础版或者高 级版鉴权密钥
+
+        //全局dialog
         this.registerActivityLifecycleCallbacks(this);//注册
         CommonData.applicationContext = this;
         DisplayMetrics metric = new DisplayMetrics();
@@ -124,7 +129,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         TCUserMgr.getInstance().initContext(getApplicationContext());
 
         FileDownloader.setup(this);//下载初始化
-
+        RichText.initCacheDir(this);//富文本
         baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
         xiaZaiLiWuBeanBox= mBoxStore.boxFor(XiaZaiLiWuBean.class);
         liwuPathBeanBox= mBoxStore.boxFor(LiwuPathBean.class);

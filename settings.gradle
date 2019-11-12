@@ -1,2 +1,2 @@
-include ':app', ':photopicker', ':meiyan', ':meiyan2'
+include ':app', ':photopicker'
 rootProject.name='My Application2'

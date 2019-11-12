@@ -1,42 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">蓝鲸视频</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-
-
-    <!--loginActivity -->
-    <!--loginActivity -->
-
-    <!--registerActivity -->
-    <!--registerActivity -->
-
-    <!-- permission check-->
-    <string name="float_window_not_allow">悬浮窗权限未开启 请在应用-权限中打开悬浮窗权限</string>
-
-    <!-- live fragment-->
-
-    <!-- publish activity-->
-
-    <!-- live play -->
-
-    <!-- pushstream -->
-
-
-    <!-- userinfo fragment--><![CDATA[
-
-
-
-
-    string>
-
-
-
-    ]]><!-- set -->
-
-    <!-- icon_edit -->
-
-
-    <!-- fragment publish -->
 
 
     <!--registerActivity  loginActivity-->
@@ -111,6 +75,5 @@
     <string name="sticker_dim">简约</string>
     <string name="sticker_sticker">萌物</string>
     <string name="sticker_shyly">少女</string>
-
 
 </resources>
