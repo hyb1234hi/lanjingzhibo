@@ -2385,7 +2385,6 @@ public class MLVBLiveRoomImpl extends MLVBLiveRoom implements HttpRequests.Heart
             mTXLivePusher.setVideoProcessListener(new TXLivePusher.VideoCustomProcessListener() {
                 @Override
                 public int onTextureCustomProcess(int i, int i1, int i2) {
-
                     if (mMhSDKManager!=null)
                     mMhSDKManager.render(i,i1,i2,0);
                     return i;

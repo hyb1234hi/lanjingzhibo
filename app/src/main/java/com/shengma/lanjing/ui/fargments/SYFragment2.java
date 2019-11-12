@@ -124,10 +124,15 @@ public class SYFragment2 extends Fragment implements View.OnClickListener {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Log.d(TAG, "position:" + position);
-                Intent intent=new Intent(getActivity(), BoFangActivity.class);
-                intent.putExtra("idid",beanList.get(position).getId());
-                intent.putExtra("playPath",beanList.get(position).getPlayUrl());
-                startActivity(intent);
+                if (beanList.get(position).getStatus()==1){
+                    Intent intent=new Intent(getActivity(), BoFangActivity.class);
+                    intent.putExtra("idid",beanList.get(position).getId());
+                    intent.putExtra("playPath",beanList.get(position).getPlayUrl());
+                    startActivity(intent);
+                }else {
+                    ToastUtils.showInfo(getActivity(),"主播休息中...");
+                }
+
 
             }
         });
